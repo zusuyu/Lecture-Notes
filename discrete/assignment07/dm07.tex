@@ -1,0 +1,152 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+
+\title{\heiti\zihao{1} 计数和概率习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{2}
+\subsection*{Statement}
+设 $A = \{1, 2, \cdots, 2n\}$, 从 $A$ 中任取 $n + 1$ 个数组成集合$B$.
+
+\begin{enumerate}
+	\item 证明: $B$ 中一定存在两个数, 其中一个数是另一个数的倍数.
+	\item 举例说明若将题中的 $n + 1$ 改为 $n$, 结论不成立.
+\end{enumerate}
+
+\subsection*{Solution}
+
+\begin{enumerate}
+	\item 对于$\forall x \in \{1, 2, \cdots, 2n\}$, 将其写成$x = 2^rq$的形式, 其中$r \in \mathbb N, q$是奇数. 显然对于$\{1, 2, \cdots, 2n\}$中的所有$x$, 只会存在$n$个不同的$q$(不超过$2n$的奇数个数), 将$\{1, 2, \cdots, 2n\}$中所有数按照其对应的$q$分类, 可以得到$n$个类.
+	
+	根据鸽巢原理, 任取$n + 1$个数组成集合$B$, 那么$B$中一定存在两个元素来自同一个类, 设为$x_1 = 2^{r_1}q, x_2 = 2^{r_2}q$, 显然一者是另一者的倍数.
+	\item 只需要取$\{n + 1, n + 2, \cdots, 2n\}$这个大小为$n$的集合, 可以验证其中不存在两个数满足一者是另一者的倍数(因为最大数与最小数的商小于$2$).
+\end{enumerate}
+
+\section*{3}
+\subsection*{Statement}
+\begin{enumerate}
+\item $n$ 个离散课同学坐在一排听课, 从中选出 $r$ 个成为 Expert Student, 并要求这 $r$ 个同学中没有两个原来是相邻的, 问有多少种不同的选法?
+\item $n$ 个离散课同学坐在一圈讨论怎么做作业, 现从中选出 $r$ 个成为小天才, 这 $r$ 个同学中没有两个是在圆周上相邻的, 问有多少种不同的选法?
+\end{enumerate}
+\subsection*{Solution}
+(默认以下组合数$\binom{n}{m}$在$n < 0$或$m < 0$或$n < m$时取值为$0$)
+\begin{enumerate}
+	\item 问题等价于从$n$名同学中挑出$r$对相邻的同学，并钦定每对左边的那位同学成为 Expert Student, 特别地, 最右边的那位同学可以和空气组队, 然后让自己成为 Expert Student.
+	
+	相当于求在$n+1$名同学中选出$r$组相邻同学的方案数, 这只需要考虑安排$r$个组与$n + 1 - 2r$个单人之间的顺序, 因此方案数为$$\binom{n + 1 - r}{r}$$
+	
+	\item 在上一问的基础上, 额外增加了“第一个与最后一个同学不能同时选”的限制.
+	
+	只需要考虑减去“钦定第一个与最后一个同学同时选”的方案即可, 因此答案为$$\binom{n + 1 - r}{r} - \binom{n - 1 - r}{r - 2}$$
+	
+\end{enumerate}
+
+\section*{8}
+\subsection*{Statement}
+众所周知, 抽卡游戏是现在年轻人最好的概率论老师. 甘迪·克劳喜欢抽卡. 现在卡池中共有 $n$ 种卡, 每种卡都有无限张, 每抽一次会以 $\frac 1n$ 的概率得到其中的一种卡一张, 这次他想集齐所有的 $n$ 种卡(至少各一张), 假设每次抽卡需要氪金 $10$ 元, 求他达到目标时期望花费的钱数.
+\subsection*{Solution}
+
+记$S_n$表示当甘迪·克劳已经拥有$n$张不同的卡时, 抽到一张新的不同的卡的期望次数. 因此期望花费的钱数就是$$\mathbb E[cost] = \mathbb E[10(S_0 + S_1 + \cdots + S_{n-1})] = 10\sum_{i=0}^{n-1}\mathbb E[S_i]$$
+
+只需考虑计算$\mathbb E[S_i]$. 抽了$m$次才抽到一张新的不同的卡的概率是$(\frac{i}{n})^{m-1}\frac{n-i}{n}$, 因此抽卡次数的期望是
+\begin{equation}
+\mathbb E[S_i] = \sum_{m \ge 1}m\left(\frac{i}{n}\right)^{m-1}\frac{n-i}{n}
+\end{equation}
+两边同乘$\frac{i}{n}$,
+\begin{equation}
+\frac{i}{n}\mathbb E[S_i] = \sum_{m \ge 1}(m-1)\left(\frac{i}{n}\right)^{m-1}\frac{n-i}{n}
+\end{equation}
+两式相减,
+\begin{equation}
+\frac{n-i}{n}\mathbb E[S_i] = \frac{n-i}{n}\sum_{m \ge 1}\left(\frac{i}{n}\right)^{m-1}, \mathbb E[S_i] = \frac{n}{n-i}
+\end{equation}
+
+综上, 期望花费的钱数是$$\mathbb E[cost] = 10\sum_{i=0}^{n-1}\frac{n}{n-i} = 10n\sum_{i=1}^{n}\frac 1i$$
+
+\section*{9}
+\subsection*{Statement}
+某星球上的遗传物质和地球上一样, 由 A, G, C, T, U 组成, 但它们只是这些核苷酸的线性序列(不允许作任何对称操作, 如 AG 和 GA 是不同的). 科学观察发现 (C, T), (C, U), (U, T), (U, U) 四对核苷酸从不连续出现 (例如 GGCTA 不存在, 但 GGTCA 存在). 求该星球上长度为 $n$ 的遗传物质序列的个数.
+\subsection*{Solution}
+
+考虑容斥. 记$A_k$表示钦定$k$个下标对$(i, i+1)$出现不合法核苷酸对时, 核苷酸序列的数量, 那么合法的核苷酸序列数量就是$\sum\limits_{k = 0}^{n - 1}(-1)^{k}A_k$.
+
+设$f_n$表示长度为$n$的合法的核苷酸序列数量, 枚举末尾处连续出现的不合法核苷酸序列的长度, 由于长度为$n(n \ge 2)$的连续不合法核苷酸序列必然为\texttt{CU*T}, \texttt{CU+}, \texttt{U+T}, \texttt{UU+}这四种形式, 故有恰好$4$种, 因此可以得到$f_n$的递推
+
+\begin{equation}
+f_{n + 1} = 5f_n + 4\sum_{m = 1}^{n}(-1)^mf_{n - m}, f_0 = 1
+\end{equation}
+
+写成生成函数的形式, 令$F(x) = \sum_{n \ge 0}f_nx^n$
+
+\begin{equation}
+\sum_{n \ge 0}f_{n + 1}x^n = 5\sum_{n \ge 0}f_nx^n + 4\sum_{n\ge 0}\sum_{m = 1}^{n}(-x)^mf_{n - m}x^{n - m}
+\end{equation}
+\begin{equation}
+\frac{F(x) - 1}{x} = 5F(x) + 4F(x)\frac{-x}{1+x}
+\end{equation}
+\begin{equation}
+F(x) = \frac{1 + x}{1 - 4x - x^2}
+\end{equation}
+
+注意到$1 - 4x - x^2 = (\sqrt5 - 2 - x)(\sqrt5 + 2 + x)$, 故$$F(x) = \frac{A}{\sqrt5 - 2 - x} + \frac{B}{\sqrt5 + 2 + x} = \sum_{n \ge 0}\frac{A}{\sqrt5 - 2}\left(\frac{x}{\sqrt5 - 2}\right)^n + \frac{B}{\sqrt5+2}\left(\frac{x}{-\sqrt5-2}\right)^n$$
+
+其中$A, B$为待定系数, 可以解得$\begin{cases}
+A = \frac{5 - \sqrt5}{10}\\B = \frac{-5-\sqrt5}{10}
+\end{cases}$, 于是有
+\begin{equation}
+f_n = \frac{(5 - \sqrt5)(2 + \sqrt5)^{n+1} + (5 + \sqrt5)(2 - \sqrt5)^{n + 1}}{10}
+\end{equation}
+\end{document}

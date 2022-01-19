@@ -1,0 +1,135 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+
+\title{\heiti\zihao{1} 逻辑习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{}
+\subsection{}
+\begin{enumerate}
+	\item $(\psi \to \chi) \to (\varphi \to (\psi \to \chi))$ \hfill i
+	\item $\psi \to \chi$
+	\item $\varphi \to (\psi \to \chi)$ \hfill 1, 2, MP
+	\item $(\varphi \to (\psi \to \chi)) \to ((\varphi \to \psi) \to (\varphi \to \chi))$\hfill ii
+	\item $(\varphi \to \psi) \to (\varphi \to \chi)$ \hfill 3, 4, MP
+	\item $\varphi \to \psi$
+	\item $\varphi \to \chi$\hfill 5, 6, MP
+\end{enumerate}
+\subsection{}
+\begin{enumerate}
+	\item $(\psi \to \varphi) \to (\lnot\varphi \to \lnot\psi)$\hfill iv
+	\item $((\psi \to \varphi) \to (\lnot\varphi \to \lnot\psi)) \to (\varphi \to ((\psi \to \varphi) \to (\lnot\varphi \to \lnot\psi))) $\hfill i
+	\item $\varphi \to ((\psi \to \varphi) \to (\lnot\varphi \to \lnot\psi))$\hfill 1, 2, MP
+	\item $(\varphi \to ((\psi \to \varphi) \to (\lnot\varphi \to \lnot\psi)))
+	\to ((\varphi \to (\psi \to \varphi)) \to (\varphi \to (\lnot\varphi \to \lnot\psi)))$\hfill ii
+	\item $(\varphi \to (\psi \to \varphi)) \to (\varphi \to (\lnot\varphi \to \lnot\psi))$\hfill 3, 4, MP
+	\item $\varphi \to (\psi \to \varphi)$\hfill i
+	\item $\varphi \to (\lnot\varphi \to \lnot\psi)$\hfill 5, 6, MP
+\end{enumerate}
+\subsection{}
+\begin{enumerate}
+	\item $\varphi \to (\lnot\varphi \to \lnot\psi)$\hfill 上一问结论
+	\item $(\varphi \to (\lnot\varphi \to \lnot\psi)) \to (\lnot\varphi \to (\varphi \to \lnot \psi))$\hfill iii
+	\item $\lnot\varphi \to (\varphi \to \lnot \psi)$\hfill 1, 2, MP
+\end{enumerate}
+\subsection{}
+\begin{enumerate}
+	\item $\lnot\varphi \to (\lnot\psi \to \lnot\varphi)$\hfill i
+	\item $\lnot\varphi$
+	\item $\lnot\psi \to \lnot\varphi$\hfill 1, 2, MP
+	\item $(\lnot\psi \to \lnot\varphi) \to (\lnot\lnot\varphi \to \lnot\lnot\psi)$\hfill iv
+	\item $\lnot\lnot\varphi \to \lnot\lnot\psi$\hfill 3, 4, MP
+	\item $\varphi \to \lnot\lnot\varphi$\hfill v
+	\item $\varphi$
+	\item $\lnot\lnot\varphi$\hfill 6, 7, MP
+	\item $\lnot\lnot\psi$\hfill 5, 8, MP
+	\item $\lnot\lnot\psi \to \psi$\hfill vi
+	\item $\psi$\hfill 9, 10, MP
+	
+\end{enumerate}
+
+\section{}
+若$\alpha_1, \alpha_2, \cdots, \alpha_n$是一般的逻辑表达式, 由于并不是命题变元, 这导致$\alpha_i$可能本身就是重言式, 例如$\alpha_1 = p \to p, \alpha_2 = q \wedge \lnot q$, 此时$\gamma = \alpha_1 \wedge \lnot \alpha_2$为重言, 但将$\alpha_1, \alpha_2$分别替换为$\beta_1 = p, \beta_2 = q$后得到的$\delta = \beta_1 \wedge \lnot \beta_2$不是重言式.
+
+若$\alpha_1, \alpha_2, \cdots, \alpha_n$均为命题变元, 则等价于对于$2^n$种真值指派, $\gamma$均为真, 此时替换$\beta_1, \beta_2, \cdots, \beta_n$相当于任给$\alpha_1, \alpha_2, \cdots, \alpha_n$作真值指派, 故得到的$\delta$是重言式.
+
+\section{}
+由$\lnot (A * A)$永真可知$\mathbf T * \mathbf T = \mathbf F * \mathbf F = \mathbf F$. 由$(\mathbf T * \mathbf T) * \mathbf T = \mathbf T$可知$\mathbf F * \mathbf T = \mathbf T$, 而$(\mathbf T * \mathbf F) * \mathbf F = \mathbf F$说明了$\mathbf T * \mathbf F = \mathbf F$(否则左式的结果就变成了$\mathbf T$). 综上, $*$的真值表为
+
+\begin{center}
+\begin{tabular}{c|c|c}
+	$p_1$ & $p_2$ & $p_1 * p_2$\\
+	\hline
+	$\mathbf T$ & $\mathbf T$ & $\mathbf F$\\
+	\hline
+	$\mathbf T$ & $\mathbf F$ & $\mathbf F$\\
+\hline
+	$\mathbf F$ & $\mathbf T$ & $\mathbf T$\\
+\hline
+	$\mathbf F$ & $\mathbf F$ & $\mathbf F$\\
+
+\end{tabular}
+\end{center}
+
+\section{}
+
+\subsection{}
+$$[x = 0] := [\forall y, (x \le y)]$$
+\subsection{}
+$$[x = y + 1] := [\lnot (x \le y) \wedge (\forall z, (y \le z) \vee (z \le x))]$$
+\subsection{}
+$$[x = 3] := [\exists y, z, w, (w = 0) \wedge (z = w + 1) \wedge (y = z + 1) \wedge (x = y + 1)]$$
+\end{document}

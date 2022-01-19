@@ -1,0 +1,126 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+
+\title{\heiti\zihao{1} 集合论习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Prob 1}
+\subsection{Statement}
+在皮亚诺公理下, 如何定义自然数的乘法和乘方?
+\subsection{Solution}
+(假设已经定义了加法$"+"$)
+
+乘法$"\times"$: $n \times 0 \triangleq 0, n \times S(m) \triangleq (n \times m) + n$
+
+乘方$"**"$: $n ** 0 \triangleq S(0), n ** S(m) \triangleq (n ** m) \times n$
+
+\section{Prob 3}
+\subsection{Statement}
+求证: $n^{++} = n$对于任意自然数都不成立.
+\subsection{Solution}
+记集合$A = \{x \in \mathbb N | n^{++} \neq n\}$.
+
+首先证明$0 \in A$: 假设$0 \notin A$, 即$0^{++} = 0$, 于是有$0^{+++} = 0^+$, 然而$0$不能作为任何元素的后继, 产生矛盾, 因此$0 \in A$.
+
+然后证明$A = \mathbb N$: 只需要归纳证明当$n \in A$时, $n^+ \in A$即可. 当$n \in A$时, 根据单射, $n^{++} \neq n$等价于$(n^+)^{++} = n^{+++} \neq n+$, 于是便可得到$n^+ \in A$. 由归纳可知$A = \mathbb N$, 即任意自然数$n$都满足$n^{++} \neq n$.
+
+{\color{red}
+	\section{}
+	配对公理可以由幂集公理+分离公理推出.
+	
+	构造$A$和$B$的笛卡尔积, 需要对$\mathcal P(\mathcal P(A \cup B))$做分离公理, 因为注意到二元组$(x, y)$被定义为$\{\{x\}, \{x, y\}\}$.
+}
+{\color{blue}
+\section{Prob 8}
+\subsection{Statement}
+在ZF公理体系下, 证明集合属于关系不能成环.
+\subsection{Solution}
+假设一列集合$X_1, X_2, \cdots, X_n$满足
+
+$$X_1 \in X_2, X_2 \in X_3, \cdots, X_{n-1} \in X_n, X_n \in X_1$$
+
+考虑集合$Y = \{X_1, X_2, \cdots, X_n\}$, 正则公理要求$Y$中存在元素与$Y$交为空集, 但$Y$中元素只能是某个$X_i$, 而显然$X_{(i-2) \bmod n + 1} \in X_i \cap Y$不是空集, 故矛盾. 从而集合属于关系不能成环.
+}
+
+\section{Prob 9}
+\subsection{Statement}
+求证: 对于任意$X$，$\mathcal P(X) \subset X$不成立. 特别地, $P(X) \neq X$对于任意$X$成立.
+\subsection{Solution}
+假设存在$A$使得$\mathcal P(A) \subset A$, 由于$\{A\} \subset \mathcal P(A)$, 故$\{A\} \subset A$, $A \cap \{A\} = \{A\} \neq \varnothing$.
+
+另一方面，根据 Axiom of Regularity, 对于$\{A\}$, 存在$x \in \{A\}$使得$x \cap \{A\} = \varnothing$, 由于$A$是$\{A\}$的唯一元素，故$A \cap \{A\} = \varnothing$.
+
+产生矛盾，于是不存在这样的集合$A$使得$\mathcal P(A) \subset A$. 同理也不存在集合$B$使得$\mathcal P(B) = B$.
+
+\section{Prob 10}
+\subsection{Statement}
+求证: 如果$X$是归纳集, 那么$\{x \in X, x \subset X\}$也是归纳集.
+\subsection{Solution}
+记$Y = \{x \in X, x \subset X\}$.
+
+欲证明$Y$是归纳集, 只需证明：
+\begin{enumerate}
+	\item $\varnothing \in Y$;
+	\item $y \in Y \Rightarrow y \cap \{y\} \in Y$
+\end{enumerate}
+
+首先, $X$是归纳集说明$\varnothing \in X$, 同时显然$\varnothing \subset X$, 因此$\varnothing \in Y$.
+
+然后考虑对于任意$y \in Y$, 有$y \in X$且$y \subset X$, 由于$X$是归纳集, 故$y \in X \Rightarrow y \cap \{y\} \in X$, 同时注意到$y \in X \Rightarrow \{y\} \subset X$, 而$y \subset X \wedge \{y\} \subset X \Rightarrow y \cap \{y\} \subset X$, 因此有$y \cap \{y\} \in Y$.
+
+综上, $Y = \{x \in X, x \subset X\}$是归纳集.
+
+\end{document}

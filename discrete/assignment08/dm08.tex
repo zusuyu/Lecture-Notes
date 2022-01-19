@@ -1,0 +1,162 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+
+\title{\heiti\zihao{1} 概率方法习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{2}
+\subsection*{Statement}\label{t1}
+证明：如果存在$p \in [0, 1]$使得
+\begin{equation}
+\binom nk p^{\binom k2} + \binom nt (1-p)^{\binom t2} < 1
+\label{t1-state}
+\end{equation}
+则$R(k, t) > n$。由此导出$R(4, t) \ge \Omega\left(\left( \frac{t}{\log t} \right)^{\frac 32}\right)$。
+
+\subsection*{Solution}
+对于使\cref{t1-state}成立的$k, t, n, p$，考虑一张$n$点完全图，对每条边独立随机地以$p$的概率染成红色，以$1-p$的概率染成蓝色。对于确定的某$k$个点，它们之间的边全都是红色的概率是$p^{\binom k2}$，因此根据union bound，图中至少存在一个大小为$k$的红色完全图的概率不超过$\binom nk p^{\binom k2}$；同理，图中至少存在一个大小为$t$的蓝色完全图的概率不超过$\binom nt (1-p)^{\binom t2}$，故图中“至少存在一个大小为$k$的红色完全图或者至少存在一个大小为$t$的蓝色完全图”的概率不超过$\binom nk p^{\binom k2} + \binom nt (1-p)^{\binom t2}$。当这个量小于$1$时，说明存在一种染色方案使得一张$n$个点的完全图上“既不存在一个大小为$k$的红色完全图，也不存在一个大小为$t$的蓝色完全图”，从而$R(k, t) > n$。
+
+取$n = \left(\frac{t}{\log t}\right)^{\frac 32}, p = \frac{\log t}{t}$，有
+\begin{align}
+	\binom nk p^{\binom k2} & \le \left(\frac{e}{4}\right)^4n^4p^6 = \left(\frac{e}{4}\right)^4 < 1\\
+	\begin{split}
+	\binom nt (1-p)^{\binom t2} &\le \frac{n^t}{t!}\left(1 - \frac{\log t}{t}\right)^{\frac{t(t-1)}{2}}\\&\sim \frac{1}{t!} \left(\frac{t}{\log t}\right)^{\frac 32t}\text e^{-\frac{(t-1)\log t}{2}}\\
+	&\sim \exp \left[ -t\log t + \frac{3}{2}t(\log t - \log\log t) - \frac{t\log t}{2}\right]\\
+	&\sim o(1)
+	\end{split}
+\end{align}
+
+因此满足\cref{t1-state}，从而有$R(4, t) > n$，说明$R(4, t) \ge \Omega\left(\left( \frac{t}{\log t} \right)^{\frac 32}\right)$。
+\section*{3}
+\subsection*{Statement}
+设$\textbf v_1, \textbf v_2, \cdots, \textbf v_n \in \mathbb R^m$满足$\|\mathbf v_i\|_2 \le 1$，证明：存在$\varepsilon_i \in \{\pm 1\}$使得
+\begin{equation}
+\left\|\sum_{i=1}^{n}\varepsilon_i\textbf v_i\right\|_2 \le \sqrt n
+\label{t2_state}
+\end{equation}
+\subsection*{Solution}
+
+设$\textbf v_i = (v_{i1}, v_{i2}, \cdots, v_{im})$，$\|\mathbf v_i\|_2 \le 1$即$\|\mathbf v_i\|_2^2 \le 1$说明$\sum\limits_{j=1}^{m}v_{ij}^2 \le 1$。考虑对于每个$i \in [1, n]$独立随机取$\varepsilon_i \in \{\pm 1\}$，注意到$\mathbb E[\varepsilon_i] = 0$，于是有
+\begin{equation}
+\begin{split}
+\mathbb E\left[\left\|\sum_{i=1}^{n}\varepsilon_i\textbf v_i\right\|_2^2\right] &= \mathbb E\left[\sum_{j=1}^{m}\left(\sum_{i=1}^{n}\varepsilon_iv_{ij}\right)^2\right]\\
+&=\mathbb E\left[\sum_{j=1}^{m}\left(\sum_{i=1}^{n}v_{ij}^2 + \sum_{i \neq i'}\varepsilon_i\varepsilon_{i'}v_{ij}v_{i'j}\right)\right]\\
+&=\mathbb E\left[\sum_{i=1}^{n}\sum_{j=1}^{m}v_{ij}^2 \right]\\
+&= \sum_{i=1}^{n}\sum_{j=1}^{m}v_{ij}^2\\
+&\le n
+\end{split}
+\end{equation}
+
+我们知道$\text{Pr}[X \le \mathbb E[X]] > 0$，这说明存在$X$满足$X \le \mathbb E[X]$，因此存在$\varepsilon_i$满足\begin{equation}
+\left\|\sum_{i=1}^{n}\varepsilon_i\textbf v_i\right\|_2^2 \le n
+\end{equation}
+这与\cref{t2_state}是等价的。
+
+\section*{4}
+\subsection*{Statement}
+证明比第一题更强的结论：$R(4, t) \ge \Omega\left(\left( \frac{t}{\log t} \right)^2\right)$。
+\subsection*{Solution}
+对于一张$n$个点的完全图，对每条边独立随机地以$p$的概率染成红色，以$1-p$的概率染成蓝色。假设染色后图中有$X$个大小为$k$的红色完全图，有$Y$个大小为$t$的蓝色完全图，那么对每个这样的子图都删掉一个点，就可以使得图中不再存在大小为$k$的红色完全图以及大小为$t$的蓝色完全图，此时图中的点数为$n - X - Y$。
+
+注意到$\text{Pr}\left[n - X - Y \ge n - \mathbb E[X] - \mathbb E[Y] \right] > 0$，这说明对于任意的$n, p$，有\begin{equation}
+R(k, t) > n - \mathbb E[X] - \mathbb E[Y] = n - \binom nk p^{\binom k2} - \binom nt (1-p)^{\binom t2}
+\end{equation}
+
+我们想要证明$R(4, t) \ge \Omega\left(\left( \frac{t}{\log t} \right)^2\right)$。事实上，取$n = \left( \frac{t}{2\log t} \right)^2, p = \frac{1}{\sqrt n} = \frac{2\log t}{t}$，有
+\begin{equation}
+\begin{split}
+	n - \mathbb E[X] - \mathbb E[Y] 
+	&= n - \binom n4 p^{\binom 42} - \binom nt (1-p)^{\binom t2}\\
+	&\ge n - \left(\frac{en}{4}\right)^4\frac{1}{n^3} - \frac{n^t}{t!}\left(1 - \frac{2\log t}{t}\right)^{t(t-1)/2}\\
+	& \sim \left[1 - \left(\frac{e}{4}\right)^4 \right]n - \frac{1}{t!}\left(\frac{t}{2\log t}\right)^{2t}\text e^{-(t-1)\log t}\\
+	& \sim \left[1 - \left(\frac{e}{4}\right)^4 \right]n - \exp\left[ -t\log t + 2t(\log t - \log \log t - \log 2) - t\log t\right]\\
+	&\sim \left[1 - \left(\frac{e}{4}\right)^4 \right]n - o(1)\\
+	&= \Omega(n)
+\end{split}
+\end{equation}
+
+因此$R(4, t) \ge \Omega\left(\left( \frac{t}{\log t} \right)^2\right)$。
+\section*{6}
+\subsection*{Statement}
+用 $r$ 种不同的颜色给实数染色。若 $T \subseteq \mathbb R$ 中数的颜色有不同的 $r$ 种，则称 $T$ 是“多彩的”。现给定有限集 $X \subseteq \mathbb R$ 和整数 $m$ 满足
+\begin{equation}
+4r[m(m-1) + 1]\left(1-\frac1r\right)^m < 1
+\label{t4_state}
+\end{equation}
+
+证明：对于任意的有$m$个实数的子集$S$，都存在一种染色方案，使得下面的全部集合都是多彩的：
+$$S_x := \{x + s: s \in S\}, \quad \forall x \in X$$
+\subsection*{Solution}
+
+记$A_x$表示“集合$S_x$不是多彩的”这一事件。考虑对每个实数独立随机染色，如果能够说明此时$$\text{Pr}\left[\bigcap_{x \in X}\overline{A_x}\right] > 0$$
+就可以证明存在一种染色方案符合题意。
+
+先考虑计算$\text{Pr}[A_x]$，即“$S_x$不是多彩的”的概率。记$B_{x, i}$表示“$S_x$中第$i$种颜色没有出现”这一事件，于是显然有$A_x = \bigcup\limits_{i = 1}^{r}B_{x, i}$。根据union bound，可以得到
+\begin{equation}
+\text{Pr}[A_x] = \text{Pr}\left[\bigcup_{i=1}^{r}B_{x, i}\right] \le \sum_{i=1}^{r}\text{Pr}[B_{x, i}] = r\left(1 - \frac 1r\right)^m
+\end{equation}
+
+然后考虑对于固定的$x$，$A_x$与多少$A_{x'}, x' \in X$是相关的。$A_x$与$A_{x'}$相关，当且仅当$S_x \cap S_{x'} \neq \varnothing$，也即存在$s_1, s_2 \in S$，使得$x + s_1 = x' + s_2$。显然不同$s_2 - s_1$的非零取值只有不超过$m(m-1)$个，因此与$A_x$相关的$A_{x'}$也只有不超过$m(m-1)$个。
+
+注意到
+\begin{equation}
+\text e[m(m-1) + 1] r\left( 1 - \frac 1r\right)^m < 4r[m(m-1) + 1]\left(1-\frac1r\right)^m < 1
+\label{t4_forward}
+\end{equation}
+
+根据Lov\'asz Local Lemma，可以得到$\text{Pr}\left[\bigcap_{x \in X}\overline{A_x}\right] > 0$，故证明了原题设。
+\end{document}

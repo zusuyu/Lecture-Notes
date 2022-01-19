@@ -1,0 +1,249 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage{enumerate}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+
+
+\title{\heiti\zihao{1} Burnside 引理和 P\'olya 定理习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}\small
+\pagestyle{fancy}
+\lhead{离散数学与结构 (I)}
+\chead{}
+\rhead{Burnside 引理和 P\'olya 定理习题}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+\section{}
+\tdplotsetmaincoords{70}{110}
+\begin{center}
+\begin{tikzpicture}[scale=3,tdplot_main_coords]
+\coordinate (A) at (0, 0, 0);
+\coordinate (B) at (0, 1, 0);
+\coordinate (C) at (1, 0, 0);
+\coordinate (D) at (1, 1, 0);
+\coordinate (E) at (0.5, 0.5, 0.7071);
+\coordinate (F) at (0.5, 0.5, -0.7071);
+
+\draw[dashed] (A)--(B);
+\draw[dashed] (A)--(C);
+\draw (B)--(D);
+\draw (C)--(D);
+\draw[dashed] (A)--(E);
+\draw (B)--(E);
+\draw (C)--(E);
+\draw (D)--(E);
+\draw[dashed] (A)--(F);
+\draw (B)--(F);
+\draw (C)--(F);
+\draw (D)--(F);
+
+\draw (0.5, 0.25, 0.35) node [below]{\color{red}4};
+\draw (0.25, 0.5, 0.35) node [below]{\color{red}3};
+\draw (0.5, 0.75, 0.35) node [below]{\color{red}2};
+\draw (0.75, 0.5, 0.35) node [below]{\color{red}1};
+\draw (0.5, 0.25, -0.35) node [below]{\color{red}8};
+\draw (0.25, 0.5, -0.35) node [below]{\color{red}7};
+\draw (0.5, 0.75, -0.35) node [below]{\color{red}6};
+\draw (0.75, 0.5, -0.35) node [below]{\color{red}5};
+\end{tikzpicture}
+\end{center}
+
+对于一个固定的面($1$号面)，将其旋转至另一个面的对应位置，其余面的对应关系有$3$种(可以按住固定的那面旋转)，故一共有$24$种旋转变换，写成不相交轮换表示分别为
+\begin{enumerate}
+\item $(1)(2)(3)(4)(5)(6)(7)(8)$
+\item $(1)(245)(386)(7)$
+\item $(1)(254)(368)(7)$
+\item $(12)(35)(46)(78)$
+\item $(1234)(5678)$
+\item $(1265)(3784)$
+\item $(136)(2)(475)(8)$
+\item $(13)(24)(57)(68)$
+\item $(138)(275)(4)(6)$
+\item $(1432)(5876)$
+\item $(1485)(2376)$
+\item $(14)(28)(35)(67)$
+\item $(1562)(3487)$
+\item $(1584)(2673)$
+\item $(15)(28)(37)(46)$
+\item $(163)(2)(457)(8)$
+\item $(16)(25)(38)(47)$
+\item $(168)(274)(3)(5)$
+\item $(17)(23)(46)(58)$
+\item $(17)(26)(35)(48)$
+\item $(17)(28)(34)(56)$
+\item $(183)(257)(4)(6)$
+\item $(18)(27)(36)(45)$
+\item $(186)(247)(3)(5)$\end{enumerate}
+
+\section{}
+
+记$A = [8]$为八面体的八个面构成的集合，$B = \{r, g, b\}$为色盘，容易验证以上$24$种旋转变换构成一个$A$上的置换群，记之为$G$。
+
+求本质不同染色方案数，也就是求$G$按照群作用$\sigma(f)(x) = f(\sigma^{-1}(x))$作用在$B^A$上的轨道个数。根据Burnside引理，轨道个数等于
+\begin{equation}
+\frac{1}{|G|}\sum_{g \in G}|\text{fixed}(g)|
+\end{equation}
+
+提出以下五种条件：
+\begin{enumerate}[i.]
+	\item 每种染料的剩余量都是无限的。
+	\item 剩余的红色染料只够染三个面，其余两种颜料的剩余量无限。
+	\item 剩余的红色和蓝色染料分别只够染三个面，绿色染料的剩余量无限。
+	\item 剩余的三种染料分别只够染三个面。
+	\item 每种染料的剩余量都是无限的，某种颜色的面的数量是另外一种颜色
+	的面的数量的两倍。
+\end{enumerate}
+
+注意到$G$中只有四种本质不同的置换，其型分别为$(8), (0, 4), (2, 0, 2), (0, 0, 0, 2)$，且分别有$1, 9, 8, 6$个。分别记为$g_0, g_1, g_2, g_3$，以下表格列出了每种置换对应在不同限制下的不动点数量	
+
+\begin{center}
+	\begin{tabular}{c|c|c|c|c|c}
+		 & i & ii & iii & iv & v\\
+		 \hline
+		 $g_0$ & 6561[\ref{i0}] & 4864[\ref{ii0}] & 3237[\ref{iii0}] & 1680[\ref{iv0}]& 2271[\ref{v0}]\\
+		 \hline
+		 $g_1$ & 81[\ref{i1}] & 48[\ref{ii1}] & 21[\ref{iii1}] & 0[\ref{iv1}] & 39[\ref{v1}]\\
+		\hline
+		 $g_2$ & 81[\ref{i2}] & 52[\ref{ii2}] & 27[\ref{iii2}] & 6[\ref{iv2}] & 3[\ref{v3}]\\
+		\hline
+		 $g_3$ & 9[\ref{i3}] & 4[\ref{ii3}] & 1[\ref{iii3}] & 0[\ref{iv3}] & 3[\ref{v3}]\\
+		 \hline
+		 $\frac{1}{|G|}\sum_{g \in G}|\text{fixed}(g)|$ & $333$& $239$& $152$ & $72$ & $111$\\
+	\end{tabular}
+\end{center}
+
+因此满足五种条件的本质不同染色方案数分别为 {\color{red} $333, 239, 152, 72, 111$}。
+
+\subsection{$g_0$, i}\label{i0}
+全部染色方案都是恒等置换的不动点，故不动点数为$3^8 = 6561$。
+\subsection{$g_1$, i}\label{i1}
+轮换分解中有$4$个环，每个环需要染相同的颜色，故不动点数为$3^4 = 81$。
+\subsection{$g_2$, i}\label{i2}
+同理，$3^4 = 81$。
+\subsection{$g_3$, i}\label{i3}
+同理，$3^2 = 9$。
+
+\subsection{$g_0$, ii}\label{ii0}
+枚举红色出现次数，剩余的部分由绿蓝两色任意染色，不动点数为
+\begin{equation}
+\sum_{k=0}^{3}\binom{8}{k}2^{8-k} = 4864
+\end{equation}
+\subsection{$g_1$, ii}\label{ii1}
+红色只能染至多一个环，不动点数为$2^4 + 4 \cdot 2^3 = 48$。
+\subsection{$g_2$, ii}\label{ii2}
+红色可以染一个大小为$3$的环或者一个或两个大小为$1$的环，不动点数为$2^4 + 4 \cdot 2^3 + 2^2 = 52$。
+\subsection{$g_3$, ii}\label{ii3}
+红色不能染，因为环的大小都超过了$3$，不动点数为$2^2 = 4$。
+
+\subsection{$g_0$, iii}\label{iii0}
+枚举红蓝两色出现次数，不动点数量为
+\begin{equation}
+\sum_{k=0}^{3}\sum_{l=0}^{3}\frac{8!}{k!l!(8-k-l)!} = 3237
+\end{equation}
+\subsection{$g_1$, iii}\label{iii1}
+红蓝两色至多各染一个环，不动点数为$1^4 + 4 \times 1^3 + 4 \times 1^3 + 4 \times 3 \times 1^2 = 21$。
+\subsection{$g_2$, iii}\label{iii2}
+红蓝两色要么至多各染一个环，要么某一种颜色染了两个长度为$1$的环，不动点数为$1 + 4 + 4 + 12 + 3 + 3 = 27$。
+\subsection{$g_3$, iii}\label{iii3}
+红蓝两色不能染，不动点数为$1$。
+\subsection{$g_0$, iv}\label{iv0}
+染色方案等于将红绿蓝三种色块各$3$个进行任意排列的方案数，因为只需要去掉排在最后的色块就可以唯一确定一种要求的染色方案，故不动点数量为
+\begin{equation}
+\frac{9!}{3!3!3!} = 1680
+\end{equation}
+\subsection{$g_1$, iv}\label{iv1}
+每种颜色至多染一个环，所以至少有一个环没法被染色，不动点数量为$0$。
+\subsection{$g_2$, iv}\label{iv2}
+显然两个长度为$3$的环不同色，且两个长度为$1$的环同色且与前者也不同色，故不动点数量为$3! = 6$。
+\subsection{$g_3$, iv}\label{iv3}
+同理，不动点数量为$0$。
+
+\subsection{$g_0$, v}\label{v0}
+三种颜色的出现次数必然为$(0, 0, 8)$或$(1, 2, 5)$或$(2, 2, 4)$，故不动点数量为
+\begin{equation}
+3 \times \frac{8!}{0!0!8!} + 6 \times \frac{8!}{1!2!5!} + 3 \times \frac{8!}{2!2!4!} = 2271
+\end{equation}
+\subsection{$g_1$, v}\label{v1}
+三种颜色的环的出现次数必然为$(0, 0, 4)$或$(1, 1, 2)$，故不动点数量为
+
+\begin{equation}
+3 \times \frac{4!}{0!0!4!} + 3 \times \frac{4!}{1!1!2!} = 39
+\end{equation}
+\subsection{$g_2$, v}\label{v2}
+只能是一种颜色染了全部面而剩下两种颜色出现次数为$0$，故不动点数量为$3$。
+\subsection{$g_3$, v}\label{v3}
+只能是一种颜色染了全部面而剩下两种颜色出现次数为$0$，故不动点数量为$3$。
+
+\section{}
+
+染色方案数为
+\begin{equation}
+	\frac{m^8 + 17m^4 + 6m^2}{24}
+\end{equation}
+\end{document}

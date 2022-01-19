@@ -1,0 +1,162 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=0.5cm, right=1.0cm, top=1.0cm, bottom=0.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 0.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 0.5em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 0.5em}
+\makeatother
+
+
+\title{\heiti\zihao{1} }
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+
+\textbf{ZFC公理体系十条}
+\begin{enumerate}
+	\item 外延公理。\textit{两个集合所有元素相同，则相等。}$\forall X \forall Y (\forall x(x \in X \Leftrightarrow x \in Y) \Rightarrow X = Y)$
+	\item 分离公理。\textit{可以通过性质在已有集合中选子集。}$\forall Y \exists X \forall x(x \in X \Leftrightarrow (x \in Y \wedge \phi(x)))$
+	\item 空集公理。\textit{存在不包含任何元素的集合。}$\exists X(\forall x(x \notin X))$
+	\item 配对公理。\textit{把两个集合外面套个括号。}$\forall X\forall Y\exists Z \forall u(u \in Z\Leftrightarrow(u = X \vee u = Y))$
+	\item 并集公理。\textit{把集合族所有集合的元素拆出来放一起。}$\forall I\exists A \forall x(x \in X \Leftrightarrow \exists i \in I(x \in i))$
+	\item 幂集公理。\textit{存在一切子集构成的集合。}$\forall X\exists Y\forall Z(Z \subseteq X \Leftrightarrow Z \in Y)$
+	\item 正则公理。\textit{每个集合都存在一个与自己交为空的元素，可以用来证明集合不存在。}$\forall X(X \neq \varnothing \Leftrightarrow \exists y \in X, y \cap X = \varnothing)$
+	\item 替换公理。$\forall x \forall y \forall z(\phi(x, y, p) \wedge \phi(x, z, p) \Rightarrow y = z)\Rightarrow \forall X \exists Y \forall y(y \in Y \Leftrightarrow (\exists x \in X)\phi(x, y, p))$
+	\item 无穷公理。\textit{归纳集存在。}
+	\item 选择公理。能从集合族每个集合里选出来一个元素。$\forall X(\varnothing \notin X \Rightarrow \exists f: X \to \bigcup X, \forall A \in X(f(A) \in A))$
+\end{enumerate}
+
+用无穷公理与分离公理可以推出空集公理。用空集公理、幂集公理与替换公理可以推出配对公理。构造多元素集合需要配对公理和并集公理交替运用。构造笛卡尔积需要用两次幂集。
+
+\textbf{归纳集} 定义为$0 = \varnothing \in A, \forall n \in A, n^+ := n \cup \{n\} \in A$。所有归纳集的交良定且唯一，这个集合为自然数集$\omega$。
+
+\textbf{Peano 公理}\ 
+\begin{enumerate}
+	\item $0 = \varnothing$是自然数
+	\item 每个自然数都有唯一后继
+	\item $0$不是任意自然数的后继
+	\item 不同自然数有不同的后继
+	\item $\omega$满足归纳原理，$\omega := \bigcap \{Y: Y \subseteq X\mbox{且为归纳集}\}$，其中$X$是由无穷公理确保的一个归纳集
+\end{enumerate}
+
+
+\textbf{传递集} 定义为$a \in A \Rightarrow a \subseteq A$或者等价地$a' \in a \in A \Rightarrow a' \in A$。每个自然数都是传递集。
+
+若$A$为传递集，则$\bigcup A, \bigcap A$也是。$A$是传递集等价于$\bigcup A \subseteq A$，等价于$A \subseteq \mathcal P(A)$，后者等价于$\mathcal P(A)$是传递集。
+
+传递集的集合的并也是传递集。\textit{$\forall x \in \bigcup S$，存在某个$X_0 \in S$使得$x \in X_0$，$X_0$传递知$x \subseteq X_0$，而$X_0 \subseteq \bigcup S$，故$x \subseteq \bigcup S$，$\bigcup S$传递}
+
+\textbf{Knaster-Tarski不动点定理}
+
+设$X$是非空集合，映射$f: \mathcal P(X) \to \mathcal P(X)$满足对于任意的$A \subseteq B \subseteq X$都有$f(A) \subseteq f(B)$。证明存在“不动点”$T \subseteq X$使得$f(T) = T$。
+
+\textit{证明}\ 取$T = \bigcup\{A: A\mbox{满足}A \subseteq f(A)\}$，一方面$T \subseteq \bigcup\{f(A): A\mbox{满足}A \subseteq f(A)\} \subseteq f(\bigcup\{A: A\mbox{满足}A \subseteq f(A)\}) = f(T)$（第一个$\subseteq$是因为$A \subset f(A)$，第二个是因为$f$的单调性，每一个$f(A)$都包含于$f(T)$于是$\bigcup f(A)$也包含于$f(T)$）；另一方面由于$T \subseteq f(T) \Rightarrow f(T) \subseteq f(f(T))$，说明$f(T)$也是之前$\bigcup$中的一项，导致$f(T) \subseteq T$，从而$f(T) = T$。\hfill$\blacksquare$
+
+
+\textbf{良序}\ 良序是指任意集合都有最小元。
+
+已知$(X, <)$是一个良序集。
+
+$f: X \to X$增函数，则$\forall x \in X, f(x) \ge x$ $\Rightarrow$ $f: X \to X$保序同构映射只能是恒等映射。$\Rightarrow$ $f: X \to Y$的保序同构映射唯一。
+
+可以通过保序同构映射来证明良序集的三歧性。
+
+\newpage
+
+\textbf{序数}\ 关于序数有几条性质
+
+$X$是在以$\in$定义的序下的良序集，则$X$是序数 iff $\forall x \in X, s_x = x$。\textit{(充分性证明传递，必要性证两个方向的$\subseteq$)}
+
+$\alpha, \beta$是不同的序数，则$\alpha \in \beta$ iff $\alpha \subseteq \beta$。\textit{(充分性证明$\beta \setminus \alpha$中最小元$= \alpha$，需要证两个$\subseteq$。必要性是定义)}
+
+序数中的任意元素都是序数。特别地，$0$属于任何序数。\textit{(证明任意元素的良序和传递)}
+
+序数$A, A^+$之间没有新的序数，或者等价的，$A < B \Rightarrow A^+ \le B$。
+
+任意序数等于其绝对前段$x = s(x)$。\textit{(证明两边的$\subseteq$)}
+
+由序数构成的集合在$\in$的序下是良序的。
+
+\textit{等价于证明任意由序数构成的集合存在最小元。任取$\alpha \in A$，要么$\alpha$就是$A$中最小元，要么$A \cap \alpha$非空，由$\alpha$良序可知$A \cap \alpha$中存在最小元$\gamma$，断言这就是$A$的最小元：若不然，存在$\gamma' \in \gamma \in \alpha$，传递性导出$\gamma' \in \alpha$，这与$\gamma$的最小性矛盾。}
+
+不存在以所有序数为元素的集合。\textit{先证明$A$是序数$\Rightarrow \bigcup A$是序数}，然后指出$A \subseteq \bigcup A$，从而例如$(\bigcup A)^+$就不可能是$A$的元素。
+
+\textbf{Cantor-Schroder-Bernstein定理}
+
+若存在集合$S, T$之间双向的单射$f: S \to T$和$g: T \to S$，则$S \sim T$。
+
+\textit{证明}\ 考虑定义映射$F: \mathcal P(S) \to \mathcal P(S)$满足$F(A) = S - g(T - f(A))$。首先验证$F$满足单调性（$A \subseteq B \Rightarrow f(A) \subseteq f(B) \Rightarrow T - f(B) \subseteq T - f(A) \Rightarrow g(T - f(B))\subseteq g(T - f(A)) \Rightarrow S - g(T - f(A)) \subseteq S - g(T - f(B))$），然后根据Knaster-Tarski不动点定理可知存在$A^*$使得$F(A^*)= A^*$，于是构造双射$h(x) = \begin{cases}
+f(x) & x \in A^*\\g^{-1}(x) & x \in g(T - f(A^*))
+\end{cases}$，需要验证一下两种case都是双射。\hfill $\blacksquare$
+
+\textbf{基数}的定义：序数$\alpha$被称为基数，如果序数$\beta$与$\alpha$对等能推出$\alpha \le \beta$。\textit{可以理解成“最小的序数”。}
+
+\textbf{对角线法}\ 用来说明两个集合不等势。证法通常是对于映射$f$，利用$x_i$和$f(x_i)$来构造出一个$\notin \text{Im} f$的元素，从而说明不可能存在满射。
+\begin{enumerate}
+	\item \textbf{Cantor 定理}$A \neq \varnothing$，则$A$和$\mathcal P(A)$不对等。对于$f: A \to \mathcal P(A)$，考虑对角线上每一位取反，即构造集合$B:= \{x \in A, x \notin f(x)\}$，则$B \notin \text{Im} f$，故满射不存在。
+	\item $\kappa_i, \lambda_i$为两族基数，且$\forall i \in I, \kappa_i < \lambda_i$，于是有$\sum_{i \in I}\kappa_i < \prod_{i \in I}\lambda_i$。这里基数的$\sum$可以理解为不交并（就是加个第二维然后并起来），$\prod$可以理解为笛卡尔积。对于任意映射$f$，对于任意$i \in I$，总存在$\alpha_i \in \lambda_i$使得$\alpha_i$不等于任何$\sum_{i \in I}\kappa_i$在$f$下的像的第$i$位，因此构造$\alpha = (\alpha_1, \cdots) \notin \text{Im}f$说明不对等。
+\end{enumerate}
+
+\textbf{可数集}\ 与自然数对等的集合称为可数集。$\mathbb Q$是可数集。可数集的可数并与有限笛卡尔积是可数集。
+
+要证明什么东西可数，可以尝试把它拆成可数个可数集的并。比如说证明从中任取实数构成正项级数序列总收敛的正实数集可数，只需要说明对于任意$n \in \mathbb N$，集合中$\ge \frac{1}{n}$的元素个数有限即可。
+
+$\text{card}\mathcal P(\mathbb N) = c$，即$\mathcal P(\mathbb N)$与$\mathbb R$等势。考虑$f(x) = \{r \in \mathbb Q, r \le x\}$这是$\mathbb R$到$\mathcal P(\mathbb N)$的单射，而另一个方向的单射是很好构造的，所以根据Cantor-Schroder-Bernstein定理可知等势。
+
+析取范式(Disjunctive Normal Form)是$\bigvee_{i=1}^m(\bigwedge_{j=1}^{n}q_{ij})$, 合取范式(Conjunctive Normal Form)是$\bigwedge_{i=1}^m(\bigvee_{j=1}^{n}q_{ij})$。构造析取范式，就是把所有真值为$\mathbf T$的情况列出来，构造合取范式，就是把所有真值为$\mathbf F$的情况列出来。
+
+\textbf{命题逻辑的形式化推理}\ 假言三段论：如果有$\varphi \to \psi$和$\psi \to \chi$，先通过L1得到$\varphi \to (\psi \to \chi)$，再利用L2得到$(\varphi \to \psi) \to (\varphi \to \chi)$。
+
+\textbf{语法和语义/可靠与完备}\ 语法是形式系统$\vdash_L \varphi$，语义是真值$\vDash_L \varphi$。可靠性是$\vdash_L\varphi \Rightarrow \vDash_L\varphi$，完备性是$\vDash_L\varphi \Rightarrow \vdash_L\varphi$。
+
+可靠性是容易证明的，只需要对推导序列的公式个数作归纳，根据MP的重言性可知推出来的都是重言式。
+
+证明完备性的过程略微繁琐。首先引入了扩充的概念，紧接着定义了一致扩充（存在某个公式不是该形式系统的定理）与完全扩充（任何一个公式$\varphi$，$\varphi, \lnot\varphi$中恰好有一个属于该形式系统），证明一致的形式系统一定存在使定理全为$\mathbf T$的赋值（先完全扩充到$J$，然后定义$v(\varphi) = \begin{cases}
+\mathbf T & \vdash_J\varphi\\
+\mathbf F & \vdash_J\lnot\varphi
+\end{cases}$，反证$v(\varphi \to \psi) = \mathbf F$当且仅当$v(\varphi) = \mathbf T$且$v(\psi) = \mathbf F$）。最后说明$L$是完备的：假设存在一个不在$L$中的重言式，那么把$\lnot\varphi$加到$L$中得到的$L^*$是一致的，而一致的形式系统存在赋值使所有定理取值$\mathbf T$，这与$\varphi$重言矛盾。
+\end{document}

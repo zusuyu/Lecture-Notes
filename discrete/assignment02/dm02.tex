@@ -1,0 +1,145 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+
+\title{\heiti\zihao{1}   良序集和序数习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+{\color{blue}
+\section{Prob 1}
+\subsection{Statement}
+$(W, <)$是良序集且$f: W \to W$是一个增函数. 证明对于任意$x \in W$, 都有$x \le f(x).$
+\subsection{Solution}
+假设存在$x_0 \in W$使得$f(x_0) < x_0$, 考虑证明$A = \{x \in W | f(x) < x\}$中没有最小元.
+
+$$x_0, f(x_0), f^2(x_0), \cdots$$
+
+这一列元素都在$A$中, 且是递减的(因为$x_0 < f(x_0)$, 根据$f$递增可知$f(x_0) < f^2(x_0)$, 归纳一下可知是递减的), 所以不存在最小元.
+
+\section{Prob 2}
+\subsection{Statement}
+证明: 若两个良序集是同构的, 则同构映射是唯一的.
+\subsection{Solution}
+
+}
+\section{Prob 3}
+\subsection{Statement}
+证明: 一个全序集合是良序的, 当且仅当不存在无穷递降序列$r_1 > r_2 > \cdots > r_n > \cdots$.
+\subsection{Solution}
+
+充分性: 设$X$是全序集, 任取$X$的一个子集$Y$, 任取$y_0 \in Y$, 考虑集合$A = \{y \in Y | y < y_0\}$, 由于全序性,{\color{red} $A$集合中的所有元素可以组成一个递降序列, 由假设可知该递降序列长度有限, 即$|A|$是有限数, 由$y_0$的任意性, 可知$Y$中存在最小元. 故$X$是良序集.
+
+全序不能保证可以排成一列. 
+
+可以用反证法来证明充分性. 如果$X$不是良序的, 那么就存在一个非空子集没有最小元, 显然这个非空子集应该是无穷集, 因为有限集是肯定能够枚举出最小元的. 于是任意取定$r_1 \in S$, 存在$r_2 \in S$满足$r_2 < r_1$, 存在$r_3 \in S$满足$r_3 < r_2$, 由此类推下去可以得到一个无穷递降序列.
+}
+
+必要性: 考虑反证. 假设存在无穷递降序列$r_1 > r_2 > \cdots > r_n > \cdots$, 记$R = \{r \in X | r = r_i, i \in \mathbb N\}$, 显然集合$R$中不存在最小元, 又由于$R \subset X$, 从而说明$X$不是良序集.
+
+\section{Prob 5}
+\subsection{Statement}
+证明: 对于任意序数$\alpha$, $\alpha \cup \{\alpha\}$也是序数, 且$\alpha \cup \{\alpha\} = \inf\{\beta : \beta > \alpha\}$.
+\subsection{Solution}
+
+先证明$\alpha \cup \{\alpha\}$满足良序和传递.
+
+良序: $\forall s \subset \alpha \cup \{\alpha\}$, 要么$s \subset \alpha$, 要么存在$s' \subset \alpha$使得$s = s' \cup \{\alpha\}$. 前一种情况根据$\alpha$良序知$s$存在最小元, 后一种情况由于$\forall x \in s' \subset \alpha \Rightarrow x \in \alpha$, 故$s = s' \cup \{\alpha\}$的最小元就是$s'$的最小元, 故也存在. 于是说明良序成立.
+
+传递: $\forall u \in v \in \alpha \cup \{\alpha\}$, 此时要么$v = \alpha$, 要么$v \in \alpha$, 由$\alpha$传递均可推出$u \in \alpha$, 于是$u \in \alpha \cup \{\alpha\}$, 即$\alpha \cup \{\alpha\}$传递.
+
+{\color{red}
+	草居然漏题了
+	
+	只需要证明不存在$\gamma$使得$\alpha < \gamma < \alpha \cup \{\alpha\}$. 假设存在, 那么要么$\gamma \in \alpha$, 要么$\gamma = \alpha$, 都是不可能的, 故不存在.
+}
+
+{\color{blue}
+	\section{Prob 6}
+	\subsection{Statement}
+	证明: $\alpha$是一个极限序数当且仅当对于任意序数$\beta, \beta < \alpha$蕴含着$\beta + 1 < \alpha$.
+	\subsection{Solution}
+	必要性: 反证, 假设存在$\beta < \alpha$使得$\beta + 1 \ge \alpha$, 那么可以证明此时$\beta + 1 = \alpha$(因为可以证明$\beta$与$\beta + 1 = \beta \cup \{\beta\}$之间不存在其他的序数), 所以$\alpha$存在前驱, 从而不是极限序数.
+	充分性: 反证, 假设$\alpha$不是极限序数, 即存在前驱$\gamma$, 那么显然有$\gamma + 1 = \alpha \notin \alpha$, 于是右边条件不成立.
+}
+
+\section{Prob 7}
+\subsection{Statement}
+
+在学习序数后, 我们会好奇所有序数放在一起是否构成一个集合.
+\begin{enumerate}
+	\item 证明: 若$\forall X \in S$均为传递集, 则$\bigcup S$为传递集.
+	\item 证明: 由序数构成的非空集合有最小元素.
+	\item 利用前两问的结论证明: 对于序数构成的集合$X$, 存在序数$a \notin X$. 这说明不存在全体序数构成的集合.
+\end{enumerate}
+
+\subsection{Solution}
+\begin{enumerate}
+	\item $\forall x \in \bigcup S$, 则一定存在某个$X_0 \in S$使得$x \in X_0$, 由$X_0$传递可知$x \subset X_0$, 而$X_0 \subset \bigcup S$, 故$x \subset \bigcup S$, 即$\bigcup S$传递.
+	\item 记该由序数构成的非空集合为$X$, 任取$X$中一元素$x$, 考虑$X$的子集$S = \{y \in X | y < x\}$, 若$S = \varnothing$, 则$x$是$X$的最小元(因为序数可以两两比较, 没有序数比$x$小则说明$x$是最小的), 否则注意到$y < x \Rightarrow y \in x$, 故$S \subset x$是$x$的非空子集, 根据序数的良序性$S$中存在最小元, 该最小元也是序数集合$X$的最小元.
+	\item 我们断言$\bigcup X$是一个序数. 若该条件成立, 则$\forall x \in X, x \subset \bigcup X \Rightarrow x \in \bigcup X$, 从而$X \subset \bigcup X \Rightarrow X \in {\color{red}(\bigcup X)^+}, {\color{red}(\bigcup X)^+} \notin X$.{\color{red}不能写$\bigcup X$啊, 因为$\subset$是可能等于的, 要加一个后继才能保证不等.}
+	
+	下证$\bigcup X$是序数, 只需要分别证明传递和良序即可. 根据第$1$问结论, 由于$X$中每个元素都是传递集, 故$\bigcup X$也是传递集; 根据第$2$问结论, 由序数构成的非空集合有最小元, 即$\bigcup X$的每个子集都有最小元, 故$\bigcup X$良序.
+\end{enumerate}
+
+\section{Prob 9}
+\subsection{Statement}
+说明$(\omega + 1) \cdot 2 \neq \omega \cdot 2 + 1 \cdot 2$. 从而, 序数的乘法对加法不满足分配率.
+\subsection{Solution}
+\begin{align*}
+(\omega + 1) \cdot 2 &= \{0, 1, \cdots, \omega\} \cdot 2 \\&= \{(0, 0), (1, 0), \cdots, (\omega, 0), (0, 1), (1, 1), \cdots, (\omega, 1)\} \\ &= \omega + \omega + 1\\
+\omega \cdot 2 + 1 \cdot 2 &= \{0, 1, \cdots\} \cdot 2 + 2\\&=\{(0, 0), (1, 0), \cdots, (0, 1), (1, 1), \cdots\} + 2\\&=\{(0, 0), (1, 0), \cdots, (0, 1), (1, 1), \cdots, 0', 1'\}\\&= \omega + \omega + 2\\
+(\omega + 1) \cdot 2 &\neq \omega \cdot 2 + 1 \cdot 2
+\end{align*}
+
+\end{document}

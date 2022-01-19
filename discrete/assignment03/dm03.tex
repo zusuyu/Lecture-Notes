@@ -1,0 +1,128 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\def \card {\textrm{card}}
+
+\title{\heiti\zihao{1}   基数习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+{\color{blue}
+\section{Prob 1}
+\subsection{Statement}
+设$A \subseteq B$且$\card A = \card A \cup C$, 证明$\card B = \card B \cup C$.
+\subsection{Solution}
+}
+
+\section{Prob 6}
+\subsection{Statement}
+$A, B$是集合，判断下列两个命题的真假：
+\begin{enumerate}
+	\item 若$A_1 \subseteq A, B_1 \subseteq B$，且$A_1 \sim B_1, A \sim B$，则$A \setminus A_1 \sim B \setminus B_1$；
+	\item 若$A \setminus B \sim B \setminus A$，则$A \sim B$。
+\end{enumerate}
+\subsection{Solution}
+\begin{enumerate}
+	\item 假。可举反例$A = [0, 1], A_1 = (0, 1), B = [0, 1), B_1 = (0, 1)$，则$A_1 \sim B_1, A \sim B$，而$A \setminus A_1 = \{0, 1\} \nsim B \setminus B_1 = \{0\}$。
+	\item 真。$A \setminus B \sim B \setminus A$说明存在双射$f: A\setminus B \to B \setminus A$，考虑构造$g: A \to B$满足$g(x) = \begin{cases}
+	x, & x \in A \cap B\\f(x), & x \in A \setminus B
+	\end{cases}$，容易验证这是一个双射，从而$A \sim B$。
+\end{enumerate}
+
+\section{Prob 7}
+\subsection{Statement}
+把是整系数多项式根的实数称为代数数，否则称为超越数。计算全体超越数构成的集合的基数。
+\subsection{Solution}
+对于整系数多项式$f(x) = \sum_{i=0}^{n}a_ix^i$，定义其“等级”$\mathrm{level}(f) = \max\{n, \max_{i=0}^{n}\{|a_i|\}\}$。记$G_n = \{f \in \mathbb Z[x]: \mathrm{level}(f) = n\}$，容易证明$G_n$中仅含有有限个元素，而$\mathbb Z[x] = \bigcup_{n=0}^{\infty}G_n$是有限集合的可数并，故$\mathbb Z[x] \sim \mathbb N$。又由于每个整系数多项式都仅有有限个代数根，故代数数集$\sim \mathbb N \times \mathbb N \sim \mathbb N$。
+
+由代数数集$\cup$超越数集 $ = \mathbb R$知card(代数数集) + card(超越数集) = card($\mathbb R$) = $c$，结合代数数集$\sim \mathbb N$可知card(超越数集) = $c$。
+
+
+\section{Prob 9}
+\subsection{Statement}
+求证：若$\bigcup_{i=1}^{\infty}A_i$与$\mathbb R$对等，则存在某个$A_n$与$\mathbb R$对等。
+\subsection{Solution}
+
+假设任何一个$A_n$都不与$\mathbb R$对等，这说明对于每个$A_n$，任取映射$f_n: A_n \to \mathbb R^{\mathbb N}$，总会存在$\alpha_n \in \mathbb R$，使得$\alpha_n$不等于$A_n$中任何一个元素在$f_n$下的像（是一个实数序列）的第$n$位。
+
+考虑实数序列$\alpha = \{\alpha_1, \alpha_2, \cdots, \alpha_n, \cdots\}$，显然$\forall n \in \mathbb N, \alpha \notin \textrm{Im} f_n$，注意到$f_n$的任意性，这使得$F: \bigcup_{n=1}^{\infty}A_n \to \mathbb R^{\mathbb N}$的双射无法构造，这与题目条件“$\bigcup_{n=1}^{\infty}A_n \sim \mathbb R$”矛盾。故一定存在某个$A_n$与$\mathbb R$对等。
+
+\section{Prob 10}
+\subsection{Statement}
+设$\{A_i: i \in I\}$是一列集合，基数$\text{card}A_i = \alpha_i \le \beta_i(\forall i \in I)$，求证$$\text{card}(\bigcup_{i\in I}A_i) \le \sum_{i \in I}\alpha_i \le \sum_{i \in I}\beta_i$$
+
+并导出可数集的可数并是可数集作为特例。
+\subsection{Solution}
+
+$\sum_{i \in I}\alpha_i$可以理解为$\text{card}\{(i, a) | i \in I, a \in A_i\}$，欲证明$\text{card}(\bigcup_{i\in I}A_i) \le \text{card}\{(i, a) | i \in I, a \in A_i\}$，只需要证明存在从$\bigcup_{i\in I}A_i$到$\{(i, a) | i \in I, a \in A_i\}$的单射即可。
+
+$\forall x \in \bigcup_{i\in I}A_i$，记$Index_x = \{i \in I | x \in A_i\}$，根据选择公理，存在映射$F: \bigcup_{i\in I}A_i \to I$使得$\forall x \in \bigcup_{i\in I}A_i, F(x) \in Index_x$即$x \in A_{F(x)}$，故可以构造单射
+\begin{align*}
+	\sigma_1: \bigcup_{i\in I}A_i &\to \{(i, a) | i \in I, a \in A_i\}\\
+	x &\to (F(x), x)
+\end{align*}
+
+考虑$\alpha_i \le \beta_i$，等价于存在从$\alpha_i$到$\beta_i$的单射$f_i$，于是可以自然地构造从$\sum_{i\in I}\alpha_i$到$\sum_{i\in I}\beta_i$的单射
+\begin{align*}
+\sigma_2: \sum_{i\in I}\alpha_i &\to \sum_{i\in I}\beta_i\\
+(i, x) &\to (i, f_i(x))
+\end{align*}
+
+令每个$A_i \sim \mathbb N$，则根据结论有
+
+$$\text{card}(\bigcup_{i\in I}A_i) \le \sum_{i \in I}\text{card}(\mathbb N) = \text{card}(\mathbb N)$$
+
+由$\text{card}(\bigcup_{i\in I}A_i) \ge \text{card}(A_i) = \text{card}(\mathbb N)$得到$\text{card}(\bigcup_{i\in I}A_i) = \text{card}(\mathbb N)$即可数集的可数并是可数集。
+
+\end{document}

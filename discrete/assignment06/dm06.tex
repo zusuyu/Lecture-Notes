@@ -1,0 +1,151 @@
+\documentclass[UTF-8]{ctexart}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black
+}
+
+\usepackage{geometry}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+
+\title{\heiti\zihao{1} 环和域习题}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{1}
+\subsection*{Statement}
+设 $R$ 是交换幺环, 重新定义加法 $\oplus$ 和乘法 $\odot$ 如下: $a \oplus b = a + b - 1, a \odot b = a + b - ab$. 证明: $(R, \oplus, \odot)$ 是交换幺环, 且和原来的环同构.
+\subsection*{Solution}
+\subsubsection*{验证$R$关于$\oplus$构成交换群}$a \oplus b = a + b - 1 = b + a - 1 = b \oplus a, (a \oplus b) \oplus c = (a + b - 1) \oplus c = a + b + c - 2 = a \oplus (b + c - 1) = a \oplus (b \oplus c)$说明$\oplus$满足交换律和结合律; 存在$1 \in R$使得$\forall a \in R, a \oplus 1 = 1 \oplus a = a$故幺元存在; 对于$\forall a \in R$, 存在$2 - a \in R$使得$a \oplus (2 - a) = (2 - a) \oplus a = 1$故逆元存在.
+
+\subsubsection*{验证$R$关于$\odot$构成交换幺半群}$a \odot b = a + b - ab = b + a - ba = b \odot a, (a \odot b) \odot c = (a + b - ab) \odot c = a + b + c - ab - ac - bc + abc = a \odot (b + c - bc) = a \odot (b \odot c)$说明$\odot$满足交换律和结合律; 存在$0 \in R$使得$\forall a \in R, a \odot 0 = 0 \odot a = a$故幺元存在.
+
+\subsubsection*{验证乘法满足分配率}$a \odot (b \oplus c) = a \odot (b + c - 1) = 2a + b + c - 1 - ab - ac = (a + b - ab) + (a + c - ac) - 1 = (a \odot b) \oplus (a \odot c)$, 由于乘法具有交换律, 故$(b \oplus c) \odot a = (b \odot a) \oplus (c \odot a)$自然也成立.
+
+\subsubsection*{验证同构}
+
+考虑映射$\sigma: R \to R$满足$\sigma(a) = 1 - a$. 验证$\sigma$是同态映射:
+\begin{align*}
+\sigma(a + b) &= 1 - a - b = (1 - a) + (1 - b) - 1 = \sigma(a) \oplus \sigma(b)\\
+\sigma(ab) &= 1 - ab = (1 - a) + (1 - b) - (1 - a)(1 - b) = \sigma(a) \odot \sigma(b)\\
+\sigma(1) &= 0
+\end{align*}
+
+即$\sigma$是保运算的, 且将$(R, +, \times)$的乘法幺元映到$(R, \oplus, \odot)$的乘法幺元, 故是同态映射. 显然$\sigma$是双射, 因此是同构映射, 故$(R, \oplus, \odot)$与$(R, +, \times)$同构.
+
+\section*{2}
+\subsection*{Statement}
+设$I$是交换幺环$R$的理想, 证明: $\sqrt I := \{r \in R: r^n \in I, n \in \mathbb Z_{\ge 1}\}$也是理想.
+\subsection*{Solution}
+任取$a \in \sqrt I$, 考虑证明对于$\forall r \in R$, 有$ra \in \sqrt I$且$ar \in \sqrt I$.
+
+$a \in \sqrt I$说明存在$n \in  \mathbb Z_{\ge 1}$使得$a^n \in I$. 考虑$(ra)^n$, 由于$R$是交换幺环, 故$(ra)^n = r^na^n$, 又因为$I$是理想, 故$(ra)^n = r^na^n \in I$, 因此根据定义, 有$ra \in \sqrt I$; 同理也有$ar \in \sqrt I$, 故$\sqrt I$也是理想.
+\section*{6}
+\subsection*{Statement}
+若$R$是幺环, 且对于任意$a \in R$都有$a^2 = a$, 证明:
+\begin{enumerate}
+	\item $R$是交换的.
+	\item 对于任意$a \in R$有$a + a = 0$.
+	\item 若$|R| > 2$, 则$R$不是整环.
+\end{enumerate}
+\subsection*{Solution}
+对于任意$a, b \in R$, 有$$(a + b)^2 = a^2 + ab + ba + b^2 = a + b$$
+
+由于$a^2 = a, b^2 = b$, 故$ab + ba = 0$. 此时代入$b = a$立得$a^2 + a^2 = 0$, 故$a + a = (a + a)^2 = a^2 + 2a^2 + a^2 = 0$. 这说明$R$中任意元素都是自身的加法逆元, 从而$ab + ba = 0 \Rightarrow ab = ba$, 故$R$交换.
+
+$R$是幺环说明存在$e \in R$使得$\forall a \in R, ae = a$. 根据乘法分配率可知$a(e - a) = 0$. 当$|R| > 2$时, $R \setminus \{0 ,e\} \neq \varnothing$, 取$a' \in R \setminus \{0 ,e\}$, 此时$a' (e - a') = 0$而$a'$和$e - a'$均不为$0$, 这说明$R$中存在零因子, 从而$R$不是整环,
+\section*{9}
+\subsection*{Statement}
+设想有无数张卡片, 每张卡片上写有 $1$ 个正整数(可能有些正整数被重复写了多次也可能有些正整数一次也没有写). 如果对一个正整数 $m$, 写有 $m$ 的约数的卡片恰好有 $m$ 张, 证明对每一个正整数 $n$, 至少有一张卡片上写了这个数.
+\subsection*{Solution}
+设$f(n)$表示写了正整数$n$的卡片数量, 由题目条件知$f(n) \le n$, 因此$f(n), n \in \mathbb N_+$是良定的.
+
+题目条件指出$$\sum_{d \mid n}f(d) = n$$
+
+根据M\"obius反演, 可以得到$$f(n) = \sum_{d \mid n}\mu(d)\frac nd$$
+
+\textit{
+证明: M\"obius函数$\mu(x) = \begin{cases}
+(-1)^k, & x = p_1p_2\cdots p_k\\
+0, & \text{otherwise}
+\end{cases}$满足$\sum_{d \mid n}\mu(d) = [n = 1]$, 故
+\begin{align*}
+f(n) &= \sum_{d | n}[\frac nd = 1]f(d)\\
+&= \sum_{d | n}f(d)\sum_{d' | \frac nd}\mu(d')\\
+&= \sum_{d' | n}\mu(d')\sum_{d | \frac {n}{d'}}f(d)\\
+&= \sum_{d | n}\mu(d)\frac nd
+\end{align*}
+\hfill $\blacksquare$
+}
+
+设$n$唯一分解为$n = \prod\limits_{i = 1}^{k}p_i^{\alpha_i}$, 则可进一步得到
+\begin{align*}
+f(n) &= \sum_{d | n}\mu(d)\frac nd\\
+&= \sum_{x \in \{0, 1\}^k}\prod_{i = 1}^{k}p_i^{\alpha_i}(-\frac 1{p_i})^{x_i}\\
+&= \prod_{i=1}^{k}p_i^{\alpha_i - 1}(p_i - 1)
+\end{align*}
+
+由于$p_i^{\alpha_i - 1}(p_i - 1)$恒大于等于$1$, 故$f(n)$恒大于等于$1$, 即对于任意正整数$n$, 都至少有一张卡片上写了这个数.
+\section*{10}
+\subsection*{Statement}
+构造一个有 $8$ 个元素的有限域并写出乘法法则和加法法则.
+\subsection*{Solution}
+
+考虑$F = \mathbb Z_2[x] / (x^3 + x + 1)\mathbb Z_2[x]$, 这个集合中包含$8$个元素
+$$\{0, 1, x, x + 1, x^2, x^2 + 1, x^2 + x, x^2 + x + 1\}$$
+
+定义加法为$\mathbb Z_2$下的多项式加法, 乘法为在$x^3 + x + 1$取模下的多项式乘法, 即, 对于$f, g \in F$, 定义$f, g$相乘的结果为$r \in F$满足
+$$fg = r + q(x^3 + x + 1)$$
+
+其中$q \in \mathbb Z_2[x]$, $r$的存在性与唯一性由多项式带余除法给出.
+
+可以验证$x^3 + x + 1$是$\mathbb Z_2[x]$中的既约多项式, 且$\forall 0 \neq f \in F, x^3 + x + 1 \nmid f$, 因此对于$\forall 0 \neq f \in F$, 总存在$u \in F, v \in \mathbb Z_2[x]$使得$$uf + v(x^3 + x + 1) = 1$$
+
+从而$f$存在逆元$f^{-1} := u$. 而$F$关于加法(多项式加法)构成群, 关于取模意义下乘法(多项式乘法)构成幺半群都是平凡的, 结合$F$中非零元都存在逆元, 即可证明$F$是一个域.
+	
+\end{document}
