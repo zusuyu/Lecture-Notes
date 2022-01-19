@@ -1,0 +1,214 @@
+\documentclass[11pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{diagbox}
+\usepackage{amsmath,amsfonts,graphicx,amssymb,bm,amsthm}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usetikzlibrary{arrows,automata}
+\usepackage{hyperref}
+\usepackage{minted}
+\setlength{\headheight}{14pt}
+\setlength{\parindent}{0 in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+
+\newcommand\E{\mathbb{E}}
+\newcommand{\hwid}{3}			% 第几次作业
+\newcommand{\name}{周书予} 		% 你的名字
+\newcommand{\id}{2000013060} 	% 你的学号
+
+
+\usetikzlibrary{positioning}
+
+\begin{document}
+
+    \pagestyle{fancy}
+    \lhead{Peking University}
+    \chead{}
+    \rhead{Mathematical Foundations for the Information Age, 2021 Fall}
+
+    \begin{center}
+        {\LARGE \bf Homework \#\hwid}\\
+        {\Large Due: 2020.11.11 23:59}\\
+        {\Large \name}\\
+        {\Large \id}\\
+    \end{center}
+
+  
+    
+  \section{(25 pts) Orthogonal Approximation}
+  Suppose that the singular value decomposition of matrix $A$ is $A = U\Sigma V^\top$, find orthogonal matrix $W$ that minimizes $\|A − W\|_F$.
+  \subsection*{answer}
+  
+  先证明两个引理。
+  
+  \textbf{引理1}\quad 对于任意$n$阶正交矩阵$B$和$n$阶矩阵$A$，总有$\|A\|_F = \|AB\|_F = \|BA\|_F$。
+  
+  \textbf{证明}\quad 记$A = \{a_{ij}\}$，$\mathbf b_i$为$B$的第$i$个行向量，注意到$|\mathbf b_i| = 1$且$\{\mathbf b_i\}$两两正交，于是有
+  \begin{align*}
+  	\|A\|_F^2 &= \sum_{i,j}a_{ij}^2\\
+  	\|AB\|_F^2 &= \sum_{i=1}^{n}|\sum_{j=1}^{n}a_{ij}\mathbf{b}_j|^2\\
+  	&= \sum_{i=1}^{n}(\sum_{j=1}^{n}a_{ij}^2)\\
+   	&= \|A\|_F^2
+  \end{align*}
+  
+  而又有$\|A\|_F^2 = \|A^{\textbf T}\|_F^2$，故$\|BA\|_F^2 = \|A^{\mathbf T}B^{\mathbf T}\|_F^2 = \|A^{\mathbf T}\|_F^2 =\|A\|_F^2$。\hfill $\blacksquare$
+
+	\textbf{引理2}\quad 对于任意对角元均$\ge 0$的对角矩阵$\Sigma$，有$\arg\min\limits_{W^{\mathbf T}W = I}\|\Sigma - W\|_F^2 = I$。
+	
+	\textbf{证明}\quad
+	$$\|\Sigma - W\|_F^2 = \sum_{i,j}(\delta_{ij}\sigma_i - w_{ij})^2 = \sum_{i=1}^{n}\sigma_i^2 + \sum_{i,j}w_{i,j}^2 - 2\sum_{i=1}^n\sigma_iw_{i,i} = \sum_{i=1}^{n}\sigma_i^2 + n - 2\sum_{i=1}^n\sigma_iw_{i,i}$$
+	
+	由于$\sum\limits_{i=1}^{n}\sigma_i^2+n$是定值，最小化$\|\Sigma - W\|_F^2$等价于最大化$\sum\limits_{i=1}^n\sigma_iw_{i,i}$，注意到$\sigma_i \ge 0$，此时取$w_{i,i} = 1$即可满足最大化条件，于是有$\arg\min\limits_{W^{\mathbf T}W = I}\|\Sigma - W\|_F^2 = I$。\hfill $\blacksquare$
+
+	回到原问题。设答案正交矩阵为$W_0$，可以得到
+	\begin{align*}
+	W_0 &= \arg\min_{W^{\mathbf T}W = I}\|A - W\|_F^2\\
+	&= \arg\min_{W^{\mathbf T}W = I}\|U\Sigma V^{\mathbf T} - W\|_F^2\\
+	&= \arg\min_{W^{\mathbf T}W = I}\|\Sigma - U^{\mathbf T}WV\|_F^2\\
+	&= U\arg\min_{W^{\mathbf T}W = I}\|\Sigma - W\|_F^2V^{\mathbf T}\\
+	&= UV^{\mathbf T}
+\end{align*}
+
+其中第四个等号用到了“$U^{\mathbf T}WV$可以为任意正交矩阵”。
+  \section{(20 pts) Exercise 3.28}
+  Read in a photo and convert to a matrix. Perform a singular value decomposition of the matrix. Reconstruct the photo using only 1,2,4, and 16 singular values.
+  \begin{enumerate}
+      \item Print the reconstructed photo. How good is the quality of the reconstructed photo?
+      \item What percent of the Frobenius norm is captured in each case?
+  \end{enumerate}
+  \subsection*{answer}
+
+\begin{figure}[htbp]
+	\centering
+	\subfigure[原图]{
+		\includegraphics[scale=0.16]{arima.png} \label{1}
+	}
+	\quad
+	\subfigure[灰度图]{
+		\includegraphics[scale=0.16]{arima_gray.png} \label{2} 
+	}
+	\quad
+		\subfigure[前1个奇异值]{
+		\includegraphics[scale=0.16]{arima_gray_1.png} \label{3} 
+	}
+	\\
+	\subfigure[前2个奇异值]{
+	\includegraphics[scale=0.16]{arima_gray_2.png} \label{4}
+}
+\quad
+\subfigure[前4个奇异值]{
+	\includegraphics[scale=0.16]{arima_gray_4.png} \label{5}
+}
+\quad
+\subfigure[前16个奇异值]{
+	\includegraphics[scale=0.16]{arima_gray_16.png} \label{6} 
+}
+\end{figure}
+
+图片质量：前两张图上大致可以看出有马的位置，$4$个奇异值的时候大概能看出人形，最后一张图已经可以提供可分辨的特征了。
+
+\begin{minted}{python}
+import cv2
+import numpy as np
+image = cv2.imread("arima.png")
+image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+U, sigma, V = np.linalg.svd(image_gray)
+for i in [1, 2, 4, 16]:
+    print(np.sqrt(np.sum(sigma[:i] ** 2) / np.sum(sigma ** 2)))
+\end{minted}
+得到的结果为
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline 
+		前$k$个奇异值 & $1$ & $2$ & $4$ & $16$ \\ 
+		\hline 
+		Frobenius norm 所占百分比 & $0.9630$ & $0.9752$ & $0.9865$ & $0.9961$\\
+		\hline
+	\end{tabular}
+\end{center}
+
+  \section{(30 pts) Power Method}
+  Use {\bf{power method}} presented in section 3.7.1 of textbook to compute the largest 10 singular values of the random matrix $A$ generated using NumPy as follows:
+  
+np.random.seed(20211028) //set random seed \\
+A = np.random.randn(2000, 1000)\\
+  Write down the singular values and attach your code here. You could use any functions provided by the NumPy package.
+  If you use other programming languages or other packages to solve this problem, please generate the random matrix in a similar fashion.
+  \subsection*{answer}
+  \begin{minted}{python}
+import numpy as np
+
+def Schimidt(x):
+    for i in range(x.shape[1]):
+        for j in range(i):
+            x[:, i] -= x[:, j] * np.sum(x[:, i] * x[:, j])
+        x[:, i] /= np.sqrt(np.sum(x[:, i] ** 2))
+    return x
+
+np.random.seed(20211028)
+A = np.random.randn(2000, 1000)
+B = A.T @ A
+x = np.random.randn(1000, 10)
+x = Schimidt(x)
+for i in range(10000):
+    x = Schimidt(B @ x)
+x = B @ x
+values = []
+for i in range(x.shape[1]):
+    values.append(np.power(np.sum(x[:, j] ** 2), 0.25))
+values.sort(reverse = True)
+print(values)
+  \end{minted}
+得到的结果为
+\begin{align*}
+\sigma_1 = 76.11359917216343\\
+\sigma_2 = 75.63684144555306\\
+\sigma_3 = 75.39052805452388\\
+\sigma_4 = 75.22870902493426\\
+\sigma_5 = 75.20521905044106\\
+\sigma_6 = 74.80676731402508\\
+\sigma_7 = 74.70959618081706\\
+\sigma_8 = 74.50702749968583\\
+\sigma_9 = 74.29437233364072\\
+\sigma_{10} = 74.06615406206454
+\end{align*}
+  \section{(25 pts) Exercise 5.4 (Rewrited)} 
+ 
+ Define a labeling $f:\{0,1\}^d\to \{-1,+1\}$:
+ $$f(x_1,x_2,x_3,\cdots,x_d):=(-1)^{\sum_{i=1}^d x_i}$$
+ 
+ Show that $\{0,1\}^d$ is not linearly separable if it is labeled by $f$.
+
+\subsection*{answer}
+
+假设$f$是可线性分类的，即存在$\mathbf w = (w_1, w_2, \cdots, w_d) \in \mathbb R^d$以及$t \in \mathbb R$，使得对于任意$\mathbf x = (x_1, x_2, \cdots, x_d) \in \{0, 1\}^d$，都有$$(\mathbf w \cdot \mathbf x - t) f(\mathbf x) > 0$$
+
+分别代入$\mathbf x = (0, 0, 0, \cdots, 0) / (0, 1, 0, \cdots, 0) / (1, 0, 0, \cdots, 0) / (1, 1, 0, \cdots, 0)$可以得到
+\begin{align}
+-t &> 0\\
+w_1 - t &< 0\\
+w_2 - t &< 0\\
+w_1 + w_2 - t &> 0
+\end{align}
+
+由$(1)(3)$可知$w_2 < 0$，这与$(2)(4)$矛盾。故这样的$\mathbf w, t$不存在，即$f$不可被线性分类。
+\end{document}

@@ -1,0 +1,271 @@
+\documentclass[12pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{diagbox}
+\usepackage{amsmath,amsfonts,graphicx,amssymb,bm,amsthm}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{minted}
+\usepackage{verbatim}
+\usepackage{listings,xcolor,indentfirst,xpatch,mathrsfs}
+\usetikzlibrary{arrows,automata}
+\usepackage{hyperref}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\scriptsize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\setlength{\headheight}{16pt}
+\setlength{\parindent}{0 in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+
+\newcommand\E{\mathbb{E}}
+\newcommand{\hwid}{5}			% 第几次作业
+\newcommand{\name}{周书予} 		% 你的名字
+\newcommand{\id}{2000013060} 	% 你的学号
+
+
+\usetikzlibrary{positioning}
+
+\begin{document}
+
+    \pagestyle{fancy}
+    \lhead{Peking University}
+    \chead{}
+    \rhead{Mathematical Foundations for the Information Age, 2021 Fall}
+
+    \begin{center}
+        {\LARGE \bf Homework \#\hwid}\\
+        {\Large \name}\\
+        {\Large \id}\\
+    \end{center}
+    
+ \section{(20 pts) Problem 6.1}
+    Given $n$ integers $a_1,a_2,\cdots,a_n$, where each $a_i$ is in $\{1,2,3,\cdots,m\}$
+    \begin{enumerate}
+        \item Give an algorithm that will select a symbol uniformly at random from the stream. How much memory does your algorithm require?
+        \item Give an algorithm that will select a symbol with probability proportional to $a_i^2$. How much memory does your algorithm require?
+    \end{enumerate}
+\subsection*{answer}
+	\begin{enumerate}
+		\item 记录结果$(\in [1, m])$和当前已见过的数的数量$k(\in [0, n])$，当出现一个新的数$x$时，以$\frac{1}{k + 1}$的概率将记录的结果替换成$x$，并把计数器$+1$。
+		
+		需要$\log m + \log n$个bits的存储空间。
+		\item 记录结果$(\in [1, m])$和当前已见过的数的平方和$s(\le nm^2)$，当出现一个新的数$x$时，以$\frac{x^2}{s + x^2}$的概率将记录的结果替换成$x$，并用$s + x^2$更新$s$。
+		
+		需要$\log m + \log nm^2 = 3\log m + \log n$个bits的存储空间。
+	\end{enumerate}
+\section{(15 pts) Problem 6.13}
+\begin{enumerate}
+    \item 
+    Construct an example in which the majority algorithm gives a false positive, i.e., stores a non-majority element at the end.
+    \item
+    Construct an example in which the frequent algorithm in fact does as badly as in the theorem, i.e., it under counts some item by $n/(k+1)$.
+\end{enumerate}
+
+\subsection*{answer}
+\begin{enumerate}
+	\item 考虑$a = \{1, 1, 1, 2, 2, 3, 3\}$，维护的结果以及计数器所经历的变化过程为
+	$$(\text{N/A}, 0) \to (1, 1) \to (1, 2) \to (1, 3) \to (1, 2) \to (1, 1) \to (\text{N/A}, 0) \to (3, 1)$$
+	
+	虽然$1$是$a$的majority，但由于其没有出现超过$\frac n2$次，故该算法给出了结果$3$构成了一个false positive。
+	\item 假设$n$是$k+1$的倍数，考虑序列$a$由$k+1$段长度均为$\frac{n}{k+1}$的连续段构成，同一段内所有数均相同，不同段内的数均不相同，此时Frequent Algorithm在处理完前$k$段后，记录了前$k$种数字出现各$\frac{n}{k+1}$次，而在处理最后一段时将这些记录数字减少，最终得到的结果是没有记录下任何数字的出现，也就相当于对每种数字都少数了$\frac{n}{k+1}$次。
+\end{enumerate}
+\section{(20 pts) 2-Universal Hash Functions A}
+Let $H = \{ \, h \, | \, h_{ab}:\{1, 2, ..., m\} \rightarrow \{0, 1, ..., M-1\}, a, b \in \{0, 1, ..., M-1 \} \}$ be a set of hash functions. Is $H$ {\bf always} 2-universal under following conditions? You do {\bf not} need to prove your answer. Simply give \emph{yes} or \emph{no} is okay.
+
+Tips: In this part, to prove your answer may be a little difficult, which may use \emph{Bézout's identity} and \emph{Fermat's little theorem} in number theory. So, you do not need to prove it. However, to find out the answer is not so difficult. For example, you can write a program to draw your conclusion. (You do not need to show your code.)
+
+\subsection{Can M be a composite number?}
+In this part, $h_{ab}(x) = ax + b \; (mod \, M)$.
+\begin{enumerate}
+    \item 
+    $M = p ^ k$, where $p$ is a prime number greater than $m$ and $k > 1$.
+    \item
+    $M = p \, q$, where $p, q$ are prime numbers greater than $m$.
+\end{enumerate}
+
+\subsection*{answer}
+
+$H$满足 2-universal 当且仅当对于任意$x, y \in \{1, 2, \cdots, m\}$且$x \neq y$，$ w, z \in \{0, 1, \cdots, M-1\}$，都有
+\begin{equation}
+\text{Prob}_{h \sim H}\left(h(x) = w\ \text{and}\ h(y) = z\right) = \frac{1}{M^2}
+\end{equation}
+这等价于
+\begin{equation}
+\left|\{h \in H: h(x) = w\ \text{and}\ h(y) = z\}\right| = 1
+\end{equation}
+进一步的，这其实又等价于对于任意$a, b \in \{1,2,\cdots,m\}$以及$w \in \{0, 1, \cdots, M-1\}$，有
+\begin{equation}
+|\{a \in \{0, 1, \cdots, M-1\}: a(x - y) \equiv w \bmod M\}| = 1
+\end{equation}
+其实只需要保证$x-y$在$\bmod M$下始终存在逆元即可。因为$M$中所包含的质因子始终大于$x-y$，从而$x-y$与$M$互质，从而故根据Bézout定理知逆元存在，因此答案为
+
+\begin{enumerate}
+	\item $yes.$
+	\item $yes.$
+\end{enumerate}
+
+\subsection{What about other hash functions?}
+In this part, $m = M$ and $M$ is a prime number.
+\begin{enumerate}
+    \item 
+    $h_{ab}(x) = x^a + b \; (mod \, M)$.
+    \item
+    $h_{ab}(x) = a^x + b \; (mod \, M)$.
+    \item
+    $h_{ab}(x) = ax^3 + b \; (mod \, M)$.
+\end{enumerate}
+
+\subsection*{answer}
+\begin{enumerate}
+	\item $no.$ 考虑$h(1)$恒等于$h(0) + 1$（$\bmod M$），因此不满足 pairwise independent。
+	\item $no.$ 考虑$h(0) = b, h(2) = a^2 + b$，由于在$\bmod M$下并不是所有数都存在二次剩余，故$h(2) - h(0)$并不能取到$\{0, 1, \cdots, M-1\}$中的所有数，从而不 pairwise independent。
+	\item $no.$ 当$M \bmod 3 \equiv 1$时，可能会存在$0 \le x, y < M$使得$x \neq y$而$x^3 \equiv y^3 \bmod M$，比如说$M = 61$时，有$1 \neq 13$而$1^3 = 1 \equiv 2197 = 13^3 \bmod 61$，这导致了$h(x)$恒等于$h(y)$，不满足 pairwise independent。
+\end{enumerate}
+\section{(20 pts) 2-Universal Hash Functions B}
+
+Does there exist a set of hash functions $H = \{ \, h \, | \, h:\{1, 2, 3, 4\} \rightarrow \{1, 2, 3, 4\} \}$, where $|H| \leq 16$ and $H$ is 2-Universal? If your answer is \emph{yes}, please give an example and show it is correct; if your answer is \emph{no}, please prove it (you can write a program as your provement and show your code and result).
+\subsection*{answer}
+
+满足要求的$H$必须满足$|H| = 16$，且对于任意$a, b, w, z\in \{1, 2, 3, 4\}$，存在唯一$h \in H$使得
+\begin{equation}
+h(a) = w, h(b) = z
+\end{equation}
+
+不妨记$H$中元素为$h_0, h_1, \cdots, h_{15}$，不失一般性地，假设$h_i(1) = \lfloor \frac i4 \rfloor + 1, h_i(2) = i \bmod 4 + 1$，只需要考虑决定所有$h_i(3), h_i(4)$的取值，由于$\{(h_i(3), h_i(4)): i = 0, 1, \cdots, 15\} = \{1, 2, 3, 4\} \times \{1, 2, 3, 4\}$，只需要考虑排列顺序，因此枚举量不超过$16!$。
+
+通过打表可以找出满足上述条件的一个$H$
+\newpage
+\begin{minted}{c++}
+#include<bits/stdc++.h>
+using namespace std;
+int pr[4][2] = { {0, 2}, {0, 3}, {1, 2}, {1, 3} };
+int h[16][4], chosen[16], vis[4][4][4];
+void dfs(int x){
+    if(x == 16){
+        for(int i = 0; i < 16; ++i, puts("")){
+            printf("%d ", i);
+            for(int j = 0; j < 4; ++j)
+                printf("& %d ", h[i][j] + 1);
+            printf("\\\\");
+        }
+        exit(0);
+    }
+    for(int i = 0; i < 16; ++i)
+        if(!chosen[i]){
+            chosen[i] = 1;
+            h[x][2] = i >> 2;
+            h[x][3] = i & 3;
+            int ban = 0;
+            for(int j = 0; j < 4; ++j)
+                ban |= vis[j][h[x][pr[j][0]]][h[x][pr[j][1]]];
+            if(!ban){
+                for(int j = 0; j < 4; ++j)
+                    vis[j][h[x][pr[j][0]]][h[x][pr[j][1]]] = 1;
+                dfs(x + 1);
+                for(int j = 0; j < 4; ++j)
+                    vis[j][h[x][pr[j][0]]][h[x][pr[j][1]]] = 0;
+            }
+            chosen[i] = 0;
+        }
+}
+int main(){
+    for(int i = 0; i < 16; ++i)
+        h[i][0] = i >> 2, h[i][1] = i & 3;
+    dfs(0);
+}
+\end{minted}
+
+\begin{table}
+	\centering
+\begin{tabular}{c|cccc}
+	$i$ & $h_i(1)$ & $h_i(2)$ & $h_i(3)$ & $h_i(4)$ \\
+	\hline
+0 & 1 & 1 & 1 & 1 \\
+1 & 1 & 2 & 2 & 2 \\
+2 & 1 & 3 & 3 & 3 \\
+3 & 1 & 4 & 4 & 4 \\
+4 & 2 & 1 & 2 & 3 \\
+5 & 2 & 2 & 1 & 4 \\
+6 & 2 & 3 & 4 & 1 \\
+7 & 2 & 4 & 3 & 2 \\
+8 & 3 & 1 & 3 & 4 \\
+9 & 3 & 2 & 4 & 3 \\
+10 & 3 & 3 & 1 & 2 \\
+11 & 3 & 4 & 2 & 1 \\
+12 & 4 & 1 & 4 & 2 \\
+13 & 4 & 2 & 3 & 1 \\
+14 & 4 & 3 & 2 & 4 \\
+15 & 4 & 4 & 1 & 3
+\end{tabular}
+\end{table}
+
+\section{(25 pts) Matrix Multiplication Using Sampling}
+
+Suppose $A$ is an $m \times n$ matrix and $B$ is an $n \times p$ matrix and the product $AB$ is desired.
+\begin{enumerate}
+    \item 
+    How to use sampling to get an approximate product $X$ faster than the traditional multiplication? Write the algorithm in your own words and justify the running time of your algorithm.
+    \item
+    Prove your way to pick elements minimize $E(||AB-X||^2_F)$.
+    \item
+    How to reduce the variance? You should describe in details but you do {\bf not} need to prove it.
+\end{enumerate}
+   
+\subsection*{answer}
+\begin{enumerate}
+	\item 令$\alpha_k(1 \le k \le n)$表示$A$的第$k$个列向量，$\beta_k^{\text T}(1 \le k \le n)$表示$B$的第$k$个行向量，那么显然有$AB = \sum\limits_{k=1}^{n}\alpha_k\beta_k^{\text T}$。取$p_k = \frac{|\alpha_k|\cdot|\beta_k|}{\sum_j |\alpha_j|\cdot|\beta_j|}$，重复$s$轮，第$i$轮中按照$\{p_k\}$的概率分布选取$X_i = \frac{1}{p_k}\alpha_k\beta_k^{\text T}$，再取$X = \frac{1}{s}\sum\limits_{i=1}^sX_i$。这个算法的运行时间是$O(smp)$。
+	\item 因为$\mathbb E[X] = AB$，所以有\begin{equation}
+	\begin{split}
+	\mathbb E[\|AB - X\|_F^2] &= \sum_{i=1}^{m}\sum_{j=1}^{p}\mathbb E[x_{ij}^2] - \mathbb E[x_{ij}]^2\\
+	&= \sum_{i=1}^{m}\sum_{j=1}^{p}\sum_{k=1}^{n}p_k\frac{1}{p_k^2}A_{ik}^2B_{kj}^2  - \|AB\|_F^2\\
+	&= \sum_{k=1}^{n}\frac{1}{p_k}|\alpha_k|^2|\beta_k|^2 - \|AB\|_F^2
+	\end{split}
+	\end{equation}
+	记$c_k = |\alpha_k|^2|\beta_k|^2$，最小化上式等价于最小化$\sum_k \frac{c_k}{p_k}$，同时需要满足$\sum_k p_k = 1$。根据Lagrange乘数法，构造$F(\{p_k\}, \lambda) = \sum\limits_{k=1}^{n}\frac{c_k}{p_k} + \lambda\left(\sum\limits_{k=1}^{n}p_k - 1\right)$，可以得到
+	\begin{align}
+		\frac{\partial F}{\partial p_k} &= -\frac{c_k}{p_k^2} + \lambda = 0\\
+		\frac{\partial F}{\partial \lambda} &= \sum_{k=1}^{n}p_k - 1 = 0
+	\end{align}
+	可知当原式取到最小值时，$p_k \propto \sqrt{c_k} = |\alpha_k| \cdot |\beta_k|$，这说明了在上一小问中选取的$p_k$是最优的。
+	\item 算法同第一小问，而减小方差的方法是重复轮数$s$。假设重复一轮得到的方差是$D$，那么重复$s$轮得到的方差就是\begin{equation}
+	\text{Var}[X] = \text{Var}\left[\frac{X_1 + X_2 + \cdots + X_s}{s}\right] = \frac{1}{s^2}\sum_{i=1}^{s}\text{Var}[X_i] = \frac{D}{s}
+	\end{equation}
+	因此能够减少方差。
+\end{enumerate}
+\end{document}

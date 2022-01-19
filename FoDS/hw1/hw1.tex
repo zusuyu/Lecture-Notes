@@ -1,0 +1,336 @@
+\documentclass[12pt]{article}%lstlisting
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{diagbox}
+\usepackage{amsmath,amsfonts,graphicx,amssymb,bm,amsthm}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{listings,xcolor,indentfirst,xpatch,mathrsfs}
+\usepackage[cache=false]{minted}
+\usetikzlibrary{arrows,automata}
+\usepackage{hyperref}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\scriptsize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\setlength{\headheight}{16pt}
+\setlength{\parindent}{0 in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+
+\newcommand\E{\mathbb{E}}
+\newcommand{\hwid}{1}			% 第几次作业
+\newcommand{\name}{周书予} 		% 你的名字
+\newcommand{\id}{2000013060} 	% 你的学号
+
+
+\usetikzlibrary{positioning}
+
+\begin{document}
+
+    \pagestyle{fancy}
+    \lhead{Peking University}
+    \chead{}
+    \rhead{Mathematical Foundations for the Information Age, 2021 Fall}
+
+    \begin{center}
+        {\LARGE \bf Homework \#\hwid}\\
+        {\Large \name}\\
+        {\Large \id}\\
+    \end{center}
+    
+\section{(20 pts) problem 2.13}
+For what value of $d$ does the volume, $V(d)$, of a $d$-dimensional unit ball take on its maximum?
+
+Hint: Consider the ratio $\frac{V(d)}{V(d-1)}$.
+\subsection*{answer}
+
+The volume $V(d)$ of a $d$-dimensional unit ball is given by
+
+$$V(d) = \frac{2\pi^{\frac d2}}{d\Gamma(\frac d2)}$$
+
+It is actually not that easy to calculate $\frac{V(d)}{V(d-1)}$, but instead one can simply calculate $\frac{V(d)}{V(d-2)}$ which gives $\frac{2\pi}{d}$, and find the exact $d$ maximizing $V(d)$ for odd and even integer $d$ respectively.
+
+$\frac{V(d)}{V(d-2)} = \frac{2\pi}{d} > 1$ holds when $d \le 6$, and vice versa, so the integer $d$ maximizing $V(d)$ for the odds and evens are $5$ and $6$ respectively. Comparing $V(5) = \frac{8\pi^2}{15}$ with $V(6) = \frac{\pi^3}{6}$, one can tell that $V(5) > V(6)$, so the integer $d$ maximizing $V(d)$ is $5$.
+
+\subsection*{code}
+The following \texttt{Python} code can verify that $5$ is the integer maximizing $V(d)$ when $d \in [1, 100]$.
+
+\begin{minted}[]{python}
+import math
+def V(d):
+    return (2 * pow(math.pi, d / 2)) / (d * math.gamma(d / 2))
+if __name__ == "__main__":
+    max_d = 1
+    for d in range(1, 101):
+        if V(d) > V(max_d):
+            max_d = d
+    print(max_d)
+\end{minted}
+
+\section{(20 pts) problem 2.14}
+A $3$-dimensional cube has vertices, edges, and faces.
+In a $d$-dimensional cube, these components are called faces.
+A vertex is a $0$-dimensional face, an edge a $1$-dimensional face, etc.
+\begin{enumerate}
+    \item 
+    For $0\leq k\leq d$, how many $k$-dimensional faces does a $d$-dimensional cube have?
+    \item
+    What is the total number of faces of all dimensions? The $d$-dimensional face is the cube itself which you can include in your count.
+    \item
+    What is the surface area of a unit cube in $d$-dimensions (a unit cube has side-length one in each dimension)?
+    \item
+    What is the surface area of the cube if the length of each side was $2$?
+    \item
+    Prove that the volume of a unit cube is close to its surface.
+\end{enumerate}
+
+\subsection*{answer}
+\begin{enumerate}
+	\item $\binom{d}{k}2^{d-k}$, where $\binom{d}{k}$ donates the way of choosing a $k$-dimensional subspace in a $d$-dimensional space, and $2^{d-k}$ implies the arbitrary assignment of the coordinates of the remaining $d - k$ dimensions.
+	\item Using \textit{Binomial Theorem}, it is obvious that $\sum_{k=0}^{d}\binom{d}{k}2^{d-k} = (2+1)^d = 3^d$.
+	\item The surface area of a $d$-dimensional unit cube is the total volume of all its $(d-1)$-dimensional faces. Since the number of $(d-1)$-dimensional faces is $2d$ and each face is of volume $1$, the surface area of the unit cube is $2d$.
+	\item $d2^d$, since the volume of each $(d-1)$-dimensional faces is $2^{d-1}$.
+	\item Consider a $d$-dimensional unit cube $A = \{(x_1, x_2, \cdots, x_d) | 0 \le x_i \le 1\}$. Shrink it by a small amount $\varepsilon$ to produce a new $d$-dimensional cube $(1 - \varepsilon)A = \{(x_1, x_2, \cdots, x_d) | 0 \le x_i \le 1 - \varepsilon\}$. By the time, the following equality holds:
+	$$\text{volume}((1 - \varepsilon)A) = (1 - \varepsilon)^d\text{volume}(A) = (1 - \varepsilon)^d$$
+	
+	Using the fact that $1 - x \le e^{-x}$, we have the following inequality:
+	$$\text{volume}((1 - \varepsilon)A) = (1 - \varepsilon)^d \le e^{-\varepsilon d}$$
+	
+	Fixing $\varepsilon$ and letting $d$ tend to infinity, the above quantity rapidly tend to zero, which indicates that most of the volume of a unit cube $A$ does not belong to $(1-\varepsilon)A$, a.k.a is close to the surface.
+\end{enumerate}
+
+    
+\section{(20 pts) problem 2.22}
+Consider the upper hemisphere of a unit-radius ball in d-dimensions.
+What is the height of the maximum volume cylinder that can be placed entirely inside the hemisphere?
+
+Hint: Consider all possible placement options
+
+\subsection*{answer}
+
+Consider two options to place the cylinder.
+
+\subsubsection*{The cylinder is placed horizontally}
+
+This means the height of the cylinder is perpendicular to the bottom of the hemisphere. Suppose it to be $h$, then the maximum radius of the cylinder should be $r = \sqrt{1 - h^2}$, and the maximum volume can be written as $V = V(d - 1, r)h = h(1 - h^2)^{\frac{d-1}{2}}V(d-1), h \in [0, 1]$. By finding the zero point of $\frac{\text dV}{\text dh}$, we can obtain the $h$ maximizing $V$: 
+
+$$\frac{\text dV}{\text dh} = (1-h^2)^{\frac{d-1}{2}} - (d-1)h^2(1-h^2)^{\frac{d-3}{2}} = (1-h^2)^{\frac{d-3}{2}}(1 - dh^2) = 0  \Rightarrow h = \frac{1}{\sqrt d}$$
+\subsubsection*{The cylinder is placed vertically}
+
+This implies that the intersection between these two objects is $1$-dimensional, and the height of the cylinder is parallel to the bottom of the hemisphere. Also suppose it to be $h$, then the maximum radius of the cylinder is $r_{max} = \frac12\sqrt{1 - \frac{h}{2}}$(since the maximum diameter is $d_{max} = \sqrt{1-\frac h2}$), and the maximum volume is $V_{max} = V(d - 1, r_{max})h = h(\frac14 - \frac{h^2}{16})^{\frac{d-1}{2}}V(d-1)$. Since the previous options is always better than this one, we don't need to take this option into consideration.
+
+Thus, the height of the maximum volume cylinder that can be placed entirely inside the hemisphere is $\frac{1}{\sqrt d}$.
+
+\section{(40 pts) coding problem}
+For dimension $d$ in $\{3,10,100,1000\}$,
+\begin{enumerate}
+    \item write code to numerically calculate the probability that the angle between two random unit vectors is from $85$ to $95$ degrees
+    \item generate as many unit vectors as possible so that the angle between any two of them is from $85$ to $95$ degrees.
+\end{enumerate}
+
+\subsection*{answer 1.}
+
+	The inner product of two vectors equals to the angle between them multiplied by the lengths of these two vectors. Since they are both unit vectors, the fact that the angle between two random unit vectors is from $85$ to $95$ degrees is equivalent to that the inner product between them is from $-\sin\frac{\pi}{36}$ to $\sin\frac{\pi}{36}$. Let $\delta = \sin\frac{\pi}{36}$ for convenience.
+	
+	By a symmetry argument, one can always treat the first random unit vector to be "the North Pole", which is $(1, 0, \cdots, 0)^{\text T}$. Thus, the statement above is also equivalent to that the second random unit vector has $|x_1| \le \delta$.
+	
+	The following \texttt{Python} code can be used to numerically calculate the probability that the above property holds.
+\begin{minted}[]{python}
+import numpy as np
+delta = np.sin(np.pi / 36)
+for D in [3, 10, 100, 1000]:
+    tot = 0
+    for i in range(1000000):
+        length = 0
+        x = 0
+        for j in range(D):
+            x = np.random.normal()
+            length += x * x
+        x /= np.sqrt(length)
+        if abs(x) <= delta:
+            tot += 1
+    print("for D = %d, the answer is %f" % (D, tot / i))
+\end{minted}
+
+	The result is illustrated in the following table.
+	\begin{center}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline 
+		$D = $ & $3$ & $10$ & $100$ & $1000$ \\ 
+		\hline 
+		Probability & $8.71\%$ & $20.13\%$ & $61.47\%$ & $99.43\%$\\
+		\hline
+	\end{tabular}
+	\end{center}
+
+
+\subsection*{answer 2.}
+\subsubsection*{too long to read}
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline 
+			$D = $ & $3$ & $10$ & $100$ & $1000$ \\ 
+			\hline 
+			\# of unit vectors & $3$ & $10$ & $247$ & $35557$\\
+			\hline
+		\end{tabular}
+	\end{center}
+\subsubsection*{$d = 3$}
+	It doesn't seem like one can find more than three unit vectors that meet the constraints. The answer is $3$, and it can be easily constructed: $\varepsilon_1 = (1, 0, 0)^{\text T}, \varepsilon_2 = (0, 1, 0)^{\text T}, \varepsilon_3 = (0, 0, 1)^{\text T}$.
+\subsubsection*{$d = 10, d = 100$}
+	In class, we learned that it is a good way to generate these vectors randomly. But random doesn't always give a valid solution, and the only thing we should do is to adjust it --- using Gradient Descenting! 
+	
+	The following \texttt{C++} code shows a naive implementation of gradient descenting. Since our goal is to restrict the absolute value of the inner product of any two unit vectors, we can simply treat it as loss function. In particular, we define our loss function $L(X)$ to be
+	
+	$$L(X) = \sum_{\vec{x}_i, \vec{x}_j \in X}g(|\vec{x}_i \cdot \vec{x}_j|), \mathrm{where}\ g(x) = \begin{cases}
+	x, & x > \delta\\0, & x \le \delta
+	\end{cases}$$
+	
+\begin{minted}{c++}
+#include<bits/stdc++.h>
+using namespace std;
+const long double delta = sin(acos(-1) / 36.0);
+const long double lr = 0.01;
+const int N = 100;
+long double a[10000][N], d[10000][N]; int tot;
+void unitize(long double *v){
+    long double sum = 0;
+    for(int i = 0; i < N; ++i)
+        sum += v[i] * v[i];
+    sum = sqrt(sum);
+    for(int i = 0; i < N; ++i)
+        v[i] /= sum;
+}
+void initialize(){
+    if(freopen(("ans" + to_string(N) + ".txt").c_str(), "r", stdin)){
+        scanf("tot = %d", &tot);
+        for(int i = 0; i < tot; ++i){
+            for(int j = 0; j < N; ++j)
+                scanf("%Lf", &a[i][j]);
+        }
+        fclose(stdin);
+    }else{
+        tot = N;
+        for(int i = 0; i < tot; ++i){
+            for(int j = 0; j < N; ++j)
+                a[i][j] = 1ull * rand() * rand() / 1e18;
+            unitize(a[i]);
+        }
+    }
+}
+int main(){
+    initialize();
+    while(1){
+        long double loss = 0;
+        memset(d, 0, sizeof(long double) * N * tot);
+        for(int i = 0; i < tot; ++i)
+            for(int j = i + 1; j < tot; ++j){
+                long double dot = 0;
+                for(int k = 0; k < N; ++k)
+                    dot += a[i][k] * a[j][k];
+                if(fabs(dot) >= delta){
+                    loss += fabs(dot);
+                    bool sig = dot > 0;
+                    for(int k = 0; k < N; ++k){
+                        d[i][k] += a[j][k] * (sig ? 1 : -1);
+                        d[j][k] += a[i][k] * (sig ? 1 : -1);
+                    }
+                }
+            }
+        if(loss == 0){
+            freopen(("ans" + to_string(N) + ".txt").c_str(), "w", stdout);
+            printf("tot = %d\n", tot);
+            for(int i = 0; i < tot; ++i, puts(""))
+                for(int j = 0; j < N; ++j)
+                    printf("%.20Lf ", a[i][j]);
+            fclose(stdin);
+            cerr << "find " << tot << endl;
+            a[tot++][0] = 1;
+        }else{
+            for(int i = 0; i < tot; ++i){
+                for(int j = 0; j < N; ++j)
+                    a[i][j] -= lr * d[i][j];
+                unitize(a[i]);
+            }
+        }
+    }
+}
+\end{minted}
+
+And it gives the answer $10$ for $d = 10$ and $247$ for $d = 100$.
+
+\subsubsection*{$d = 1000$}
+
+Unfortunately, the code above fails to give a decent solution for $d = 1000$ due to the shortage of computational capability. To solve that problem, an important intuition is that we can construct the answer using the answer for small $d$. For example, after we obtain the answer $247$ for $d = 100$, we can immediately construct the answer $2470$ for $d = 1000$, by splitting $1000$ dimensions into $10$ non-overlapping subsections which each of $100$ dimensions.
+
+To optimize the solution, actually we can tolerate "some small overlapping" between subsections, as long as inner products between vectors do not exceed $\delta$. It seems one should generate as many subsets of $1000$ dimensions as possible so that the size of intersection between any two subsets is small enough. This remains me of an OI problem\footnote{\url{https://acm.dingbacode.com/showproblem.php?pid=6313}} I have solved from past: 
+
+\begin{center}
+	\textit{Construct a $n\times n(n \le 2000)$ $01$-matrix with the number of $1$s not less than $85000$, and for any two different rows, there is at most one column on which these rows have $1$ in common.}
+\end{center}
+
+I find it the exactly solution I am looking for, so here it goes:
+\begin{enumerate}
+	\item find a prime number $p$ where $p^2 \le d$, and generate $k$ unit vectors in $p$-dimension satisfying any two vectors have inner product less than $\delta$, \textbf{and the absolute value of the coordinate on each dimension does not exceed $\sqrt \delta$}. This is not difficult since $\sqrt{\delta} \approx 0.2952$ which is not too small.
+	\item Construct $kp^2$ vectors in $p^2$-dimension. The $(xp^2 + yp + z)$-th vector among them$(0 \le x < k, 0 \le y, z < p)$ is extended from the $x$-th vector generated in $p$-dimension, with the coordinate on $t$-th of $p$-dimension corresponding to $[pt + (yt+z \bmod p)]$-th of $p^2$-dimension. All other coordinate in $p^2$-dimension are set to be $0$, and clearly these constructed vectors are all unit vectors.
+\end{enumerate}
+
+It can be proved (will be shown later) that for any two vectors, the absolute value of inner product does not exceed $\delta$, so the constraint is met.
+
+For $d = 1000$, we can pick $p = 31$ since it's a prime number and $p^2 = 961 < 1000$, and $k = 37$ vectors (just a few) can be generated in $p$-dimension satisfying the restriction mentioned above. So we can actually construct a set of unit vectors with size $kp^2 = 35557$. It is apparently a quite rough work, and lots of thing can be done to improve the result --- But TA said the full-score standard does not exceed $30000$, so maybe I could just stop here :)
+
+\begin{center}
+	{\color{white} \textit{当时脑子一热就决定用英文写了，写着写着发现变成了折磨自己也折磨助教\\助教学长辛苦了$Q\omega Q$}}
+\end{center}
+
+\subsection*{the proof}
+
+We use a triple $(x, y, z)$ to represent the $(xp^2 + yp + z)$-th vector. Our goal is to prove that for any $(x_1, y_1, z_1) \neq (x_2, y_2, z_2)$, the inner product between them is less than $\delta$. First we prove that for two vectors with different $(y, z)$, they have non-zero coordinates simultaneously on at most $1$ dimension.
+
+\begin{itemize}
+	\item For two vectors with $(y_1, z_1) \neq (y_2, z_2)$, they have non-zero coordinates on $(ap + b)$-th dimension iff $ay_1 + z_1 \equiv ay_2 + z_2 \equiv b \bmod p$. So the number of dimensions these two vectors have non-zero coordinates simultaneously on is equal to the number of solutions to the congruence equation above. Since when $p$ is prime, the equation $a(y_1 - y_2) \equiv z_2 - z_1 \bmod p$ has one solution $(z_2 - z_1)(y_1 - y_2)^{-1} \bmod p$ when $y_1 \neq y_2$, and has no solution when $y_1 = y_2$ and $z_1 \neq z_2$. So the number of solutions is at most one, and the number of dimensions is also at most one.
+\end{itemize}
+
+Thus, for any two vectors with different $(y, z)$, the inner product between them has at most one non-zero item. Since each coordinates is of absolute value not greater than $\sqrt{\delta}$, the absolute value of inner product will not be greater than $\delta$.
+
+If two different vectors have the same $(y, z)$, they must differ from each other on $x$. The inner product between vector $(x_1, y, z)$ and $(x_2, y, z)$ in $p^2$-dimension is exactly equal to the inner product between $x_1$-th and $x_2$-th unit vector in $p$-dimension, and thus is of absolute value less than $\delta$.{\hfill $\blacksquare$\par}
+
+
+
+\end{document}

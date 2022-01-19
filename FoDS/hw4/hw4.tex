@@ -1,0 +1,168 @@
+\documentclass[12pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{diagbox}
+\usepackage{amsmath,amsfonts,graphicx,amssymb,bm,amsthm}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{listings,xcolor,indentfirst,xpatch,mathrsfs}
+\usetikzlibrary{arrows,automata}
+\usepackage{hyperref}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\scriptsize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=4
+}
+
+\setlength{\headheight}{16pt}
+\setlength{\parindent}{0 in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+
+\newcommand\E{\mathbb{E}}
+\newcommand{\hwid}{4}			% 第几次作业
+\newcommand{\name}{周书予} 		% 你的名字
+\newcommand{\id}{2000013060} 	% 你的学号
+
+
+\usetikzlibrary{positioning}
+
+\begin{document}
+	
+	\pagestyle{fancy}
+	\lhead{Peking University}
+	\chead{}
+	\rhead{Mathematical Foundations for the Information Age, 2021 Fall}
+	
+	\begin{center}
+		{\LARGE \bf Homework \#\hwid}\\
+		{\Large \name}\\
+		{\Large \id}\\
+	\end{center}
+	
+	\section{(20 pts) problem 5.7}
+	Find the mapping $\varphi(\mathbf{x})$ that gives rise to the kernel
+	$K(\mathbf{x}, \mathbf{y}) = (x_1y_1 + x_2y_2)^2$.
+	
+	\subsection*{answer}
+	对于$\mathbf x = (x_1, x_2)$, 可以构造$$\varphi(\mathbf x) = (x_1^2, x_2^2, \sqrt2
+	x_1x_2)^{\mathbf T}$$
+	
+	于是就有$K(\mathbf x, \mathbf y) = \varphi(\mathbf x)^{\mathbf T}\varphi(\mathbf y)
+	= x_1^2y_1^2 + x_2^2y_2^2 + 2x_1x_2y_1y_2 = (x_1y_1 + x_2y_2)^2$恰好符合要求.
+	
+	\section{(30 pts) problem 5.15+}
+	Consider the instance space $X = \mathbb{R}^2$. What is the VC-dimension of
+	\begin{enumerate}
+		\item right corners with axis aligned edges that are oriented with one edge
+		going to the right and the other edge going up,
+		\item Intersection of two half planes,
+		\item Intersection of four half planes.
+	\end{enumerate}
+	\subsection*{answer}
+	\begin{enumerate}
+		\item VC-dimension 为2. 
+		
+		考虑集合$\{(1, 0), (0, 1)\}$, 它是可以被题目中描述的这种东西shatter的, 故VC-dimension至少为2. 
+		
+		对于任何一个3个点的集合$A$, 取$A$中“横坐标最小的点与纵坐标最小的点”构成的集合(如果有多个则钦定取某一个, 这两个点可能重合),
+		那么这个集合是无法被表示为$A \cap h$的, 因为任何包含这个集合的$h$都必然包含整个集合$A$. 故VC-dimension小于3.
+		
+		\item VC-dimension 为5.
+		
+		考虑5个点的(严格)凸包. 由于5个点的任意子集都可以表示为全集减去不超过两个凸包上点连续段的形式, 而任何的“全集减去一个点连续段”都可以用一个半平面表示,
+		因此两个半平面的交可以表示5个点凸包的任意子集. 故VC-dimension至少为5.
+		
+		对于任意6个点组成的点集, 若这6个点不构成凸包, 那么取凸包上的所有点作为子集, 这个子集一定无法被表示(因为半平面交能够表示的集合一定是凸集);
+		否则这6个点构成凸包, 考虑按顺序取凸包上的第1, 3, 5个点, 可以验证这3个点构成的子集无法被两个半平面交表示. 故VC-dimension小于6.
+		
+		\item VC-dimension 为9.
+		
+		与上一小问同理, 考虑9个点的凸包. 由于9个点的任意子集都可以表示为全集减去不超过四个凸包上点连续段的形式,
+		因此四个半平面的交可以表示9个点凸包的任意子集. 故VC-dimension至少为9.
+		
+		同样类似上一小问, 对于任意10个点组成的点集, 若这10个点不构成凸包, 那么取凸包上的所有点作为子集, 这个子集一定无法被表示; 否则这10个点构成凸包,
+		考虑按顺序取凸包上的第1, 3, 5, 7, 9个点, 可以验证这5个点构成的子集无法被四个半平面交表示. 故VC-dimension小于10.
+		
+	\end{enumerate}
+	\section{(30 pts) problem 5.28}
+	\begin{enumerate}
+		\item Intuitively define the most general form of a set system of
+		VC-dimension one.
+		\item Give an example of such a set system that can generate $n$ subsets of
+		an $n$ element set.
+		\item What is the form of the most general set system of dimension two?
+	\end{enumerate}
+	\subsection*{answer}
+	\begin{enumerate}
+		\item 一个set system $(\mathcal X, \mathcal H)$的VC-dimension是1, 如果$|\mathcal H| > 1$且对于任意$\{x_1,
+		x_2\} \subseteq \mathcal X$, 都有$$|\mathcal H \cap \{x_1, x_2\}| < 4$$
+		其中$\mathcal H \cap \{x_1, x_2\}$被定义为$\{h \cap \{x_1, x_2\} | h \in \mathcal
+		H\}$.
+		\item 考虑set system $(\mathcal X, \mathcal H)$, 其中$\mathcal X = \mathbb N$, $\mathcal H = \{\{n\} | n \in \mathbb N\}$即所有“等于某个自然数”的classifier构成的集合.
+		容易验证$\mathcal H$的VC-dimension为$1$, 且对于任意$A \subseteq \mathcal X$且$|A| = n$的子集$A$来说, 都有$|\mathcal H \cap A| = |A \cup \{\varnothing\}| = n + 1$.
+		\item 一个set system $(\mathcal X, \mathcal H)$的VC-dimension是2, 如果存在$\{x_1, x_2\} \subseteq \mathcal X$使得$$|\mathcal H \cap \{x_1, x_2\}| = 4$$且对于任意$\{x_1,
+		x_2, x_3\} \subseteq \mathcal X$, 都有$$|\mathcal H \cap \{x_1, x_2, x_3\}| < 8$$
+	\end{enumerate}
+	
+	\section{(20 pts) problem 5.36}
+	Consider the boosting algorithm given in Figure 5.9. Suppose hypothesis $h_t$
+	has error rate $\beta_t$ on the weighted sample $(S,\mathbf{w})$ for $\beta_t$
+	much less than $\frac12-\gamma$. Then, after the booster multiples the weight of
+	misclassified examples by $\alpha$, hypothesis $h_t$ will still have error less
+	than $\frac12-\gamma$ under the new weights. This means that $h_t$ could be
+	given again to the booster (perhaps for several times in a row). Calculate, as a
+	function of $\alpha$ and $\beta_t$, approximately how many times in a row ht
+	could be given to the booster before its error rate rises to above
+	$\frac12-\gamma$. You may assume $\beta_t$ is much less than $\frac12-\gamma$.
+	
+	Note: The AdaBoost boosting algorithm [FS97] can be viewed as performing this
+	experiment internally, multiplying the weight of misclassified examples by
+	$\alpha_t=\frac{1-\beta_t}{\beta_t}$, and then giving ht a weight proportional
+	to the quantity you computed in its final majority-vote function.
+	
+	\subsection*{answer}
+	假设$k$次连续得到相同的$h_t$之后它的error rate能够达到至少$\frac12 - \gamma$.
+	考虑初始时正确部分与错误部分的权重和分别是$1 - \beta_t$与$\beta_t$, 在$k$次迭代后, 它们分别变为$1 - \beta_t$与$\beta_t\alpha^k$, 于是有\begin{align*}
+\frac{\beta_t\alpha^k}{1 - \beta_t + \beta_t\alpha^k} &> \frac12 - \gamma\\
+\frac{1 - \beta_t}{1 - \beta_t + \beta_t\alpha^k} &< \frac12 + \gamma\\
+\beta_t\alpha^k &> (1 - \beta_t)(\frac{1}{\frac12 + \gamma} - 1)\\ &= \frac{1 - \beta_t}{\alpha}\\
+\alpha^k &> \frac{1}{\alpha}\frac{1 - \beta_t}{\beta_t}\\
+k &> \log_{\alpha}\frac{1 - \beta_t}{\beta_t} - 1
+\end{align*}
+	
+	因此想要使$h_t$的error rate达到至少$\frac12 - \gamma$, 所需要的次数$\text{step}(\alpha, \beta_t) \approx \log_{\alpha}\frac{1 - \beta_t}{\beta_t} = \frac{\ln\frac{1 - \beta_t}{\beta_t}}{\ln\alpha}$.
+\end{document}

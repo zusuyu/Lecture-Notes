@@ -1,0 +1,209 @@
+\documentclass[12pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{diagbox}
+\usepackage{amsmath,amsfonts,graphicx,amssymb,bm,amsthm}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{listings,xcolor,indentfirst,xpatch,mathrsfs}
+\usetikzlibrary{arrows,automata}
+\usepackage{hyperref}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\scriptsize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\setlength{\headheight}{16pt}
+\setlength{\parindent}{0 in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+
+\newcommand\E{\mathbb{E}}
+\newcommand{\hwid}{2}			% 第几次作业
+\newcommand{\name}{周书予} 		% 你的名字
+\newcommand{\id}{2000013060} 	% 你的学号
+
+
+\usetikzlibrary{positioning}
+
+\begin{document}
+
+    \pagestyle{fancy}
+    \lhead{Peking University}
+    \chead{}
+    \rhead{Mathematical Foundations for the Information Age, 2021 Fall}
+
+    \begin{center}
+        {\LARGE \bf Homework \#\hwid}\\
+        {\Large \name}\\
+        {\Large \id}\\
+    \end{center}
+
+
+\section{(20 pts) Problem 2.19}
+If $\lim _{d \rightarrow \infty} V(d)=0$, the volume of a $d$-dimensional ball for sufficiently large $d$ must be less than $V (3)$. How can this be since the $d$-dimensional ball contains the three dimensional ball? Explain in your own words.
+\subsection*{answer}
+尽管一个$d$维球包含一个点集可以构成一个$3$维球，但这个$3$维球只能算作$d$维空间中某个截面的“面积”，而非$d$维空间中定义的“体积”。
+
+从定量计算的角度分析，对于$d > 3$我们可以$V(d)$关于$V(3)$的关系式
+
+\begin{align*}
+V(d) &= \int\limits_{x_1 = -1}^{1}\int\limits_{x_2 = -1}^{1} \cdots \int\limits_{x_{d-3}=-1}^{1}V(3, \sqrt{1 - x_1^2 - x_2^2 - \cdots - x_{d-3}^2})\text dx_{d-3}\cdots\text dx_2\text dx_1\\
+&= V(3)\int\limits_{x_1 = -1}^{1}\int\limits_{x_2 = -1}^{1} \cdots \int\limits_{x_{d-3}=-1}^{1}(1 - x_1^2 - x_2^2 - \cdots - x_{d-3}^2)^{\frac32}\text dx_{d-3}\cdots\text dx_2\text dx_1
+\end{align*}
+
+可以看出$V(d)$的表达式中并不完整地包含$V(3)$一项（积分式子的结果作为系数并不一定能够达到$1$），故$d$维球的体积会比$3$维球的体积还要小。
+
+\section{(30 pts) Calculation Problem}
+Let $\overline{abcdefghij}$ be a ten-digit integer which denotes your student ID. $\mathbf{A}$ is a matrix as follows:
+$$
+    \begin{bmatrix}
+    a & b \\
+    e & f \\
+    g & h \\
+    i & j
+    \end{bmatrix}
+$$
+
+Calculate the right-singular vectors and the singular values of $\mathbf{A}$.
+
+\textbf{Note}: You should calculate them by the definition in page 43. Using other methods such as calculating $\mathbf{A}^{T}\mathbf{A}$ will get at most 80\% of the score. The radical sign should be kept and you do \textbf{not} need to rationalise the denominator.
+    
+\subsection*{answer}
+
+$$\mathbf A = \begin{bmatrix}
+2 & 0\\
+0 & 1\\
+3 & 0\\
+6 & 0
+\end{bmatrix}$$
+
+It is quite obvious that the first singular vector is $\mathbf v_1 = \begin{bmatrix}
+1\\0
+\end{bmatrix}$, and since the second singular vector is perpendicular to the former one, we obtain $\mathbf v_2 = \begin{bmatrix}
+0\\1
+\end{bmatrix}$。
+
+The conclusion above can be easily proved: let the first singular vector be $\mathbf v_1 = \begin{bmatrix}
+x\\\sqrt{1-x^2}
+\end{bmatrix}(|x| \le 1)$, by maximizing $|\mathbf A\mathbf v_1| = \sqrt{(2x)^2 + \sqrt{1-x^2}^2 + (3x)^2 + (6x)^2} = \sqrt{1 + 48x^2}$, we get $x = \pm 1$, and $\max|\mathbf A\mathbf v_1| = 7$.
+
+According to $v_1, v_2$, one can immediately obtain
+\begin{align*}
+\sigma_1 &= |\mathbf A\mathbf v_1| = 7\\
+\sigma_2 &= |\mathbf A\mathbf v_2| = 1\\
+\mathbf u_1 &= \frac{1}{\sigma_1}\mathbf A\mathbf v_1 = \begin{bmatrix}
+\frac{2}{\sqrt{43}}\\0\\\frac{3}{\sqrt{43}}\\\frac{6}{\sqrt{43}}
+\end{bmatrix}\\
+\mathbf u_2 &= \frac{1}{\sigma_2}\mathbf A\mathbf v_2 = \begin{bmatrix}
+0\\1\\0\\0
+\end{bmatrix}\end{align*}
+
+
+\section{(20 pts) Problem 3.12}
+Let $\mathbf{A}=\sum_{i=1}^{r}{\sigma_i\mathbf{u}_i\mathbf{v}_i^\mathbf{T}}$ be the singular value decomposition of a rank $r$ matrix $\mathbf{A}$, let $\mathbf{A}_k:=\sum_{i=1}^k{\sigma_i\mathbf{u}_i\mathbf{v}_i^\mathbf{T}}$ be the rank-$k$ approximation of $\mathbf{A}$ for some $k<r$. Express the following quantities in terms of the singular values $\{\sigma_i,1\le i\le r\}$:
+  \begin{enumerate}
+      \item $\|\mathbf{A}_k \|_F^2$
+      \item $\|\mathbf{A}_k \|_2^2$
+      \item $\|\mathbf{A}-\mathbf{A}_k \|_F^2$
+      \item $\|\mathbf{A}-\mathbf{A}_k \|_2^2$
+  \end{enumerate}
+
+\subsection*{answer}
+
+Let $\mathbf a_1, \mathbf a_2, \cdots, \mathbf a_n$ be the rows of matrix $\mathbf A$. Since $\mathbf v_1, \mathbf v_2, \cdots, \mathbf v_r$ span the row space of $\mathbf A$, for each row $\mathbf a_j$, $\sum\limits_{i=1}^{r}(\mathbf a_j \cdot \mathbf v_i)^2 = |\mathbf a_j|^2$. 
+\begin{align*}
+\|\mathbf A\|_F^2 &= \sum_{j,k}a_{jk}^2
+= \sum_{j=1}^{n}|\mathbf a_j|^2\\
+&= \sum_{j=1}^{n}\sum_{i=1}^{r}(\mathbf a_j \cdot \mathbf v_i)^2
+= \sum_{i=1}^{r}\sum_{j=1}^{n}(\mathbf a_j \cdot \mathbf v_i)^2\\
+&= \sum_{i=1}^{r}|\mathbf A\mathbf v_i|^2
+= \sum_{i=1}^{r}\sigma_i^2
+\end{align*}
+
+It shows that $\|\mathbf A\|_F^2$ is square sum of all singular values of $\mathbf A$. As for spectral norm $\|\mathbf A\|_2^2$, by defination we can draw that
+$$\|\mathbf A\|_2^2 = \max_{|x| \le 1}|\mathbf Ax|^2 = \sigma_1^2$$
+It shows that $\|\mathbf A\|_2^2$ is the first singular value of $\mathbf A$.
+
+Other thing need to proved is that $\mathbf A_k, \mathbf A - \mathbf A_k$ have SVD $\sum_{i=1}^{k}{\sigma_i\mathbf{u}_i\mathbf{v}_i^\mathbf{T}}$ and $\sum_{i=k+1}^{r}{\sigma_i\mathbf{u}_i\mathbf{v}_i^\mathbf{T}}$ respectively.
+
+Generally, for a matrix $\mathbf B = \sum_{i=1}^{s}\hat{\sigma}_i\hat{\mathbf u}_i\hat{\mathbf v}_i^{\mathbf T}$ where $\hat{\sigma}_1 \ge \cdots \ge \hat{\sigma}_s$ and $\{\hat{\mathbf v}_i\}$ are pirewise orthogonal, we can prove that the first singular vector is $\hat{\mathbf v}_1$, and the first singular value is $\hat{\sigma}_1$: just assume the singular vector to be $\hat{\mathbf v} = \sum_{i=1}^{s}c_i\hat{\mathbf{v}}_i + c_{s+1}\hat{\mathbf{v}}'$ where $\hat{\mathbf{v}}'$ is orthogonal to all $\hat{\mathbf v}_i$s. Then $|\mathbf B\hat{\mathbf v}| = \sum_{i=1}^{s}\hat{\sigma}_i\hat{\mathbf u}_i\hat{\mathbf v}_i^{\mathbf T}(\sum_{i=1}^{s}c_i\hat{\mathbf{v}}_i + c_{s+1}\hat{\mathbf{v}}) = \sum_{i=1}^sc_i\hat{\sigma}_i$. Notice that $|\hat{\mathbf v}| = 1$ means $\sum_{i=1}^{s+1}c_i^2 = 1$, by maximizing $|\mathbf B\hat{\mathbf v}|$ one can get $c_i = \delta_{i1}$, so $\hat{\mathbf v} = \hat{\mathbf v}_1$.
+
+So $\mathbf B = \sum_{i=1}^{s}\hat{\sigma}_i\hat{\mathbf u}_i\hat{\mathbf v}_i^{\mathbf T}$ has the first singular vector to be $\hat{\mathbf v}_1$. By induction we can draw the conclusion that $\mathbf B$ has the $i$-th singular vector to be $\hat{\mathbf v}_i$ and the $i$-th singular value to be $\hat{\sigma}_i$.
+
+\begin{enumerate}
+	
+	\item $$\|\mathbf A_k\|_F^2 = \sum_{i = 1}^{k}\sigma_i^2$$
+	\item $$\|\mathbf A_k\|_2^2 = \sigma_1^2$$
+	\item $$\|\mathbf A - \mathbf A_k\|_F^2 = \sum_{i = k + 1}^{r}\sigma_i^2$$
+	\item $$\|\mathbf A - \mathbf A_k\|_2^2 = \sigma_{k+1}^2$$
+\end{enumerate}
+
+
+\section{(30 pts) Problem 3.23}
+Let $\mathbf{A}=\sum_{i=1}^{r}{\sigma_i\mathbf{u}_i\mathbf{v}_i^\mathbf{T}}$ be the singular value decomposition of a matrix $\mathbf{A}$. Given $\mathbf{A},k$, 
+   \begin{enumerate}
+       \item Prove that $\sigma_k\le \frac{\| \mathbf{A} \|_F}{\sqrt{k}}$.
+       \item Prove that there exists a matrix $\mathbf{B}$ of rank at most $k$ such that $\| \mathbf{A}-\mathbf{B} \|_2 \le \frac{\|\mathbf{A}\|_F}{\sqrt{k}}$.
+       \item Could you always find a matrix $\mathbf{B}$ of rank at most $k$ such that $\| \mathbf{A}-\mathbf{B} \|_F \le \frac{\|\mathbf{A}\|_F}{\sqrt{k}}$?
+   \end{enumerate}
+\subsection*{answer}
+\begin{enumerate}
+	\item $$\frac{\|\mathbf A\|_F^2}{k} = \frac1k\sum_{i=1}^r\sigma_i^2 \ge \frac1k\sum_{i=1}^k\sigma_i^2 \ge \frac1k\sum_{i=1}^r\sigma_k^2 = \sigma_k^2$$
+	
+	于是$\sigma_k^2 \le \frac{\|\mathbf A\|_F^2}{k}$即$\sigma_k \le \frac{\|\mathbf A\|_F}{\sqrt k}$。
+	
+	\item $\mathbf A - \mathbf B$的 spectral norm 就等于$\sigma_1(\mathbf A - \mathbf B)$即$\mathbf A - \mathbf B$的 first singular value。只需要取$\mathbf B = \mathbf A_k$，即可得到
+	
+	$$\|\mathbf A - \mathbf B\|_2 = \|\mathbf A - \mathbf A_k\|_2 = \sigma_{k+1} \le \sigma_k \le \frac{\| \mathbf{A} \|_F}{\sqrt{k}}$$
+	
+	故这样的$\mathbf B$总是可以取到的。
+	
+	\item 因为对于任意秩不超过$k$的矩阵$\mathbf B$都有$\| \mathbf{A}-\mathbf{B} \|_F \ge \| \mathbf{A}-\mathbf{A_k} \|_F$，只需要构造出一组特例$\mathbf A, k$使得$\| \mathbf{A}-\mathbf{A}_k \|_F^2 = \sum_{i=k+1}^r\sigma_i^2 > \frac{\| \mathbf{A} \|_F^2}{k} = \frac{1}{k}\sum_{i=1}^{r}\sigma_i^2$，即可构造出原问题的反例。
+	
+	令 $\mathbf A = \begin{bmatrix}
+	1&&&&\\
+	&1&&&\\
+	&&1&&\\
+	&&&1&\\
+	&&&&1
+	\end{bmatrix}, k = 2$，显然$\mathbf A$的所有奇异值均为$1$，故$\| \mathbf{A}-\mathbf{A}_k \|_F^2 = \sum_{i=k+1}^r\sigma_i^2 = 3$，而$\frac{\| \mathbf{A} \|_F^2}{k} = \frac{1}{k}\sum_{i=1}^{r}\sigma_i^2 = \frac{5}{2}$，此时无法找出任何一个秩不超过$k=2$的矩阵$\mathbf B$使得$\| \mathbf{A}-\mathbf{B} \|_F \le \frac{\|\mathbf{A}\|_F}{\sqrt{k}}$，构成了原问题的一组反例。
+	
+\end{enumerate}
+
+    
+\end{document}
