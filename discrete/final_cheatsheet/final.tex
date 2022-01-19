@@ -1,0 +1,527 @@
+\documentclass[landscape, a4paper]{article}
+
+\usepackage{ctex}
+\usepackage{geometry}
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage{ulem}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{mathrsfs}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{multicolrule}
+
+\raggedright
+\geometry{left=5mm,right=5mm,top=5mm,bottom=13mm}
+
+\newtheoremstyle{compact}%
+  {3pt}{3pt}%
+  {}{}%
+  {\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+  {.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+  \newenvironment{#1}[1]
+  {%
+   \renewcommand\customgenericname{#2}%
+   \renewcommand\theinnercustomgeneric{##1}%
+   \innercustomgeneric
+  }
+  {\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{example}{例}
+\newtheorem{corollary}{推论}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{axiom}{公理}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\ord#1{\text{ord}({#1})}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}[{#1}]}
+\def\E#1{\mathbb{E}[{#1}]}
+
+\begin{document}
+\fontsize{10.48}{0}
+\begin{multicols}{3}
+
+\section{代数结构}
+\subsection{群的定义}
+\begin{definition}[3.2.1]
+	若$G$为一非空集合，若其上代数运算满足结合律，则称$G$为\obj{半群}；若$G$中还存在幺元，则称$G$为\obj{幺半群}。
+\end{definition}
+\begin{definition}[3.2.3]
+	若幺半群$G$上代数运算满足每个元素都有逆，就称$G$为\obj{群}；如果该运算满足交换律，就称$G$为\obj{交换群}。
+\end{definition}
+\begin{example}[3.2.4]
+	半群$G$有左幺元$1_L$，每个元素有左逆元，则$G$是群。
+\end{example}
+\subsection{置换群}
+\begin{remark}
+{\color{red}映射从右往左复合！}
+\end{remark}
+\begin{proposition}[3.2.12]
+	$S_n$中所有偶置换对于置换乘法构成一个群。
+\end{proposition}
+\begin{corollary}[3.2.15]
+	设$\sigma \in S_n$的轮换分解中有$c$个轮换，则$(-1)^{\text{sgn}(\sigma)} = (-1)^{n-c}$。
+\end{corollary}
+\begin{definition}
+	设$G$是群，$a, b \in G$，令$a$\obj{共轭作用}于$b$，就是计算$aba^{-1}$，后者称为与$b$\obj{共轭}的元素。如果与$b$共轭的元素只有$b$，就说明$b$与$G$中任意元素都可交换，所有这样的$b$构成的集合称为$G$的\obj{中心}$Z_G$。
+\end{definition}
+\subsection{子群}
+\begin{definition}[3.2.20]
+	设$G$是群，若$\varnothing \neq H \subseteq G$在$G$的运算下也构成一个群，就称$H$为$G$的一个\obj{子群}，记作$H \leqslant G$。
+\end{definition}
+\begin{theorem}[3.2.22]
+	设$G$是群，非空集合$H \subseteq G$是$G$的子群当且仅当$\forall a, b \in H, ab^{-1} \in H$。
+\end{theorem}
+\begin{example}[3.2.23]
+	任意群$G$都有$Z_G \leqslant G$。证明只需要验证上述等价条件。
+\end{example}
+\begin{example}[3.2.24]
+	设$G$是群，$H \leqslant G$，取定$g \in G$，则$gHg^{-1} \leqslant G$，称为$H$的\obj{共轭子群}。
+\end{example}
+\begin{example}[3.2.25]
+	设$G$是群，$H, K \leqslant G$，则$H \cup K \leqslant G$当且仅当$H \subseteq K$或$K \subseteq H$。
+\end{example}
+\begin{definition}[3.2.26]
+	设$S$是群$G$的非空子集，$G$中所有包含$S$的子群的交称为$S$\obj{生成}的子群，记为$\langle S \rangle$。若$G = \langle S \rangle$，则称$G$由$S$生成，$S$称为\obj{生成元集合}。
+\end{definition}
+\subsection{阶与Lagrange定理}
+\begin{definition}[3.2.28]
+	$g$是群$G$中元素，称最小满足$g^n=1$的正整数$n$为$g$的\obj{阶}，记为$\ord{g}$。如果不存在，则认为$\ord{g} = \infty$。
+\end{definition}
+\begin{theorem}[3.2.29]
+	设群$G$中元素$g$具有有限的阶，则$\langle g \rangle = \{1, g, g^2, \cdots, g^{\ord{g}-1}\}$，称为$g$生成的\obj{循环群}。
+\end{theorem}
+\begin{definition}[3.2.36]
+	设$G$是群，$H \leqslant G, a \in G$，称$aH = \{ah: h \in H\}$为$H$的一个\obj{左陪集}，$Ha = \{ha: h \in H\}$为$H$的一个\obj{右陪集}。$a$称为\obj{陪集代表元}，注意代表元不唯一。
+\end{definition}
+\begin{theorem}[3.2.38, 陪集分解]
+	设$G$是群，$H \leqslant G$，则$H$的任意两个左(右)陪集都相等或者不交，且$G$可以表示为若干个左(右)陪集的不交并。
+\end{theorem}
+\begin{corollary}[3.2.39, Lagrange]
+	设$G$是有限群，$H \leqslant G$，则$|H|$是$|G|$的因子。这个倍数称为$H$的\obj{指数}，记为$[G:H]$。
+\end{corollary}
+\begin{corollary}[3.2.40, 望远镜法则]
+	设$G$是有限群，$K \leqslant H \leqslant G$，则$[G:K] = [G:H][H:K]$。
+\end{corollary}
+\begin{example}[3.2.41]
+	设$G$是有限群，$H, K \leqslant G$，则$|HK| = \frac{|H||K|}{|H\cap K|}$。
+\end{example}
+\begin{corollary}[3.2.42]
+	设$G$是有限群，则$\forall g \in G, \ord{g} \mid |G|$，从而有$g^{|G|} = 1$。
+\end{corollary}
+\begin{corollary}[3.2.44]
+	素阶群一定是循环群。
+\end{corollary}
+\begin{theorem}[3.2.45]
+	设$G = \langle g \rangle$是循环群，则其一切子群都是循环群。无限循环群的全部子群是$\{ \langle g^t \rangle: t \in \mathbb Z_{\ge 0}\}$，$m$阶循环群的全部子群是$\{\langle g^{d} \rangle: d | m\}$。循环群任一大小子群唯一。
+\end{theorem}
+
+\subsection{群同态与正规子群}
+\begin{definition}[3.2.46]
+	设$G, H$是两个群，映射$\sigma: G \to H$称为\obj{同态}，如果它保运算
+	$$\forall x, y \in G, \sigma(x)\sigma(y) = \sigma(xy)$$如果同态$\sigma$是单射，就称为\obj{单同态}或\obj{嵌入}，如果是满射就称为\obj{满同态}，如果是双射就称为\obj{同构}，记作$G \cong H$。
+\end{definition}
+\begin{definition}[3.2.51]
+	设$\sigma: G \to H$是同态，称$\{g \in G: \sigma(g) = 1_H\}$为\obj{同态核}，记为$\ker \sigma$。
+\end{definition}
+\begin{proposition}
+	设$\sigma: G \to H$是同态，$\ker \sigma = K$，则左陪集$aK$(右陪集$Ka$)给出了该同态下像为$\sigma(a)$的一切元素。
+\end{proposition}
+\begin{example}[3.2.55]
+	$H$是子群当且仅当$HH^{-1} = H$。设$G$是群，$H, K \le G$，则$HK \le G$当且仅当$HK = KH$。
+\end{example}
+\begin{definition}
+	把陪集的全体$\{gK: g \in G\}$在“按代表元相乘”的运算下构成的群称为$G$模$K$的\obj{商群}。
+\end{definition}
+\begin{definition}[3.2.58]
+	设$G$是群，$H \le G$，称$H$是$G$的\obj{正规子群}，如果$\forall g \in G$都有$gH = Hg$，记为$H \triangleleft G$。
+\end{definition}
+\begin{corollary}[3.2.59]
+	交换群的任意子群都是正规子群。$H \triangleleft G$的充要条件是$\forall g \in G, h \in H, ghg^{-1} \in H$。
+\end{corollary}
+\begin{proposition}
+	同态核与正规子群是一回事。一方面同态核一定是正规子群，另一方面对于正规子群$N \triangleleft G$，构造\obj{典范同态}$G \to G/N: g \to gN$，可以使同态核恰好为$N$。
+\end{proposition}
+\begin{proposition}
+	设$G$是群，$H \le G$，若$[G:H] = 2$，则$H$是$G$的正规子群。
+\end{proposition}
+\begin{proposition}
+	设$G$是有限交换群，$|G| = n$，$p$是素数且$p \mid n$，则$G$中存在$p$阶元。
+\end{proposition}
+
+\subsection{四个同构定理}
+\begin{theorem}[3.2.61, 第一同构定理]
+	设$\varphi: G \to H$是群同态，则$G / \ker \varphi \cong \im \varphi$。
+\end{theorem}
+\begin{corollary}[3.2.63, 循环群分类定理]
+	无限循环群都同构于$\mathbb Z$，有限循环群都同构于某个$\mathbb Z_n$。
+\end{corollary}
+\begin{theorem}[3.2.64, 第二同构定理]
+	设$G$是群，若$N \triangleleft G, H \le G$，则$H \cap N \triangleleft H, N \triangleleft NH \le G$，且$NH/N \cong H/(H\cap N)$。
+\end{theorem}
+\begin{Proof}
+	注意$$NH = \bigcup_{h \in H}Nh = \bigcup_{h \in H}hN = HN$$
+	故由3.2.55知$NH \le G$，根据定义验证$N \triangleleft NH$。考虑映射$\pi$$$H \to NH/N: h \to hN$$$\ker \pi = \{h \in H, hN = N\} = H \cap N$，由于是同态，根据第一同构定理，得到$NH/N \cong H / (H\cap N)$，从而$H\cap N \triangleleft H$。
+\end{Proof}
+\begin{theorem}[3.2.65, 第三同构定理]
+	设$G$是群，$N, M \triangleleft G$且$N \le M$，则$G / M \cong (G/N) / (M / N)$。
+\end{theorem}
+\begin{Proof}
+	考虑映射$\pi$
+	$$G/N \to G / M: gN \to gM$$由$N \le M$只映射良定，而$\ker \pi = \{gN \in G/N: gM = M\} = M/N$，由于$\pi$是同态，由第一同构定理知$(G/N) / (M/N) \cong G/N$。$M/N$是$G/N$的正规子群。
+\end{Proof}
+
+\subsection{群直积}
+\begin{definition}[3.3.35]
+	设$G_1, G_2$是群，在$G_1 \times G_2$上定义运算$(g_1, g_2) \times (g_1', g_2') = (g_1g_1', g_2g_2')$，得到的群称为$G_1$与$G_2$的\obj{直积}，$G_1, G_2$称为\obj{直积因子}。
+\end{definition}
+\begin{example}[3.3.36]
+	设$G, H$分别为$m, n$阶循环群，则$G \times H$是循环群当且仅当$\gcd(m, n) = 1$。
+\end{example}
+\begin{theorem}[3.3.38]
+	设$H, K$是群$G$的子群，若\num{i}$G = HK$ \num{ii}$H \cap K = \{1\}$ \num{iii}$H, K$中元素可交换，即$\forall h \in H, k \in K, hk = kh$，则$G \cong H \times K$，此时称$G$为$H, K$的\obj{内直积}。
+\end{theorem}
+
+\subsection{有限交换群结构}
+\begin{lemma}[3.3.41]
+	任意有限交换群都是其Sylow子群(阶为$p^r$的子群)的内直积。
+\end{lemma}
+\begin{lemma}[3.3.42]
+	设$A$是有限交换$p$群(阶为$p^r$)，则$A$循环当且仅当它只有一个$p$阶子群。
+\end{lemma}
+\begin{lemma}[3.3.42]
+	设$A$是非循环有限$p$群，设$a$是$A$中的最高阶元素，则存在$B \le A$使得$A = \langle a \rangle B$。
+\end{lemma}
+\begin{theorem}[3.3.44]
+	有限交换$p$群可分解为循环子群的直积$A = \langle a_1 \rangle \times \cdots \times \langle a_t \rangle$，其中$t$和每个直积因子的阶$p^{m_1}, \cdots, p^{m_t}$由$A$唯一决定。
+\end{theorem}
+\begin{theorem}[3.3.45, 有限交换群结构定理, 初等因子]
+	设$G$是$n$阶交换群，则$$G \cong \prod_{i=1}^{s}(\mathbb Z_{p_i^{l_{i1}}}\times \cdots \times \mathbb Z_{p_i^{l_{ik_i}}} )$$
+	其中$l_{i1} \le \cdots \le l_{ik_i}, \sum_{j=1}^{k_i}l_{ij} = e_i$。多重集$$\{p_1^{l_{11}}, \cdots, p_1^{l_{1k_1}}, \cdots, p_s^{l_{s1}}, \cdots, p_s^{l_{sk_s}}\}$$由$G$唯一决定，称为$G$的\obj{初等因子}。
+\end{theorem}
+\begin{theorem}[3.3.46, 有限交换群结构定理, 不变因子]
+	设$G$是$n$阶交换群，则$$G \cong \mathbb Z_{d_1} \times \cdots \times \mathbb Z_{d_k}$$
+	其中$k = \max_{j=1}^{s}k_s, d_1 | \cdots | d_k, \prod_{j=1}^{k}d_j = n$由$G$唯一决定，称为$G$的\obj{不变因子}。
+\end{theorem}
+\begin{corollary}[3.3.48]
+	有限交换群$G$是循环群(不变因子分解中$k=1$)当且仅当$\forall m \in \mathbb Z_{\ge 1}, x^m = 1$在$G$中的解至多$m$个。
+\end{corollary}
+
+
+\subsection{环和域的定义}
+\begin{definition}[3.4.1]
+	$R$是一非空集合，有两种代数运算，满足\num{i}$(R, +)$构成交换群，\num{ii}$(R, \times)$构成幺半群，\num{iii}(左右)乘法分配律成立，就称$R$是\obj{环}。如果乘法还是交换的，就称$R$是\obj{交换环}。注意我们默认环有乘法幺元。
+\end{definition}
+\begin{definition}[3.4.4]
+	若环$R$满足$R^* = R \setminus \{0\}$对乘法构成群，就称$R$是\obj{除环}或\obj{体}。
+	
+	环中的可逆元称为\obj{单位}，所有单位构成环的\obj{单位群}，于是除环也可以说是单位群等于$R^*$的环。
+\end{definition}
+\begin{definition}[3.4.7]
+	若$a, b \in R^*$满足$a, b = 0$，则称$a$是\obj{左零因子}，$b$是\obj{右零因子}。无零因子交换环称为\obj{整环}，交换除环称为\obj{域}。
+\end{definition}
+\begin{proposition}[3.4.10]
+	有限整环是域。只需要验证每个非零元可逆。
+\end{proposition}
+\subsection{环同态与理想}
+\begin{definition}[3.4.12]
+	设$R, R'$是两个环，映射$\sigma: R \to R'$称为\obj{环同态}，如果它保运算
+	$$\sigma(x+y) = \sigma(x) + \sigma(y), \sigma(xy) = \sigma(x)\sigma(y), \sigma(1_R) = 1_{R'}$$
+\end{definition}
+\begin{remark}
+	$\sigma(1_R) = 1_{R'}$是必需的，因为乘法只构成幺半群，但如果是域同态，就不需要这条。此外域同态一定是单同态或零同态。
+\end{remark}
+\begin{definition}[3.4.15]
+	设$R$是环，加法子群$S \subseteq R$称为\obj{左理想}，如果$\forall r \in R, rS \subseteq S$；称为\obj{右理想}，如果$\forall r \in R, Sr \subseteq S$；同时是左理想和右理想的$S$称为\obj{理想}。\textit{“黑洞”}
+\end{definition}
+\begin{corollary}
+	$\{0\}, R$是$R$是平凡理想。非平凡理想的元素都不可逆。
+\end{corollary}
+\begin{definition}[3.4.19]
+	设$R$是环，若$S \subseteq R$在$R$的运算下构成一个环，就称$S$是$R$的\obj{子环}。
+\end{definition}
+\begin{proposition}
+	非平凡理想都不是子环。\textit{包含$1_R$的理想就是整个$R$。}
+\end{proposition}
+\begin{definition}
+	理想是加法的正规子群，因此$\{a + I: a \in R\}$构成一个环，称为$R$对$I$的\obj{商环}$R / I$。
+\end{definition}
+\begin{theorem}
+	设$f: R_1 \to R_2$是环同态，则$\ker f$是$R_1$的理想。
+\end{theorem}
+\begin{definition}[3.4.22]
+	设$a \in R$，$R$中所有含$a$的理想的交(显然还是理想)称为$a$的\obj{主理想}，记为$(a)$。若环$R$中的理想都是主理想，则称$R$是\obj{主理想环}。同样可定义子集$S$\obj{生成}的理想和\obj{生成元集合}。
+\end{definition}
+\begin{proposition}[3.4.25]
+	$\mathbb Z, F[x]$是主理想环。\textit{“带余除法”}
+\end{proposition}
+
+\section{组合计数}
+\subsection{P\'olya方法}
+\begin{lemma}[3.3.23, Burnside]
+	设有限置换群$G$作用在$X$上，$\text{fixed}(g)$表示$g \in G$置换下的不动点集合，$\text{Stab}(x)$表示$G$中满足$gx = x$的$g$的集合，$\text{orb}(x) = \{gx: g \in G\}$为$x$的轨道。\begin{align*}
+	|X \setminus G| = \sum_{x \in X}\frac{1}{|\text{orb}(x)|} &= \frac{1}{|G|}\sum_{x \in X}|\text{Stab}(x)| \\&= \frac{1}{|G|}\sum_{g \in G}|\text{fixed}(g)|
+	\end{align*}
+\end{lemma}
+\begin{theorem}[4.3.6, P\'olya]
+	$A$是元素集，$B$是色盘，$G$是$A$上的置换群，$c(\sigma)$表示$\sigma \in G$的轮换分解中轮换数(环数)，则$G$在$B^A$上的轨道数量为$$\frac{1}{|G|}\sum_{\sigma \in G}|B|^{c(\sigma)}$$
+\end{theorem}
+\subsection{组合恒等式}
+\begin{theorem}[组合数上指标求和/平行求和]
+	$$\sum_{k=0}^{m}\binom{k}{n} = \binom{m+1}{n+1}$$
+\end{theorem}
+\begin{theorem}[Vandermonde恒等式]
+	$$\sum_{k=0}^{r}\binom{m}{k}\binom{n}{r-k} = \binom{m+n}{r}$$
+\end{theorem}
+\begin{theorem}[Lucas]
+	$$\binom{n}{k} = \binom{\lfloor n / p \rfloor}{\lfloor k / p \rfloor}\binom{n \bmod p}{k \bmod p} \mod p$$
+\end{theorem}
+\begin{theorem}[组合反演式]
+	$$b_n = \sum_{k=0}^{n}\binom{n}{k}(-1)^ka_k \Leftrightarrow a_n = \sum_{k=0}^{n}\binom{n}{k}(-1)^{k}b_n$$
+\end{theorem}
+\subsection{Ramsey理论}
+\begin{theorem}[4.4.8, Ramsey]
+	设$k, l \ge 2$是正整数，总\textit{存在}一个最小的正整数$R(k, l)$(称为\obj{Ramsey数})，使得当$n \ge R(k, l)$时，完全图$K_n$的任意红蓝边染色要么包含一个边全为红色的$K_k$，要么包含一个边全为蓝色的$K_l$。
+\end{theorem}
+\begin{Proof}
+	证明$R(k, l) \le R(k-1, l) + R(k, l - 1)$，从而有上界$R(k, l) \le \binom{k + l - 2}{k - 1}$。
+\end{Proof}
+\begin{theorem}[4.4.11, 4.4.12]
+	$R(3, 3) = 6, R(4, 3) = R(3, 4) = 9, R(4, 4) = 18.$
+\end{theorem}
+\begin{theorem}[4.4.13, Ramsey定理的推广]
+	设$r, k \ge 1, q_i \ge r$，则\textit{存在}一个最小的正整数$R(q_1, \cdots, q_k; r)$，使得当$|S| \ge R(q_1, \cdots, q_k; r)$时，可以把$S$的所有$r$元子集写成$k$个集族的不交并$\binom{S}{r} = \bigsqcup_{i=1}^{k}T_i$，使得“存在$S_i \subseteq S, |S_i| = q_i$且$\binom{S_i}{r} \subseteq T_i$”对至少一个$i$成立。
+	
+	\textit{Ramsey是其在$r=2, q = \{k, l\}$时的推论。}
+\end{theorem}
+\section{图论}
+\subsection{图的基本概念}
+\begin{theorem}[5.1.21, 握手定理]
+	$2|E| = \sum_{v \in V}d(v)$
+\end{theorem}
+\begin{theorem}[5.1.28, Mantel]
+	$n$个顶点的图$G$不包含三角形作为子图，则它至多有$\lfloor \frac{n^2}{4} \rfloor$条边。\textit{考虑$\mathcal N(x)$是独立集。}
+\end{theorem}
+\begin{proposition}[5.1.30]
+	若图$G$有$n$个顶点且$\delta(G) \ge \frac{n-1}{2}$，则$G$连通。\textit{证明$dist(u, v) \le 2$。}
+\end{proposition}
+\begin{lemma}[5.1.31]
+	设图$G$满足$\delta(G) \ge 2$，则$G$必包含一个至少长为$\delta(G)$的路径和一个至少长为$\delta(G)+1$的圈。
+\end{lemma}
+\begin{proposition}[5.1.34]
+	设图$G$中至少有一个圈，则最短圈长度$g(G) \le 2\text{ diam } G + 1$。
+\end{proposition}
+\begin{theorem}[5.1.42, Landau]
+	$n$阶竞赛图中一定存在一个点可以通过不超过两条边到达所有点。\textit{验证出度最大的点。}
+\end{theorem}
+\begin{corollary}[5.1.43]
+	强连通竞赛图一定存在长度为$3$的圈。
+\end{corollary}
+\subsection{树}
+\begin{proposition}[5.2.4]
+	设$T$是一棵有$n$条边的树，若$G$满足$\delta(G) \ge n$，则$T$一定是$G$的子图。
+\end{proposition}
+\begin{theorem}[5.2.7, Cayley]
+	以$[n]$为顶点标号的树有$n^{n-2}$种。\textit{用Pr\"ufer序列证明即可。}
+\end{theorem}
+\subsection{Euler图与Hamilton图}
+\begin{theorem}[5.5.1]
+	无向图$G$是Euler图当且仅当$G$连通且每个点的度数都是偶数，等价于$G$连通且是若干边不交圈的并。
+\end{theorem}
+\begin{theorem}[5.5.4]
+	有向图$G$是Euler图当且仅当$G$强连通且每个点的入度等于出度，等价于$G$强连通且是若干边不交有向圈的并。
+\end{theorem}
+\begin{theorem}[5.5.6]
+	(必要条件)若$G$是Hamilton图，则对任意$S \subseteq V(G), G \setminus S$至多有$|S|$个连通分量。
+	
+	\textit{从圈里删去$k$个点，剩下的部分至多有$k$个连通分量。}
+\end{theorem}
+\begin{theorem}[5.5.9, Dirac]
+	(充分条件)设$G$有$n \ge 3$个顶点且$\delta(G) \ge \frac n2$，则$G$是Hamilton图。
+	
+	\textit{欲证否“存在$G$不是Hamilton图且$\delta(G) \ge \frac n2$”，把$G$扩充为极大非Hamilton图，不改变$\delta(G) \le \frac n2$的性质，此时图中存在一条Hamilton路径$u \to v$且$d(u) + d(v) \ge n$，据此构造一条Hamilton回路以导出矛盾。}
+\end{theorem}
+\begin{corollary}[5.5.10]
+	设$G$有$n \ge 3$个顶点且任意两个不相邻的顶点$u, v$都满足$d(u) + d(v) \ge n$，则$G$是Hamilton图。
+\end{corollary}
+\begin{corollary}[5.5.11, Ore]
+	设$G$有$n \ge 3$个顶点且某两个不相邻的顶点$u, v$满足$d(u) + d(v) \ge n$，则$G$是Hamilton图当且仅当$G + uv$是Hamilton图。
+\end{corollary}
+\subsection{匹配与覆盖}
+\begin{theorem}[5.6.6, Hall]
+	二部图$G(X, Y)$存在一个饱和$X$的完美匹配当且仅当$\forall S \subseteq X, |\mathcal N(S)| \ge |S|$。
+\end{theorem}
+\begin{Proof}
+	必要性显然。充分性考虑对$|X|$归纳。如果存在$S\subsetneq X$使得$|\mathcal N(S)| = |S|$，那么(根据归纳假设)匹配$S$与$\mathcal N(S)$，验证$(X \setminus S, Y \setminus \mathcal N(S))$仍满足条件；若任意$S \subsetneq X$均$|\mathcal N(S)| > |S|$，那么随便匹配一条边后仍满足条件。得证。
+\end{Proof}
+\begin{proposition}[稳定婚姻]
+	算法流程：每轮尚未匹配的左侧点向匹配度最高且没有被拒绝过的右侧点发申请，右侧点在收到的申请中找匹配度最高的匹配并拒绝其余。
+\end{proposition}
+\begin{theorem}
+	上述算法一定能结束，且最后得到了一个稳定的最大匹配。
+\end{theorem}
+\subsection{平面图}
+\begin{theorem}[5.7.14, Euler]
+	设$G$是连通平面图，$n, e, f$分别表示其顶点数，边数和面数，那么$n - e + f = 2$。如果有$p$个连通分量，那么就$n - e + f = p + 1$。
+\end{theorem}
+\begin{theorem}[5.7.17]
+	设$G$是至少有三个顶点的简单可平面图，则$|E(G)| \le 3|V(G)| - 6$。若$G$中无三角形，命题可加强为$|E(G)| \le 2|V(G)| - 4$。
+\end{theorem}
+\begin{Proof}
+	不妨认为$G$是连通的。每个面的长度至少为$3$，因此$2e \ge 3f = 3(2 - n + e)$，整理得到$e \le 3n - 6$。没有三角形就可以加强为$2e \ge 4f$，类似可得结论。
+\end{Proof}
+\begin{example}[5.7.18]
+	$K_5$和$K_{3, 3}$都不是平面图。
+\end{example}
+\begin{theorem}[5.7.21, Kuratowski]
+	一个图是可平面图当且仅当不包含$K_5$和$K_{3, 3}$作为子图。
+\end{theorem}
+\begin{theorem}[5.8.19, Heawood]
+	任何平面图都是$5$-可着色的。
+\end{theorem}
+\begin{Proof}
+	对点数作归纳。根据5.7.17可知一定存在度数不超过$5$的点$v$，只需要证明$v$有五个邻居且五个邻居都染不同色是不可能的。
+	
+	\includegraphics[width=3cm]{5-col.png}
+	
+	$1, 4$两点必然通过粉橙二色连通，$3, 5$两点必然通过红蓝二色连通，这样产生了交叉，与平面性矛盾。
+\end{Proof}
+
+\section{离散概率}
+\begin{theorem}[6.1.4, union bound]
+	$$\text{Pr}\left[\bigcup_{i=1}^{n}A_i\right] \le \sum_{i=1}^{n}\Pr{A_i}$$
+\end{theorem}
+\begin{definition}[6.1.5]
+	设$\Pr{A} > 0$，称$\frac{\Pr{AB}}{\Pr{A}}$为已知$A$发生的条件下$B$发生的概率，记为\obj{条件概率}$\Pr{B|A}$。
+\end{definition}
+\begin{proposition}[6.1.7, Bayes]
+	$A_1, \cdots, A_n$构成样本空间$\Omega$的划分，那么对于任意事件$A$
+	$$\Pr{A_i | A} = \frac{\Pr{A | A_i}\Pr{A_i}}{\sum_{j=1}^{n}\Pr{A | A_j}\Pr{A_j}}$$
+	其中$\Pr{A_i}$称为\obj{先验概率}，$\Pr{A_i | A}$称为\obj{后验概率}。
+\end{proposition}
+\begin{theorem}[6.1.16, Markov Inequality]
+	设随机变量$X$的支撑非负，期望存在，那么对于$\forall \varepsilon > 0$有$\Pr{X \ge \varepsilon} \le \frac{\E{X}}{\varepsilon}$。
+\end{theorem}
+\begin{corollary}[6.1.17]
+	设随机变量$X$的$2k$阶\obj{中心矩}$\E{(X - \E{X})^{2k}}$存在，那么$\forall \varepsilon > 0$$$\Pr{|X - \E{X}| \ge \varepsilon} \le \frac{\E{(X - \E{X})^{2k}}}{\varepsilon^{2k}}$$
+	$k = 1$时就是\obj{Chebyshev Inequality}。
+\end{corollary}
+\begin{theorem}[Stirling 公式]
+	$$n! \sim \sqrt{2\pi n}\left(\frac{n}{\text e}\right)^n \qquad (n \to +\infty)$$
+\end{theorem}
+\subsection{随机方法}
+\begin{example}[6.1.10, Karger]
+	最小割随机算法：每次随机图中的一条边并收缩两点，重复$n-2$次后输出剩下两点之间连边数。
+	
+	设$k$个最小割大小，则图中有至少$\frac{kn}{2}$条边，因为每个点度数至少为$k$。$A_i$表示第$i$次没有收缩掉最小割中的一条边，则$\Pr{A_1} = 1 - \frac{k}{\frac{kn}{2}} = 1 - \frac{2}{n}, \Pr{A_i | \bigcap_{j=1}^{i-1}A_j} = 1 - \frac{2}{n-i+1}$，故$\Pr{A_1\cdots A_{n-2}} \ge \frac{2}{n(n-1)} = \Omega(n^{-2})$。
+\end{example}
+\begin{example}[6.3.2]
+	任取一张$n$点$m$条边的图$G$，则$K_n$可以被$O(n^2\log n / m)$个$G$的副本覆盖。\textit{考虑一条边未被覆盖的概率，union bound。}
+\end{example}
+\begin{example}[6.3.3]
+	存在一个大小为$O(k2^k\log n)$的集合系$\mathcal F$，可以打散任何一个$[n]$的大小为$k$的子集$A$。\textit{考虑一个集合不能被表出的概率，union bound。}
+\end{example}
+\subsection{期望的线性性}
+\begin{theorem}
+	$$\Pr{X \ge \E{X}} > 0, \Pr{X \le \E{X}} > 0$$
+\end{theorem}
+\begin{example}[6.3.5]
+	存在一张$n$点竞赛图有至少$n!2^{-n}$条Hamilton路径。\textit{证明这个值就是期望。}
+\end{example}
+\begin{example}
+	任何图$G(V, E)$中都包含一个至少有$\frac{|E|}{2}$条边的二部图。\textit{证明这个值就是期望。}
+\end{example}
+\begin{example}[6.3.6]
+	图$G(V, E)$中一定有不小于$\sum_{v \in V}\frac{1}{d(v) + 1}$的独立集。\textit{随机点排列，选比邻居都大的作为独立集。}
+\end{example}
+\begin{corollary}[6.3.8]
+	满足不存在大小为$r+1$的团的$n$点图至多有$\left( 1 - \frac1r \right)\frac{n^2}{2}$条边。\textit{对上一题结果用均值不等式。}
+\end{corollary}
+\begin{example}[6.3.11]
+	设$S \subseteq \mathbb Z \setminus \{0\}, |S| = n$，则$S$中一定包含一个大小至少为$\frac{n}{3}$的子集，其中不存在两个数相加等于第三个数。\textit{取$u \sim U[0, 1]$，考虑$\{s \in S: \{su\} \in (\frac13, \frac23)\}$。}
+\end{example}
+\subsection{改造法}
+\begin{example}[5.6.20, Arnautov–Payan]
+	设$G$有$n$个顶点且$\delta(G) = k$，则图中有一个大小不超过$n\frac{1 + \log(k+1)}{k+1}$的支配集。
+	
+	\textit{以$p$的概率取$V$的子集$X$，取$Y = X \cup (V \setminus (X \cup \mathcal N(X)) )$作为支配集，一个点属于$Y$的概率$\le p + (1-p)^{\delta + 1}$，即$\E{|Y|} \le n(p + \text{e}^{-p(\delta+1)})$，调整到$p^* = \frac{\ln(\delta+1)}{\delta+1}$得到结果。}
+\end{example}
+\begin{example}[6.3.13]
+	若$|V| \le 2|E|$，则图$G(V, E)$的最大独立集大小$\ge \Omega\left(\frac{|V|^2}{|E|}\right)$。
+	
+	$\E{|S*|} \ge \E{|S|} - \E{|\binom{S}{2} \cap E|} = p|V| - p^2|E|$，取$p = \frac{|V|}{2|E|}$。
+\end{example}
+\begin{example}[6.3.14]
+	存在$M \in \{0, 1\}^{n \times n}$满足$M$中有$\Omega(n^{2 - \frac{2}{k+1}})$个$1$，且不存在全$1$的$k \times k$子矩阵。
+	
+	$\E{\#1} \ge n^2p - \binom{n}{k}^2p^{k^2} \ge n^2p - n^{2k}p^{k^2}$。
+\end{example}
+\subsection{LLL}
+\begin{theorem}[6.3.16, Lov\'asz Local Lemma]
+	设$A_1, \cdots, A_n$是同一概率空间上的事件，依赖图$G = ([n], E)$。如果存在实数$0 \le x_i < 1$满足$\forall 1 \le i \le n, \Pr{A_i} \le x_i \prod_{(i,j) \in E}(1 - x_j)$，那么$\Pr{\bigcap_{i=1}^{n}\overline{A_i}} \ge \prod_{i=1}^{n}(1 - x_i) > 0$。
+\end{theorem}
+\begin{Proof}
+	$$\Pr{\bigcap_{i=1}^{m}\overline{A_i}} = \prod_{i=1}^{m}(1 - \Pr{A_i | \bigcap_{j=1}^{i-1}\overline{A_j}})$$
+	
+	需要证明$\Pr{A_i | \bigcap_{j \in S}\overline{A_j}} \le x_i$。归纳，把$S$拆成$S_1, S_2$，其中$S_1$是与$A_i$有依赖的
+	$$\Pr{A_i | \bigcap_{j \in S}\overline{A_j}} = \frac{\Pr{A_i \cap (\bigcap_{j \in S_1}\overline{A_j}) | \bigcap_{k \in S_2}\overline{A_k}}}{\Pr{\bigcap_{j \in S_1}\overline{A_j} | \bigcap_{k \in S_2} \overline{A_k}}}$$
+	
+	分子放缩成$\Pr{A_i} \le x_i \prod_{(i,j) \in E}(1 - x_j)$，分母根据union bound以及归纳假设$\ge \prod_{j \in S_1}(1 - x_j)$，故得证。
+\end{Proof}
+\begin{corollary}[6.3.18, Symmetric Lov\'asz]
+	设$A_1, \cdots, A_n$是满足$\Pr{A_i} \le p < 1$的事件，且每个$A_i$和至多$d$个其他事件相关，同时$\text e p(d+1) \le 1$，那么$\Pr{\bigcap_{i=1}^{n}\overline{A_i}} > 0$。\textit{取$x_i = \frac{1}{d+1}$}
+\end{corollary}
+
+\begin{example}[6.3.20]
+	可以用$O(\sqrt n)$种颜色对$K_n$($n$点完全图)的边染色，使得图中不存在同色的$K_3$。
+	
+	$\text{e}\frac{1}{k^2}(3(n-3)+1) < 1$, LLL。
+\end{example}
+
+\begin{example}
+	$11n$个点围成一圈，染成$n$种颜色，每种颜色各$11$个，则一定可以选出$n$个两两不同色的点在圆周上不相邻。
+	
+	\textit{
+	$A_i$表示$i$和$i+1$同时选中，欲证$\Pr{\bigcap_{i=1}^{11n}\overline{A_i}} > 0$。
+	$\Pr{A_i} = \frac{1}{121}$，$d$取$42$因为$A_{i-1}, A_{i+1}, \{A_{j-1}, A_{j}: c_j = c_i\}, \{A_{k-1}, A_{k}: c_k = c_{i+1}\}$是直接相关的。
+	$\text{e}p(d+1) = \frac{43\text{e}}{121} = 0.96600098036 < 1$。
+	}
+\end{example}
+
+\section{不等式}
+\begin{theorem}[均值不等式]
+	$$\frac{n}{\sum_{i=1}^{n}\frac{1}{x_i}} \le \sqrt[n]{\prod_{i=1}^{n}x_i} \le \frac{1}{n}\sum_{i=1}^{n}x_i \le \sqrt{\frac{\sum_{i=1}^{n}x_i^2}{n}}$$
+\end{theorem}
+\begin{theorem}[Cauchy]
+	$$\left( \sum_{i=1}^{n}a_ib_i \right)^2 \le \sum_{i=1}^{n}a_i^2\sum_{i=1}^{n}b_i^2$$
+\end{theorem}
+\begin{theorem}
+	$$\left(\frac {n}{\text e}\right)^n \le n! \le n\text e\left(\frac {n}{\text e}\right)^n$$
+	$$\left(\frac {n}{k}\right)^k \le \binom nk \le \left(\frac {\text en}{k}\right)^k, \binom nk \le \frac{n^k}{k!}$$
+	$$\frac{2^{2n}}{2\sqrt n} \le \binom{2n}{n} \le \frac{2^{2n}}{\sqrt{2n}}$$
+	$$(1 - p)^n \le \text e^{-np}, \ln(1 - x) \le -x$$
+\end{theorem}
+
+\end{multicols}
+\end{document}

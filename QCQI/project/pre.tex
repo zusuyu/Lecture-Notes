@@ -1,0 +1,400 @@
+\documentclass{beamer}
+
+\usepackage[UTF8,noindent]{ctexcap}
+\usepackage{color}%引入颜色
+\usetheme{Frankfurt}%使用Singapore主题
+\usepackage{graphicx}%引入插图
+\usepackage{ulem}%删除线
+\usepackage{tikz}
+\usefonttheme[onlymath]{serif}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=yellow
+}
+
+\usepackage[cache=false]{minted}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{tikz}  
+
+\useoutertheme{infolines}
+%\usepackage[orientation=landscape,size=custom,width=16,height=9,scale=0.5,debug]{beamerposter}
+
+\def \ket#1{|#1 \rangle}
+\def \bra#1{\langle #1|}
+\def \braket#1#2{\langle #1|#2\rangle}
+
+
+\title{Efficient Generation of Clifford Circuits}
+\date{2021年12月17日}
+\author{信息科学技术学院\ \ \ 周书予}
+
+%\setbeamercovered{dynamic}
+\begin{document}\small
+	
+%\usebackgroundtemplate{\tikz\node[inner sep=0pt,opacity=0.3]{\includegraphics[width=16cm,height=9cm]{zsy_background.jpg}};}
+	\begin{frame}
+	\titlepage
+		\begin{center}
+		%\includegraphics[width=2.0cm]{cj.jpg}
+		$\ \ \ \ \ \ \ \ $
+		%\includegraphics[width=2.0cm]{zsy_test.png}
+		\end{center}
+	\end{frame}
+
+\begin{frame}{outline}
+	\begin{itemize}
+		\item Introduction: What is Clifford?
+		\item Part A: Clifford circuit generating efficiency
+		\item Part B: Canonical form
+		\item Part C: Random sampling on Clifford group
+	\end{itemize}
+\end{frame}
+
+\section{Introduction}
+\begin{frame}{Introduction}
+	\sout{好像前一组同学做的内容也是围绕Clifford的, 如果按照顺序讲的话我也许就不需要再介绍Clifford是什么了.}
+\end{frame}
+\begin{frame}{Pauli matrices}
+\pause
+\begin{block}{Single qubit}
+	(一阶)Pauli matrices的集合是$\mathcal P = \{I, X, Y, Z\}$, 其中
+	$$I = \begin{pmatrix}1&0\\0&1\end{pmatrix},
+	X = \begin{pmatrix}0&1\\1&0\end{pmatrix},
+	Y = \begin{pmatrix}0&-i\\i&0\end{pmatrix},
+	Z = \begin{pmatrix}1&0\\0&-1\end{pmatrix}$$
+	
+	在这里为了让$\mathcal P$构成一个群, 我们给每个元素乘上$\pm 1, \pm i$作为global phase.
+\end{block}\pause
+\begin{block}{and for $n$ qubits}
+	$$\mathcal P_n = \{\sigma_1 \otimes \sigma_2 \otimes \cdots \otimes \sigma_n | \sigma_i \in \mathcal P\}$$
+\end{block}\pause
+\begin{block}{Property of Pauli group}
+	群$\mathcal P_n / U(1)$ 同构于向量空间$\mathbb F_2^{2n}$\pause
+	$$\begin{matrix}
+	Z&-&Y\\|&&|\\I&-&X
+	\end{matrix} \quad\Leftrightarrow\quad \begin{matrix}
+	(0,1)&-&(1,1)\\|&&|\\(0,0)&-&(1,0)
+	\end{matrix}$$
+\end{block}
+\end{frame}
+\begin{frame}{Clifford group}
+\begin{block}{Definition}
+	$$\mathcal C_n = \left\{ U \in U(2^n) | \sigma \in \mathcal  \mathcal P_n \Rightarrow U\sigma U^{\dagger} \in \mathcal  \mathcal P_n\right\} / U(1)$$
+	
+	代数上称右侧(没有商掉$U(1)$的部分)为$\mathcal P_n$的normalizer, 记作$\mathcal N(\mathcal P_n)$.
+	
+	可以发现$\mathcal C_n$中global phase是不存在的, 因为被商掉了.
+\end{block}	\pause
+\begin{block}{Size of $\mathcal C_1$}
+	\pause 只需要决定$X, Z$分别被$U$共轭作用映到哪个Pauli matrix.
+	
+	\pause $UXU^{\dagger}$可以取$\{\pm X, \pm Y, \pm Z\}$.
+	
+	\pause $UZU^{\dagger}$也可以取$\{\pm X, \pm Y, \pm Z\}$, 但需要满足与$UXU^{\dagger}$ anti-commute, 因此不能取$\pm UXU^{\dagger}$. 剩下有恰好四种取法.
+	
+	\pause $|\mathcal C_1| = 6 \cdot 4 = 24$.
+\end{block}\pause
+\begin{block}{General Conclusion}
+	$$|\mathcal C_n| = \prod_{i=1}^{n}2(4^i-1)\cdot 4^i = 2^{n^2+2n}\prod_{i=1}^{n}(4^i-1)$$
+\end{block}
+\end{frame}
+
+\begin{frame}{Clifford group}
+	上一页的结论与 A003956\footnote{\tiny \url{http://oeis.org/A003956}} 并不一致, 这是为什么呢?\pause
+\begin{block}{Another Definition}
+	$\mathcal C_n = \langle H, S, \mathrm{CNOT} \rangle$, 其中
+	$$H = \frac{1}{\sqrt2}\begin{pmatrix}
+	1&1\\1&-1
+	\end{pmatrix}, S = \begin{pmatrix}
+	1&0\\0&i
+	\end{pmatrix}, \mathrm{CNOT} = \begin{pmatrix}
+	1&0&0&0\\
+	0&1&0&0\\
+	0&0&0&1\\
+	0&0&1&0
+	\end{pmatrix}$$
+\end{block}
+
+\pause 两种定义方式存在细微的区别. 后者定义的$\mathcal C_n$中包含$(SH)^3 = e^{\frac{i\pi}{4}}I$, 导致产生$8$种不同的global phase, 从而使集合大小变成原来的$8$倍. OEIS 上的数列遵循的是后者(所以多了$8$的系数).\\
+
+我们会构造证明两种定义方式(在忽略gloal phase时)的等价性.
+\end{frame}
+\section{Part A}
+\begin{frame}{Part A}
+	
+	先补充定义一些东西: 
+	
+	默认第二种对$\mathcal C_n$的定义, 即暂时不承认$\mathcal C_n / U(1) = \mathcal N(\mathcal P_n) / U(1)$, 称$H, S, \mathrm{CNOT}$三个门为Clifford gate, 称由这三个门组成的量子线路为Clifford circuit, 称Clifford circuit实现的算符为Clifford operator.\pause
+	
+\begin{block}{Theorem 1}
+	$\mathcal C_n \subseteq \mathcal N(\mathcal P_n)$, 即Clifford operator都是$\mathcal P_n$的normalizer.
+\end{block}
+\begin{block}{Theorem 2}
+	任意$U \in \mathcal N(\mathcal P_n)$都可以通过$O(n^2)$个Clifford gates实现, up to a global phase.
+\end{block}
+
+\pause 之后“up to a global phase”这样的状语可能会频繁地出现.
+\end{frame}
+\begin{frame}{Proof of Theorem 1}
+	只需要验证生成元$\{ H, S, \mathrm{CNOT} \}$就好了, 而且也只要验证作用于$X, Z$这两个Pauli matrices\\
+	
+	\centering
+	\begin{tabular}{c|c|c}
+		$U$ & $\sigma$ & $U\sigma U^{\dagger}$\\
+		\hline 
+		\multirow{4}{*}{controlled-NOT $\mathrm{CNOT}$} & $X_1$ & $X_1X_2$\\
+		& $X_2$ & $X_2$\\
+		& $Z_1$ & $Z_1$\\
+		& $Z_2$ & $Z_1Z_2$\\
+		\hline
+		\multirow{2}{*}{Hadamard $H$} & $X$ & $Z$\\
+		& $Z$ & $X$\\
+		\hline
+		\multirow{2}{*}{phase $S$} & $X$ & $Y$\\
+		& $Z$ & $Z$\\
+	\end{tabular}
+\end{frame}
+
+\begin{frame}{Proof of Theorem 2}
+	考虑归纳.
+	\begin{itemize}
+		\item 证明: 任意$U \in \mathcal N(\mathcal P_1)$可以通过$O(1)$个$H, S$门实现.
+		\item 证明: 如果结论对于$n$成立, 那么任意满足$UZ_1U^{\dagger} = X_1 \otimes g$以及$UX_1U^{\dagger} = Z_1 \otimes g'$的$U \in \mathcal N(\mathcal P_{n+1})$可以通过$O(n^2)$个Clifford门实现.
+		\item 证明: 如果上一条成立, 那么任意$U \in \mathcal N(\mathcal P_{n+1})$可以通过$O(n^2)$个Clifford门实现.
+	\end{itemize}
+	(严谨地说, 每一步结论都需要加上一句“up to a global phase”.)
+	\pause
+	
+	讲一下第二步怎么证明, 其中用到了一个比较巧妙的构造.
+\end{frame}
+\begin{frame}{Proof of the Second Step}
+	令$U'$满足$U' \ket{\psi} = \sqrt2\bra{0}U(\ket{0}\otimes\ket{\psi})$. 构造量子线路
+	\begin{figure}[h]
+		\centerline{
+			\Qcircuit  @C = 1em @R = 0.8em{
+				& \qw & \qw & \ctrl{1} & \gate{H} & \ctrl{1} & \qw\\
+				& {/} \qw & \gate{U'} & \gate{g'} & \qw & \gate{g} & \qw
+			}
+		}
+	\end{figure}
+	假设线路实现了$\tilde U$, 我们希望证明$U = \tilde U$. 注意$UZ_1U^{\dagger} = X_1 \otimes g$, $UX_1U^{\dagger} = Z_1 \otimes g'$, 可以写出$U$以及$U'\ket{\psi}$的一些变式
+	\begin{align*}
+	U
+	&= (X_1 \otimes g)UZ_1\\
+	&= (Z_1 \otimes g')UX_1\\
+	&= (Z_1X_1 \otimes g'g)U(Z_1X_1)
+	\end{align*}
+	\begin{align*}
+	U' \ket{\psi} 
+	&= \sqrt2\bra{0}U(\ket{0}\otimes\ket{\psi})\\
+	&= \sqrt2\bra{1}gU(\ket{0}\otimes\ket{\psi})\\
+	&= \sqrt2\bra{0}g'U(\ket{1}\otimes\ket{\psi})\\
+	&= -\sqrt2\bra{1}g'gU(\ket{1}\otimes\ket{\psi})
+	\end{align*}
+	
+\end{frame}
+\begin{frame}{Proof of the Second Step}
+	想要证明$U = \tilde{U}$, 可以验证对于$\forall \ket{\alpha}, \ket{\beta} \in \{\ket0, \ket1\}$, 都有$\bra{\alpha}\tilde{U}(\ket{\beta}\otimes\ket{\psi}) = \bra{\alpha}U(\ket{\beta}\otimes\ket{\psi})$. \pause 以$\ket{\alpha} = \ket{0}, \ket{\beta} = \ket{1}$为例
+	\begin{align*}
+	\begin{split}
+	\bra{0} \tilde{U} (\ket{1} \otimes \ket{\psi}) &= 
+	\bra{0}(\frac{1}{\sqrt 2}\ket{0}\otimes g'U'\ket{\psi} - \frac{1}{\sqrt 2}\ket{1}\otimes gg'U'\ket{\psi})\\
+	&= \frac{1}{\sqrt 2}g'U'\ket{\psi}\\
+	&= \frac{1}{\sqrt 2}g' \cdot \sqrt2\bra{0}g'U(\ket{1}\otimes\ket{\psi})\\
+	&= \bra{0} U (\ket{1} \otimes \ket{\psi})
+	\end{split}
+	\end{align*}
+	
+	证明了$U = \tilde U $之后, 由归纳假设$U'$可以被$O(n^2)$个Clifford门实现. 剩下的部分可以被$O(n)$个门实现(考虑Controlled-$\{X, Y, Z\}$), 因此结论得证.\hfill$\blacksquare$
+\end{frame}
+\begin{frame}{Part A Conclusion}
+	把两条结论连起来, 可以直接得到
+	\begin{block}{Corollary}
+		任意Clifford operator都可以通过$O(n^2)$个Clifford gates实现.
+	\end{block}
+
+	本来是要“up to a global phase”的, 但Clifford group里的global phase都可以通过$O(1)$个门实现, 因此就可以去掉了.
+	
+	这个推论指出了Clifford operator 的实现高效性.
+\end{frame}
+\section{Part B}
+\begin{frame}{Part B}
+	在这一部分, 我们引入一个叫做Canonical form的记号, 并证明$\mathcal C_n$与之的一一对应关系. 这有助于我们进一步掌握Clifford group内部的结构, 并最终实现随机采样.
+	
+	\cite{paper1}中介绍的方法通过研究$\mathcal C_n$的子群得到了一些有益的结论. 
+	
+	接下来我们均忽略global phase.
+\end{frame}
+\begin{frame}{Subset structure of $\mathcal C_n$}
+	\begin{center}
+	\begin{tabular}{c|c|c}
+		Notation & Name & Generating Set\\
+		\hline
+		$\mathcal C_n$ & Clifford group & $H, S, \mathrm{CNOT}$\\
+		\hline
+		$\mathcal F_n$ & Hadamard-free group & $X, S, \mathrm{CNOT}, \mathrm{CZ}$\\
+		\hline
+		$\mathcal B_n$ & Borel group & $X, S, \mathrm{CNOT}^{\downarrow}, \mathrm{CZ}$\\
+		\hline
+		$\mathcal S_n$ & Symmetric group & $\mathrm{SWAP}$\\
+		\hline
+		$\mathcal P_n$ & Pauli group & $X, Z$\\
+	\end{tabular}
+	\end{center}
+$\mathcal C_n$的Generating Set也可以写成$\{X, Z, H, S, \mathrm{CNOT}, \mathrm{CZ}\}$, 从而显式地指出表中的所有群都是其子群.
+\end{frame}
+\begin{frame}{Hadamard Free?}
+	考虑这样一件事情: Hadamard gate是(在computational basis下)唯一会产生叠加态的Clifford gate, 这说明Hadamard-free group $\mathcal F_n$中的任何算符都不能产生任何叠加, 只能把基矢映成基矢, 因而会有如下的形式:\pause
+\begin{equation}
+F\ket{x} = i^{x^{\textbf T}\Gamma x}O\ket{\Delta x}
+\label{equ1}
+\end{equation}	
+	其中$x \in \mathbb F_2^{n}, \Gamma, \Delta \in \mathbb F_2^{n \times n}, O \in \mathcal P_n$. $\Delta$是可逆的, 它表示$n$个qubit之间的纠缠, 而$\Gamma$的作用是确定相位, 它是对称的.\pause
+	
+	$\mathcal B_n$生成元集合中的$\mathrm{CNOT}^{\downarrow}$记号表示control qubit比target qubit标号小的$\mathrm{CNOT}$门，这使得\cref{equ1}式中的$\Delta$变成了下三角，且对角元全是$1$。这样的简化也使得我们可以直接地写出算符$F$的量子线路表示:\pause
+	\begin{equation}
+	F = O\prod_{i=1}^{n}S_i^{\Gamma_{i, i}}\prod_{1 \le i < j \le n}\mathrm{CZ}_{i, j}^{\Gamma_{i, j}} \prod_{1 \le i < j \le n}\mathrm{CNOT}_{i, j}^{\Delta_{j, i}}
+	\label{equ2}
+	\end{equation}
+	
+	接下来会用$F(O, \Gamma, \Delta)$来表示\cref{equ2}中的$F$. 称算符 $F(O, \Gamma, \Delta)$的Pauli部分是平凡的, 当且仅当$O = I$.
+	
+\end{frame}
+\begin{frame}{Canonical Form}
+	\begin{block}{Theorem(Canonical Form)}
+		任意$U \in \mathcal C_n$都可以被\textbf{唯一地}写成
+		\begin{equation}
+		U = F(I, \Gamma, \Delta) \cdot \left( \prod_{i=1}^nH_i^{h_i} \right)\sigma \cdot F(O', \Gamma', \Delta')
+		\label{canonical}
+		\end{equation}
+		其中$h \in \{0, 1\}^n, \sigma \in \mathcal S_n$是$n$阶排列, $F(I, \Gamma, \Delta), F(O', \Gamma', \Delta') \in \mathcal B_n$, 其中$\Gamma, \Delta$需要满足条件: 对于$\forall 1 \le i, j \le n$：
+		\begin{enumerate}
+			\item 若$h_i = 0, h_j = 0$, 则$\Gamma_{i, j} = 0$.
+			\item 若$h_i = 1, h_j = 0, \sigma(i) > \sigma(j)$, 则$\Gamma_{i, j} = 0$.
+			\item 若$h_i = 0, h_j = 0, \sigma(i) > \sigma(j)$, 则$\Delta_{i, j} = 0$.
+			\item 若$h_i = 1, h_j = 1, \sigma(i) < \sigma(j)$, 则$\Delta_{i, j} = 0$.
+			\item 若$h_i = 1, h_j = 0$, 则$\Delta_{i, j} = 0$.
+		\end{enumerate}
+	\end{block}
+\end{frame}
+\begin{frame}{Why Canonical?}
+	\begin{block}{Bruhat Decomposition\cite{bruhat}}
+	Clifford group $\mathcal C_n$ 可以写成如下\textbf{不交}并的形式
+$$\mathcal C_n = \bigsqcup_{h \in \{0, 1\}^n}\bigsqcup_{\sigma \in \mathcal S_n} \mathcal B_n\left(\prod_{i=1}^{n}H_i^{h_i}\right)\sigma\mathcal B_n$$
+	\end{block}
+
+	\begin{block}{Definition}
+对于$h \in \{0, 1\}^n, \sigma \in \mathcal S_n$, 定义$\mathcal B_n$的子群
+$$\mathcal B_n(h, \sigma) = \{F \in \mathcal B_n: W^{-1}FW \in \mathcal B_n\}$$
+(可以验证这是一个子群)其中$W = \left(\prod\limits_{i=1}^{n}H_i^{h_i}\right)\sigma$, 以下会始终沿用这个记号.	\end{block}
+\end{frame}
+
+\begin{frame}{Important Lemmas}
+\begin{block}{Lemma 1}
+	记$\overline{h} = h \oplus 1^n$表示$h$的按位取反, 那么任意算符$F(O, \Gamma, \Delta) \in \mathcal B_n$是$\mathcal B_n(\overline{h}, \sigma)$中的元素, 当且仅当$\Gamma, \Delta$对于$h, \sigma$满足Canonical form中的五条限制, 此外还存在关系$$
+	\mathcal B_n(\overline{h}, \sigma) \cap \mathcal B_n(h, \sigma) = \mathcal P_n$$
+\end{block}
+\begin{block}{Lemma 2}
+	任意算符$F \in \mathcal B_n$都可以被唯一写成$F = F_LF_R$，其中$F_R \in \mathcal B_n(h, \sigma)$，$F_L \in \mathcal B_n(\overline{h}, \sigma)$且Pauli部分是平凡的。
+	\label{lemma2-2}
+\end{block}
+\end{frame}
+
+\begin{frame}{Proof of One-to-one Correspondence}
+	
+	{\color{gray} {\tiny Bruhat Decomposition和两个引理的证明篇幅太长了我们直接跳过,}} 考虑利用它们来证明Canonical form的存在与唯一性.\pause\\
+	
+	首先由Bruhat Decomposition知任意$U \in \mathcal C_n$可以写成$U = LWR$, 其中$L, R \in \mathcal B_n$, 且$W$唯一确定. 根据Lemma 2, $L$可以被进一步分解为$L = BC$, 其中$C \in \mathcal B_{n}(h, \sigma), B \in \mathcal B_n(\overline h, \sigma)$且Pauli部分平凡, 因此有
+	$$U = LWR = BCWR = BWW^{-1}CWR = BWC'R$$
+	根据$\mathcal B_n(h, \sigma)$的定义, 有$C' \triangleq W^{-1}CW \in \mathcal B_n$, 因而$C'R \in \mathcal B_n$, 这证明了Canonical form的存在性.\pause\\
+	
+	至于唯一性, 考虑$F_1WF_1' = F_2WF_2'$均满足条件, 由于
+	$$W^{-1}(F_2^{-1}F_1)W = F_2'(F_1')^{-1} \in \mathcal B_n$$
+	这说明了$F_2^{-1}F_1 \in \mathcal B_n(\overline{h}, \sigma) \cap \mathcal B_n(h, \sigma) = \mathcal P_n$, 注意到两者Pauli部分平凡, 导致$F_2^{-1}F_1 = I$从而$F_1 = F_2, F_1' = F_2'$, 唯一性得证.
+	
+\end{frame}
+\begin{frame}{High Level Proof of Lemma 1}
+	\begin{block}{Lemma 1}
+		记$\overline{h} = h \oplus 1^n$表示$h$的按位取反, 那么任意算符$F(O, \Gamma, \Delta) \in \mathcal B_n$是$\mathcal B_n(\overline{h}, \sigma)$中的元素, 当且仅当$\Gamma, \Delta$对于$h, \sigma$满足Canonical form中的五条限制, 此外还存在关系$$
+		\mathcal B_n(\overline{h}, \sigma) \cap \mathcal B_n(h, \sigma) = \mathcal P_n$$
+	\end{block}\pause
+	
+	充分性($\Leftarrow$): 即证明只要$\Gamma, \Delta$满足五条限制就可以使$F(O, \Gamma, \Delta) \in \mathcal B(\overline h, \sigma)$, 考虑对满足条件的生成元验证.\pause\\
+	
+	必要性($\Rightarrow$): 记$\mathcal B_n'(h, \sigma)$表示对于$\overline h, \sigma$满足五条限制的算符集合, 充分性指出了$\mathcal B_n'(h, \sigma) \subseteq \mathcal B_n(h, \sigma)$, 于是
+	
+	$$|\mathcal C_n| \le \sum_{h \in \{0, 1\}^n} \sum_{\sigma \in \mathcal S_n} \frac{|\mathcal B_n|^2}{|\mathcal B_n(h, \sigma)|} \le \sum_{h \in \{0, 1\}^n} \sum_{\sigma \in \mathcal S_n} \frac{|\mathcal B_n|^2}{|\mathcal B'_n(h, \sigma)|}$$
+\end{frame}
+\begin{frame}{High Level Proof of Lemma 1}
+	$$|\mathcal C_n| \le \sum_{h \in \{0, 1\}^n} \sum_{\sigma \in \mathcal S_n} \frac{|\mathcal B_n|^2}{|\mathcal B_n(h, \sigma)|} \le \sum_{h \in \{0, 1\}^n} \sum_{\sigma \in \mathcal S_n} \frac{|\mathcal B_n|^2}{|\mathcal B'_n(h, \sigma)|}$$\pause
+	
+	考虑证明右侧等于左侧. 定义$I_n(h, \sigma)$表示$\overline h, \sigma$给$\Gamma, \Delta$的限制条数, 那么有$|\mathcal B_n'(h, \sigma)| = |\mathcal B_n|2^{-I_n(h, \sigma)}$.
+	
+	可以验证$I_n(h, \sigma) = \frac{n(n-1)}{2} + |h| + \sum_{1 \le i < j \le n: \sigma(i) < \sigma(j)}(-1)^{h_i + 1}$, 回忆$|\mathcal C_n|= 2^{n^2 + 2n}\prod_{i=1}^{n}(4^i-1)$的, 只需要证明$$\sum_{h \in \{0, 1\}^n} \sum_{\sigma \in \mathcal S_n} 2^{I_n(h, \sigma)} = \prod_{i=1}^{n}(4^i-1)$$
+	
+	就可以了, 手段是归纳. \pause 至于证明$\mathcal B_n(\overline{h}, \sigma) \cap \mathcal B_n(h, \sigma) = \mathcal P_n$, 根据以上等价条件可知$\Gamma, \Delta$需要同时对$(h, \sigma)$和$(\overline h, \sigma)$满足限制, 验证这样会使$\Gamma = \Delta = 0^{n\times n}$, 从而使$F \in \mathcal P_n$.
+\end{frame}
+\begin{frame}{High Level Proof of Lemma 2}
+\begin{block}{Lemma 2}
+	任意算符$F \in \mathcal B_n$都可以被唯一写成$F = F_LF_R$，其中$F_R \in \mathcal B_n(h, \sigma)$，$F_L \in \mathcal B_n(\overline{h}, \sigma)$且Pauli部分是平凡的。
+\end{block}\pause
+令$F_1, \cdots, F_m \in \mathcal B_n(\overline{h}, \sigma)$且Pauli部分平凡的全部元素, 验证左陪集$F_j\mathcal B_n(\overline{h}, \sigma)$两两不交, 从而说明分解的唯一性.\pause\\
+
+存在性又是考虑对元素计数, 想要验证
+$$|\mathcal B_n(h, \sigma)| \cdot |\mathcal B_n(\overline h, \sigma)| = |\mathcal P_n| \cdot |\mathcal B_n| = 4^n |\mathcal B_n|$$
+
+注意到$|\mathcal B_n(h, \sigma)| = |\mathcal B_n|2^{-I_n(h, \sigma)}$, $I_n(h, \sigma) + I_n(\overline h, \sigma) = n^2$以及$|\mathcal B_n| = 2^{n^2+2n}$, 代入即可直接得到结论.
+\end{frame}
+\section{Part C}
+\begin{frame}{Part C}
+	利用前面证明的一一对应关系, 现在我们可以通过对Canonical form的随机采样来实现对Clifford group的随机采样了.\pause
+	
+	采样的过程分为两步, 第一步是采样$W= \left(\prod\limits_{i=1}^{n}H_i^{h_i}\right)\sigma$, 需要遵循概率分布	$$
+	P_n(h, \sigma) = \frac{|\mathcal B_nW\mathcal B_n|}{|\mathcal C_n|} = \frac{|\mathcal B_n|^2}{|\mathcal B_n(h, \sigma)|\cdot |\mathcal C_n|} = \frac{2^{I_n(h, \sigma)}}{\sum_{h, \sigma}2^{I_n(h, \sigma)}}
+	$$
+	这个概率分布被称为quantum Mallows distribution, (可以证明)对其进行的采样可以被下一页中的算法实现.
+\end{frame}
+\begin{frame}{Sampling on Quantum Mallows Distribution}
+		\begin{algorithmic}[1]
+			\State $A \gets [1...n]$
+			\For{$i = 1 \ \text{to}\  n$}
+			\State $m \gets |A|$
+			\State Sample $h_i \in \{0, 1\}$ and $k \in [1...m]$ from the probability distribution
+			$$p(h_i, k) = \frac{2^{m-1+h_i+(m-k)(-1)^{1 + h_i}}}{4^m-1}$$
+			\State Let $j$ be the $k$-th largest element of $A$
+			\State $\sigma(i) \gets j$
+			\State $A \gets A \setminus \{j\}$
+			\EndFor
+			\State \Return $(h, \sigma)$
+		\end{algorithmic}
+\end{frame}
+\begin{frame}{Clifford Random Sampling}
+	采样的第二步就是根据第一步中得到$h, \sigma$来采样Canonical form中的$\Gamma, \Delta, \Gamma', \Delta', O$, 其中$\Gamma, \Delta$受到了一定的限制.\\\pause
+	
+	其实也可以不管这些限制. 通过前面的证明我们可以知道限制本质上是把$\mathcal B_n W \mathcal B_n$形式中的前一个$\mathcal B_n$限制在了一个更小的子群\footnote{\tiny 准确来说限制在了$\mathcal B_n / \mathcal B_n(h, \sigma) \cong \mathcal B_n(\overline h, \sigma) / \mathcal P_n$里.}, 而Lagrange定理\cite{lagrange}指出了子群的每个陪集大小都是相同的, 即说明对大群的均匀随机采样也是对子群的均匀随机采样, 因此正确性上是没有问题的, 而且去掉限制以后可以让代码实现变得简短, 唯一的代价是消耗了额外的随机比特.\\
+	
+	\href[]{https://qiskit.org/documentation/stubs/qiskit.quantum_info.random_clifford.html?highlight=random_clifford#qiskit.quantum_info.random_clifford}{Qiskit 中所实现的 random\_clifford 方法}就采用了这种策略.
+	
+\end{frame}
+\section{Reference}
+\begin{frame}{Reference}
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{frame}
+\end{document}

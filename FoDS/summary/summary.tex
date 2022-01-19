@@ -1,0 +1,790 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+\title{\heiti\zihao{1} 信息科学中的数学\quad 课程讲义}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{信息科学中的数学}
+\chead{2021 Fall}
+\rhead{Foundations of Data Science}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{proposition}{命题}{命题}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{High-Dimensional Space}
+
+\begin{theorem}[Markov's Inequality]
+	设$x$为一非负随机变量，则对于任意$a > 0$，有\begin{equation}
+	\Pr{x \ge a} \le \frac{\E{x}}{a}
+	\end{equation}
+\end{theorem}
+\begin{Proof}
+	以连续形式为例，假设$x$的概率密度为$p$。
+	\begin{equation}
+	\E{x} = \int_{0}^{\infty}xp(x)\text dx \ge \int_{a}^{\infty}xp(x)\text dx \ge a\int_{a}^{\infty}p(x)\text dx = a\Pr{x \ge a}
+	\end{equation}
+\end{Proof}
+\begin{theorem}[Chebyshev's Inequality]
+	设$x$为一随机变量，则对于任意$c > 0$，有
+	\begin{equation}
+	\Pr{|x - \E{x}| \ge c} \le \frac{\Var{x}}{c^2}
+	\end{equation}
+\end{theorem}
+\begin{Proof}
+	考虑随机变量$y = |x - \E{x}|^2$非负，且$\E{y} = \Var{x}$，故对$y$考虑Markov's Inequality。
+	\begin{equation}
+	\Pr{|x - \E{x}| \ge c} = \Pr{y \ge c^2} \le \frac{\E{y}}{c^2} = \frac{\Var{x}}{c^2}
+	\end{equation}
+\end{Proof}
+\begin{theorem}[大数定理]
+	令$x_1, x_2, \cdots, x_n$为对随机变量$x$的$n$次独立随机采样，则
+	\begin{equation}
+		\Pr{ \left|\frac{x_1 + x_2 + \cdots + x_n}{n} - \E{x}\right| \ge \varepsilon} \le \frac{\Var{x}}{n\varepsilon^2}
+	\end{equation}
+\end{theorem}
+
+\begin{theorem}[体积集中在表面]
+	高维球的体积集中在表面。这是因为\begin{equation}
+	\frac{\text{volume}((1 - \varepsilon)A)}{\text{volume}(A)} = (1 - \varepsilon)^d \le \text e^{-\varepsilon d} \to 0 \quad (d \to \infty)
+	\end{equation}
+	\label{surface}
+\end{theorem}
+\begin{theorem}[高维球的体积与表面积公式]
+	用$V(d)$和$A(d)$来表示$d$维单位球的体积与表面积，则
+	\begin{equation}
+	V(d) = \frac{2\pi^{\frac d2}}{d\Gamma(\frac d2)} \qquad \qquad A(d) = \frac{2\pi^{\frac d2}}{\Gamma(\frac d2)}
+	\end{equation}
+\end{theorem}
+\begin{Proof}
+	用$V(d, r)$和$A(d, r)$表示$d$维空间中半径为$r$的球的体积与表面积，则
+	\begin{equation}
+	V(d) = \int_{r=0}^{1}A(d, r)\text dr = A(d)\int_{r=0}^{1}r^{d-1}\text dr = \frac{A(d)}{d}
+	\end{equation}
+	
+	于是接下来只考虑计算$A(d)$。考虑如下积分
+	\begin{equation}
+	I(d) = \int_{x_1 \in \mathbb R} \int_{x_2 \in \mathbb R} \cdots \int_{x_d \in \mathbb R}\text{e}^{-(x_1^2 + x_2^2 + \cdots + x_d^2)}\text dx_d\cdots \text dx_2\text dx_1
+	\end{equation}
+	
+	一方面，每个$x_i$是独立的，因此结果就是$d$个乘起来。
+	\begin{equation}
+	I(d) = \left[\int_{x \in \mathbb R}\text e^{-x^2}\text dx\right]^d = \sqrt{\pi}^d = \pi^{\frac d2}
+	\end{equation}
+	
+	另一方面，这个积分可以理解为给$d$维空间中的每个点附上了一个只与“到原点距离”有关的权重，因此可以考虑枚举“到原点距离”$r$计算。
+	\begin{equation}
+	I(d) = \int_{r=0}^{\infty}A(d, r)\text e^{-r^2}\text dr = A(d)\int_{r=0}^{\infty}r^{d-1}\text e^{-r^2}\text dr  \xlongequal{t=r^2} \frac{A(d)}{2}\int_{t=0}^{\infty}t^{\frac{d}{2}-1}\text e^{-t}\text dt = \frac{A(d)}{2}\Gamma(\frac d2)
+	\end{equation}
+	
+	结合两者结果即可得到$A(d) = \frac{2\pi^{\frac d2}}{\Gamma(\frac d2)}$，于是$V(d) = \frac{2\pi^{\frac d2}}{d\Gamma(\frac d2)}$。
+\end{Proof}
+\begin{theorem}[体积集中在赤道]
+	对于$c \ge 1$以及$d \ge 3$，$d$维单位球有至少$1 - \frac{2}{c}\text e^{-c^2/2}$的体积满足$|x_1| \le \frac{c}{\sqrt{d-1}}$。
+	\label{equator}
+\end{theorem}
+\begin{Proof}
+	记$A$表示单位球$x_1 \ge \frac{c}{\sqrt{d-1}}$的部分，$H$表示半球，需要证明\begin{equation}
+	\frac{\text{volume}(A)}{\text{volume}(H)} \le \frac{\text{upper bound volume}(A)}{\text{lower bound volume}(H)} = \frac{2}{c}\text e^{-c^2/2}
+	\end{equation}
+	
+	\begin{equation}
+	\begin{split}
+	\text{volume}(A) &= \int_{\frac{c}{\sqrt{d-1}}}^{1}V(d-1, \sqrt{1 - x^2})\text dx \le V(d-1)\int_{\frac{c}{\sqrt{d-1}}}^{1}\text e^{-\frac{d-1}{2}x^2}\text dx\\
+	&\le V(d-1)\frac{\sqrt{d-1}}{c}\int_{\frac{c}{\sqrt{d-1}}}^{1}x\text e^{-\frac{d-1}{2}x^2}\text dx
+	= \frac{V(d-1)}{c\sqrt{d-1}}\text e^{-c^2/2}
+	\end{split}
+	\end{equation}
+	\begin{equation}
+	\text{volume}(H) \ge V\left(d-1, \sqrt{1 - \frac{1}{d-1}}\right) \cdot \frac{1}{\sqrt{d-1}} \ge \frac{V(d-1)}{2\sqrt{d-1}}
+	\end{equation}
+	结合两者结果即可得到结论。
+\end{Proof}
+\begin{theorem}[两两向量几近正交]
+	在$d$维单位球中随机取$n$个点$\mathbf x_1, \mathbf x_2, \cdots, \mathbf x_n$，则有$1 - O(\frac 1n)$的概率
+	\begin{itemize}
+		\item $|\mathbf x_i| \le 1 - \frac{2\ln n}{d}$对每个$i$均成立；
+		\item $|\mathbf x_i \cdot \mathbf x_j| \le \frac{\sqrt{6 \ln n}}{\sqrt{d-1}}$对每对$i \neq j$均成立。
+	\end{itemize}
+\end{theorem}
+\begin{Proof}
+	根据\cref{surface}，$\Pr{|\mathbf x_i| < 1 - \varepsilon} = (1 - \varepsilon)^d \le \text e^{-\varepsilon d}$，故
+	\begin{equation}
+	\Pr{|\mathbf x_i| < 1 - \frac{2\ln n}{d}} \le \text e^{-(\frac{2\ln n}{d})d} = 1 / n^2
+	\end{equation}
+	union bound一下，存在一个$\mathbf x_i$寄掉的概率不超过$1/n$。
+	
+	根据\cref{equator}，$\Pr{|\mathbf x_i \cdot \mathbf x_j| > \frac{c}{\sqrt{d-1}}} \le \frac{2}{c}\text e^{-\frac{c^2}{2}}$，故
+	\begin{equation}
+	\Pr{|\mathbf x_i \cdot \mathbf x_j| > \frac{\sqrt{6\ln n}}{\sqrt{d-1}}} \le \text e^{-\frac{6\ln n}{2}} = 1 / n^3
+	\end{equation}
+	union bound 一下，存在一对$\mathbf x_i, \mathbf x_j$寄掉的概率不超过$\binom{n}{2} / n^3 = O(1/n)$。
+\end{Proof}
+
+\begin{theorem}[单位球中随机采点的方法]
+	
+	 \num{i}按$p(\mathbf x) = \frac{1}{(2\pi)^{\frac d2}}\text e^{-\frac{\sum_{i=1}^{d}x_i^2}{2}}$的概率取向量$\mathbf x$；
+	\num{ii} 按$\rho(r) = dr^{d-1}$的概率取模长$r$，此时得到$\mathbf y = r\frac{\mathbf x}{|\mathbf x|}$就是均匀随机的高维单位球中的点。
+\end{theorem}
+\begin{theorem}[Gaussian Annulus Theorem]
+	对于$d$维的单位方差的高斯分布，对于$\beta \le \sqrt d$，有至多$3\text e^{-c\beta^2}$的概率密度分布在$\sqrt d - \beta \le |\mathbf x| \le \sqrt d + \beta$之外，其中$c$是一个固定的正常数。
+\end{theorem}
+\begin{theorem}[Random Projection Theorem]
+	随机取$k$个服从高斯分布的向量$\mathbf u_1, \mathbf u_2, \cdots, \mathbf u_k$，构造函数$f: \mathbb R^d \to \mathbb R^k$满足
+	\begin{equation}
+	f(\mathbf v) = (\mathbf u_1 \cdot \mathbf v, \mathbf u_2 \cdot \mathbf v, \cdots, \mathbf u_k \cdot \mathbf v)
+	\end{equation}
+	则存在常数$c > 0$使得对于任意$\varepsilon \in (0, 1)$均满足
+	\begin{equation}
+	\Pr{ \left| |f(\mathbf v)| - \sqrt k |\mathbf v|\right| \ge \varepsilon \sqrt k |\mathbf v|} \le 3\text e^{-ck^2\varepsilon}
+	\end{equation}
+\end{theorem}
+\begin{Proof}
+	不妨设$|\mathbf v| = 1$，注意到
+	\begin{equation}
+	\Var{\mathbf u_i \cdot \mathbf v} = \Var{\sum_{j=1}^{d}u_{ij}v_j} = \sum_{j=1}^{d}v_j^2\Var{u_{ij}} = \sum_{j=1}^{d}v_j^2 = 1
+	\end{equation}
+	
+	因此$f(\mathbf v)$也是$\mathbb R^k$中服从高斯分布的随机向量，套用Gaussian Annulus Theorem即可。
+\end{Proof}
+\begin{theorem}[Johnson-Lindenstrauss Lemma]
+	对于任意$\varepsilon \in (0, 1)$以及正整数$n$，取$k \ge \frac{3}{c\varepsilon^2}\ln n$，对于任意$\mathbb R^d$中大小为$n$的点集$\{\mathbf v_i\}$和随机映射$f$(定义同上)，有至少$1 - \frac{3}{2n}$的概率，对于任意$i, j$均满足
+	\begin{equation}
+		(1 - \varepsilon)\sqrt{k}|\mathbf v_i - \mathbf v_j| \le |f(\mathbf v_i) - f(\mathbf v_j)| \le (1 + \varepsilon)\sqrt{k}|\mathbf v_i - \mathbf v_j|
+	\end{equation}
+\end{theorem}
+\begin{Proof}
+	根据Random Projection Theorem，$|f(\mathbf v_i) - f(\mathbf v_j)|$不在$\left[ (1 - \varepsilon)\sqrt{k}|\mathbf v_i - \mathbf v_j| ,(1 + \varepsilon)\sqrt{k}|\mathbf v_i - \mathbf v_j| \right]$范围中的概率不超过$3\text e^{-ck^2\varepsilon} \le \frac{3}{n^3}$。由于$\binom{n}{2} \le \frac{n^2}{2}$，根据union bound可得结论。
+\end{Proof}
+
+\newpage
+\section{Best-Fit Subspaces and Singular Value Decomposition(SVD)}
+
+\begin{definition}[奇异向量与奇异值]
+	\begin{equation}
+	\mathbf v_i = \arg \max_{|\mathbf v| = 1, \mathbf v \perp \mathbf v_1, \cdots, \mathbf v_{i-1}} |A\mathbf v| \qquad \sigma_i = |A\mathbf v_i| \qquad \mathbf u_i = \frac{A\mathbf v_i}{\sigma_i}
+	\end{equation}
+	
+	此时可以得到$A$的奇异值分解(Singular Value Decomposition, SVD)
+	
+	\begin{equation}
+	A = \sum_{i=1}^{r}\sigma_i \mathbf u_i \mathbf v_i^{\text T}
+	\end{equation}	
+\end{definition}
+\begin{definition}[Frobenius norm]
+	定义矩阵的Frobenius norm为
+	\begin{equation}
+	\|A\|_F = \sqrt{\sum_{j,k}a_{jk}^2}
+	\end{equation}
+	也即根号下所有行向量长度的平方和。$\|A\|_F = \sqrt{\sum\limits_{i=1}^{r}\sigma_i^2}$。
+\end{definition}
+\begin{definition}[Spectral norm]
+	定义矩阵的Spectral norm为
+\begin{equation}
+\|A\|_2 = \max_{|\mathbf x| \le 1}|A \mathbf x|
+\end{equation}
+$\|A\|_2 = \sigma_1$。	
+\end{definition}
+\begin{theorem}[Greedy Algorithm Works]
+	设$A$的奇异向量为$\mathbf v_1, \mathbf v_2, \cdots, \mathbf v_r$。对于任意$1 \le k \le r$，由$\mathbf v_1, \mathbf v_2, \cdots, \mathbf v_k$张成的空间$V_k$都是$A$的最佳$k$维近似。
+\end{theorem}
+\begin{Proof}
+	考虑归纳。$k=1$时显然成立，故尝试从$k-1$维最佳推出$k$维最佳。假设$W_k$是$A$的最佳$k$维近似，由于维数是$k$，故必然存在一个单位向量与$\mathbf v_1, \mathbf v_2, \cdots, \mathbf v_{k-1}$均垂直。不妨记$W_k = \langle \mathbf w_1, \cdots, \mathbf w_{k-1}, \mathbf w_k
+	\rangle$，其中$\mathbf w_k$垂直于$\mathbf v_1, \mathbf v_2, \cdots, \mathbf v_{k-1}$，那么根据归纳假设，$\sum\limits_{i=1}^{k-1}|A\mathbf w_i|^2 \le \sum\limits_{i=1}^{k-1}|A\mathbf v_i|^2$，根据$\mathbf v_k$的定义(选取规则)，$|A\mathbf w_k|^2 \le |A\mathbf v_k|^2$，从而$\sum\limits_{i=1}^{k}|A\mathbf w_i|^2 \le \sum\limits_{i=1}^{k}|A\mathbf v_i|^2$，即说明$V_k$也是$A$的最佳$k$维近似。
+\end{Proof}
+
+\begin{theorem}[$A_k$是最佳Frobenius norm近似]
+	对于任意秩不超过$k$的矩阵$B$
+	\begin{equation}
+	\|A - A_k\|_F \le \|A - B\|_F
+	\end{equation}
+\end{theorem}
+\begin{Proof}
+	$\|A - B\|_F^2$不小于$A$的所有行向量到$B$的行空间的距离平方和，而$A_k$恰好是后者问题中最小化这个值的$B$。
+\end{Proof}
+\begin{theorem}[$A_k$是最佳Spectral norm近似]
+	对于任意秩不超过$k$的矩阵$B$
+	\begin{equation}
+	\|A - A_k\|_2 \le \|A - B\|_2
+	\end{equation}
+\end{theorem}
+\begin{Proof}
+	考虑$\ker B$与$\langle \mathbf v_1, \mathbf v_2, \cdots, \mathbf v_{k+1}\rangle$，由于二者维度分别为$\ge d - k$与$k + 1$，故必然存在一单位向量$\mathbf z$属于二者的交
+	\begin{equation}
+	\begin{split}
+	\|A - B\|_2 &\ge |(A - B)\mathbf z| = |A\mathbf z| = \left|\sum_{i=1}^{r}\sigma_i\mathbf u_i\mathbf v_i^{\text T}\mathbf z\right| = \left|\sum_{i=1}^{k+1}\sigma_i\mathbf u_i\mathbf v_i^{\text T}\mathbf z\right| \\&= \sqrt{\sum_{i=1}^{k+1}\sigma_i^2(\mathbf v_i^{\text T}\mathbf z)^2} \ge \sigma_{k+1}\sqrt{\sum_{i=1}^{k+1}(\mathbf v_i^{\text T}\mathbf z)^2} = \sigma_{k+1}
+\end{split}
+	\end{equation}
+	而$\|A - A_k\|_2 = \sigma_{k+1}$，故$A_k$是最佳Spectral norm近似。
+\end{Proof}
+\begin{theorem}[左奇异向量两两垂直]
+	左奇异向量两两垂直。
+\end{theorem}
+\begin{Proof}
+	设$i$是最小的下标满足存在$j$，使$\mathbf u_i^{\text T}\mathbf u_j = \delta > 0$，令$\mathbf v_i' = \frac{\mathbf v_i + \varepsilon \mathbf v_j}{|\mathbf v_i + \varepsilon \mathbf v_j|} = \frac{1}{\sqrt{1 + \varepsilon^2}}(\mathbf v_i + \varepsilon \mathbf v_j)$，则$A\mathbf v_i' = \frac{1}{\sqrt{1 + \varepsilon^2}}(\sigma_i\mathbf v_i + \varepsilon \sigma_j\mathbf v_j), |A\mathbf v_i'| \ge \mathbf u_i^{\text T}A\mathbf v_i' = \frac{1}{\sqrt{1+\varepsilon^2}}(\sigma_i + \varepsilon \sigma_j \delta) \ge (\sigma_i + \varepsilon \sigma_j \delta)(1 - \frac{\varepsilon^2}{2}) = \sigma_i + \varepsilon \sigma_j \delta - \frac{\varepsilon^2}{2}\sigma_i - \frac{\varepsilon^3}{2}\sigma_j\delta$。
+	
+	当$\varepsilon \to 0$时，可以发现上式$> \sigma_i$，这与$\mathbf v_i$的选取矛盾。故左奇异向量两两垂直。
+\end{Proof}
+\begin{theorem}[Power Method]
+	$A$是$n \times d$的矩阵，$\mathbf x \in \mathbb R^d$满足$|\mathbf x^\text{T}\mathbf v_1| \ge \delta > 0$，令$V$表示所有对应于$\ge (1 - \varepsilon)\sigma_1$奇异值的奇异向量张成的子空间，$\mathbf w$为通过Power Method迭代$k = \frac{\ln(1 / \varepsilon \delta)}{2\varepsilon}$轮后得到的单位向量，即
+	\begin{equation}
+	\mathbf w = \frac{ (A^{\text T}A)^k\mathbf x }{|(A^{\text T}A)^k\mathbf x|}
+	\end{equation}
+	
+	则$\mathbf w$只有不超过$\varepsilon$的分量垂直于$V$。
+\end{theorem}
+\begin{Proof}
+	设$A$的SVD为$A = \sum\limits_{i=1}^{r}\sigma_i\mathbf u_i\mathbf v_i^{\text T}$，则$(A^{\text T}A)^k = \sum\limits_{i=1}^{r}\sigma_i^{2k}\mathbf v_i\mathbf v_i^{\text T}$。再设$\mathbf x = \sum\limits_{i=1}^{d}c_i\mathbf v_i$，于是$(A^{\text T}A)^k\mathbf x = \sum\limits_{i=1}^{r}\sigma_i^{2k}c_i\mathbf v_i$。
+	
+	考虑分别计算垂直部分长度的upper bound和向量总长度的lower bound。
+	\begin{equation}
+	\sum_{i=m+1}^{d}(\sigma_i^{2k}c_i)^2 \le (1 - \varepsilon)^{4k}\sigma_1^{4k}\sum_{i=m+1}^{d}c_i^2 \le (1 - \varepsilon)^{4k}\sigma_1^{4k}
+	\end{equation}
+	\begin{equation}
+	|(A^{\text T}A)^k\mathbf x|^2 = \left|\sum_{i=1}^{d}\sigma_i^{2k}c_i\mathbf v_i\right|^2 = \sum_{i=1}^{d}(\sigma_i^{2k}c_i)^2 \ge \sigma_1^{4k}c_1^2 \ge \sigma_1^{4k}\delta^2
+	\end{equation}
+	其中$\sigma_m \ge (1 - \varepsilon)\sigma_1, \sigma_{m+1} < (1 - \varepsilon)\sigma_1$。相除即可得到结论
+	\begin{equation}
+	\frac{(1 - \varepsilon)^{2k}\sigma_1^{2k}}{\delta\sigma_1^{2k}} = \frac{(1 - \varepsilon)^{2k}}{\delta} \le \frac{\text e^{-2k\varepsilon}}{\delta} = \varepsilon
+	\end{equation}
+\end{Proof}
+\newpage
+\section{Machine Learning}
+\subsection{Perception Algorithm}
+\begin{definition}[Perception Algorithm]
+	\num{i} $\mathbf w \gets 0$，\num{ii} 每当存在$\mathbf x_i$使得$\mathbf x_il_i \cdot \mathbf w \le 0$，就更新$\mathbf w \gets \mathbf w + \mathbf x_il_i$。
+\end{definition}
+\begin{theorem}[Perception Algorithm的运行时间上界]
+	如果存在一个$\mathbf w^*$满足$(\mathbf w^* \cdot \mathbf x_i)l_i \ge 1$对于任意$i$成立，则Perception Algorithm可以在不超过$r^2|\mathbf w^*|^2$步内找到一个$(\mathbf w \cdot \mathbf x_i)l_i > 0$的解$\mathbf w$，其中$r = \max_{i}|\mathbf x_i|$。
+\end{theorem}
+\begin{Proof}
+	考虑两个量：$\mathbf w^\text T\mathbf w^*$和$|\mathbf w|^2$。前者每步至少增加$1$，因为
+	\begin{equation}
+	(\mathbf w + \mathbf x_il_i)^{\text T}\mathbf w^* = \mathbf w^\text T\mathbf w^* + \mathbf x_i^{\text T}l_i\mathbf w^*  \ge \mathbf w^\text T\mathbf w^* + 1
+	\end{equation}
+	后者每步至多增加$r^2$，因为
+	\begin{equation}
+	(\mathbf w + \mathbf x_il_i)^\text T(\mathbf w + \mathbf x_il_i) = |\mathbf w|^2 + 2\mathbf x_i^{\text T}l_i\mathbf w + |\mathbf x_il_i|^2 \le |\mathbf w|^2 + |\mathbf x_i|^2 \le |\mathbf w^2| + r^2
+	\end{equation}
+	设运行步数为$m$，则由$|\mathbf w||\mathbf w^*| \ge \mathbf w^\text T\mathbf w^* \ge m, |\mathbf w|^2 \le r^2m$可以解得$m \le r^2|\mathbf w^*|^2$。
+	
+\end{Proof}
+\subsection{Kernel Function}
+\begin{definition}[Kernel Function]
+	形如$k(\mathbf x_i, \mathbf x_j) = \varphi(\mathbf x_i)^{\text T}\varphi(\mathbf x_j)$的函数$k$被称为kernel function。
+\end{definition}
+\begin{lemma}[Kernel Matrix]
+	一个矩阵$K$是kernel matrix，即存在一个函数$\varphi$使$k_{ij} = \varphi(\mathbf x_i)^{\text T}\varphi(\mathbf x_j)$，当且仅当$K$半正定。
+\end{lemma}
+\begin{theorem}
+	设$k_1, k_2$是两个kernel functions，则\begin{enumerate}
+		\item 对任意$c > 0$，$ck_1$是一个kernel function。
+		\item 对任意标量函数$f$，$k_3(\mathbf x, \mathbf y) = f(\mathbf x)f(\mathbf y)k_1(\mathbf x, \mathbf y)$是一个kernel function。
+		\item $k_1 + k_2$是一个kernel function。
+		\item $k_1k_2$是一个kernel function。
+	\end{enumerate}
+\end{theorem}
+
+\subsection{Generalizing to New Data}
+\begin{theorem}
+	如果训练集大小满足\begin{equation}
+	n \ge \frac{1}{\varepsilon}(\ln |\mathcal H| + \ln \frac{1}{\delta})
+	\end{equation}则就有至少$1 - \delta$的概率，每个$h \in \mathcal H$都满足$err_S(h) = 0 \Rightarrow err_D(h) < \varepsilon$。$S$表示训练集，$D$表示整体分布。
+	\label{training}
+\end{theorem}
+\begin{Proof}
+	某一个$h$寄掉的概率$\le (1 - \varepsilon)^n$(相当于大小为$n$的训练集一次都没有砸中$h$的错误)，故根据union bound，存在一个$h$寄掉的概率$\le |\mathcal H|(1 - \varepsilon)^n \le |\mathcal H|\text e^{-n\varepsilon}$，$|\mathcal H|\text e^{-n\varepsilon} \le \delta \Rightarrow n \ge \frac{1}{\varepsilon}(\ln |\mathcal H| + \ln \frac{1}{\delta})$。
+\end{Proof}
+\begin{theorem}[Hoeffding bounds]
+	$x_1, x_2, \cdots, x_n$是$n$个独立随机$\{0, 1\}$变量满足$\Pr{x_i = 1} = p$。令$s = \sum_i x_i$，则对于任意$0 \le \alpha \le 1$
+	\begin{equation}
+	\Pr{\frac sn > p + \alpha} \le \text e^{-2n\alpha^2} \qquad \Pr{\frac sn < p - \alpha} \le \text e^{-2n\alpha^2}
+	\end{equation}
+	\label{Hoeffding}
+\end{theorem}
+\begin{theorem}[一致收敛]
+	如果训练集大小满足\begin{equation}
+	n \ge \frac{1}{2\varepsilon^2}(\ln|\mathcal H| + \ln\frac{2}{\delta})
+	\end{equation}
+	则就有至少$1 - \delta$的概率，每个$h \in H$都满足$|err_D(h) - err_S(h)| < \varepsilon$。
+\end{theorem}
+\begin{Proof}
+	根据\cref{Hoeffding}，把$err_S(h)$理解成$\frac{s}{n}$，把$err_D(h)$理解成$p$，可以得到某个$h$寄掉的概率$\le 2\text e^{-2n\varepsilon^2}$，union bound后$2|\mathcal H|\text e^{-2n\varepsilon^2} \le \delta \Rightarrow n \ge \frac{1}{2\varepsilon^2}(\ln|\mathcal H| + \ln\frac{2}{\delta})$。
+\end{Proof}
+\begin{theorem}[奥卡姆剃刀，Occam's razor]
+	本质就是\cref{training} 在$\mathcal H = [2^b-1]$时的平凡推论，即规则集合包含所有可用少于$b$个比特描述的$h$。但这揭示了一件很有意思的事情：对于同一个训练样本集$S$，使用越简单的规则去描述，它的置信度就越高。当然这其实也不是绝对的，因为不同主体可以有不同的定义“简单”的方式。
+\end{theorem}
+\subsection{VC-Dimension}
+\begin{definition}[VC-Dimension]
+	对于一个集合系统$(X, \mathcal H)$，称$\mathcal H$ shatter了一个集合$A \subseteq X$，如果$A$的每个子集都可以表示成$A \cap h$，其中$h \in \mathcal H$。$\mathcal H$的VC-Dimension就是最大的可被$\mathcal H$ shatter的集合大小。
+\end{definition}
+\begin{proposition}[一些VC-Dimension的例子]{\color{white}...}
+	\begin{itemize}
+		\item 边平行于坐标轴的矩形：VC-Dimension为$4$。
+		\item 实数区间：VC-Dimension为$2$。
+		\item 两个实数区间：VC-Dimension为$4$。
+		\item $k$个半平面：VC-Dimension为$2k+1$。
+		\item 有限集：VC-Dimension为$\infty$。
+		\item 凸多边形：VC-Dimension为$\infty$。
+		\item $d$维半平面：VC-Dimension为$d+1$。
+		\item $d$维球：VC-Dimension为$d+1$。
+	\end{itemize}
+\end{proposition}
+
+\begin{definition}[Shatter Function]
+	对于集合系统$(X, \mathcal H)$，定义其 shatter function $\pi_{\mathcal H}(n)$表示可被$A \cap h$表出的$A$的子集数量的最大值，其中$A$取遍所有$n$元集合。
+	
+	设$\mathcal H$的VC-Dimension为$d$，对于$n \le d$，有$\pi_{\mathcal H}(n) = 2^n$，在这之外，$\pi_{\mathcal H}(n)$随着$n$多项式级别增长。
+\end{definition}
+\begin{theorem}[Sauer]
+	设$\mathcal H$的VC-Dimension为$d$，则$\pi_{\mathcal H}(n) \le \binom{n}{ \le d} \le n^d + 1$对所有$n$成立。
+\end{theorem}
+\begin{Proof}
+	考虑归纳，尝试证明\begin{equation}
+	\pi_{\mathcal H}(n) = \pi_{\mathcal H_1}(n-1) + \pi_{\mathcal H_2}(n-1) \le \binom{n-1}{\le d} + \binom{n-1}{\le d-1} = \binom{n}{\le d}
+	\end{equation}
+\end{Proof}
+\begin{theorem}[Key Theorem]
+	$(X, \mathcal H)$是一集合系统，$D$是$X$上的概率分布，$S_1$包含$n$个根据$D$分布从$X$中选取的点，其中$n$满足
+	\begin{equation}
+		n \ge \max\left\{ \frac{8}{\varepsilon}, \frac{2}{\varepsilon}\left[ \log_22\pi_{\mathcal H}(2n) + \log_2\frac{1}{\delta} \right] \right\}
+	\end{equation}
+	则有至少$1 - \delta$的概率，$\mathcal H$中每个概率密度$\ge \varepsilon$(类似于$|h| \ge \varepsilon|X|$，但$X$可能是无限的)的$h$都会满足$h \cap S_1 \neq \varnothing$。
+\end{theorem}
+\begin{Proof}
+	考虑事件$A$：存在一个概率密度$\ge \varepsilon$的$h \in \mathcal H$使得$h \cap S_1 = \varnothing$。按照与$S_1$相同的方法采样$S_2$，再考虑事件$B$：存在一个概率密度$\ge \varepsilon$的$h \in \mathcal H$使得$h \cap S_1 = \varnothing$且$|h \cap S_2| \ge \frac{\varepsilon}{2}n$。
+	
+	先证明$\Pr{B|A} \ge \frac12$，这可以说明$\Pr{B} \ge \Pr{B|A}\Pr{A} \ge \frac12\Pr{A}$。考虑$\mathbf x = (x_1, x_2, \cdots, x_n)$，其中$x_i$是$\{0, 1\}$变量表示$S_2$的第$i$次采样是否在$h$中，$\E{x_i} = \varepsilon$(不妨假设就是$\varepsilon$)，$ \Var{x_i} \le \varepsilon$，则$\E{|\mathbf x|^2} = n\varepsilon, \Var{|\mathbf x|^2} \le n\varepsilon$，于是$\Pr{|\mathbf x|^2 \ge \frac{\varepsilon}{2}n} \ge \Pr{||\mathbf x|^2 - \E{|\mathbf x|^2}| \le \frac{\varepsilon}{2}n} \ge 1 - \Var{|\mathbf x|^2}\left(\frac{2}{n\varepsilon}\right)^2 \ge 1 - \frac{4}{n\varepsilon}$。当$n \ge \frac{8}{\varepsilon}$时，可以得到$\Pr{|\mathbf x|^2 \ge \frac{\varepsilon}{2}n} \ge \frac12$。
+	
+	于是接下来只考虑限制$\Pr{B}$。更换$S_1, S_2$的采样顺序，考虑先进行$2n$大小的采样得到$S_3$，再随机选择$n$个点给$S_1$。注意此时$S_3 \cap \mathcal H= \{S_3 \cap h: h \in \mathcal H\}$是一个有限集合，其大小不超过$\pi_{\mathcal H}(2n)$，因此我们就可以对这个有限集合运用union bound了。对于每个$h' \in S_3 \cap \mathcal H$，满足$|S_1 \cap h'| = 0$且$|S_2 \cap h'| \ge \frac{\varepsilon}{2}n$的概率不超过($|h'| \ge \frac{\varepsilon}{2}n$，相当于有至少$\frac{\varepsilon}{2}n$个元素需要保证被划入$S_2$)\begin{equation}
+		2^{-n\varepsilon / 2} \le 2^{-\log_22\pi_{\mathcal H}(2n) + \log \delta} = \frac{\delta}{2\pi_{\mathcal H}(2n)}
+	\end{equation}
+	从而根据union bound，存在一个这样的$h'$的概率不超过$\frac{\delta}{2\pi_{\mathcal H}(2n)} \cdot \pi_{\mathcal H}(2n) = \frac{\delta}{2}$，即$\Pr{B} \le \frac{\delta}{2}$。于是$\Pr{A} \le \delta$。
+\end{Proof}
+\begin{remark}
+	Key Theorem 是利用Shatter Function对可能为无限集的$X$给出了一个类似\cref{training} 的结论，其中用到了被称为\obj{double sampling}的技巧。如果把$h$理解成error，那么这个定理等价于在说：以至少$1 - \delta$的概率，每个$h \in \mathcal H$都满足$err_D(h) \ge \varepsilon \Rightarrow err_S(h) \ge 0$或者等价的，$err_S(h) = 0 \Rightarrow err_D(h) < \varepsilon$。
+\end{remark}
+\subsection{Online Learning}
+
+\subsubsection{三个在线学习的例子}
+考虑有$n$位专家的二分类问题。
+
+\begin{proposition}[Q1]
+	若存在perfect expert(永远回答正确)，则存在策略使出错次数不超过$\log_2 n$。
+\end{proposition}
+\begin{Proof}
+	使用majority elimination即可(每次选取专家回答的majority，并把出错的专家干掉，这样自己的每次出错都会使剩余专家数量减少至少一半)。
+\end{Proof}
+\begin{proposition}[Q2]
+	 采用这样的策略：所有专家初始权重均为$1$，每次选取专家回答的加权majority，并把出错的专家权重除以$2$。假设最厉害的专家一共出错了$\text{opt}$次。
+	 \begin{itemize}
+	 	\item 结束时总权重至少还有$\left(\frac12\right)^{\text {opt}}$。
+	 	\item 自己的每次出错会导致总权重减少至少$\frac14$。
+	 \end{itemize}
+	 从而该策略可以使得\begin{equation}
+	 \left(\frac12\right)^{\text {opt}} \le n\left(\frac34\right)^{\#\text{mistake}}
+	 \Rightarrow \#\text{mistake} \le \frac{\text{opt} + \log_2n}{\log_2\frac43}
+	 \end{equation}
+\end{proposition}
+\begin{proposition}[Q3]
+	采用这样的策略：所有专家初始权重均为$1$，每次按权重随机一位专家的回答，并把出错的专家权重乘$(1 - \varepsilon)$。假设最厉害的专家一共出错了$\text{opt}$次。
+	
+	注意每轮结束后总权重的变换总是$w \to w(1 - \varepsilon \Pr{\text{mistake}})$，这是与本轮是否回答错误无关的，而$\E{\#\text{mistake}} = \sum \Pr{\text{mistake}}$，所以考虑对后者求上界：
+	\begin{equation}
+	(1 - \varepsilon)^{\text{opt}} \le n\prod (1 - \varepsilon \Pr{\text{mistake}}) \le n\prod \text e^{-\varepsilon \Pr{\text{mistake}}} = n\text e^{-\varepsilon \sum \Pr{\text{mistake}}}
+	\end{equation}
+	\begin{equation}
+	\E{\#\text{mistake}} = \sum \Pr{\text{mistake}} \le \frac{\ln n + \text{opt}\ln\frac{1}{1 - \varepsilon}}{\varepsilon}
+	\end{equation}
+\end{proposition}
+
+\subsubsection{Boosting}
+\begin{definition}[$\gamma$-weak learner]
+	一个$\gamma$-weak learner指的是一种算法，在任何给定的带权样本集下，都能够给出一个分类器，其可以正确标识集合中权重和至少为$(\frac12 + \gamma)\sum w_i$的样本。
+\end{definition}
+\begin{definition}[Boosting]
+	Boosting Algorithm指的是利用一个$\gamma$-weak learner来得到一个strong learner的算法。分为如下几步：
+	\begin{enumerate}
+		\item 对于样本集$S = (\mathbf x_1, \cdots, \mathbf x_n)$，设定初始权重$\mathbf w = (w_1, \cdots, w_n)$其中$w_i = 1, \forall i$。
+		\item 重复$t_0$轮，第$t$轮将带权样本集$(S, \mathbf w)$喂给$\gamma$-weak learner并得到分类器$h_t$，把$h_t$分错的那些元素的权重乘上$\alpha = \frac{\frac12 + \gamma}{\frac12 - \gamma}$。
+		\item $t_0$轮结束后，输出$\text{MAJ}(h_1, \cdots, h_{t_0})$作为最终的分类器。
+	\end{enumerate}
+\end{definition}
+\begin{theorem}
+	取$t_0 > \frac{\ln n}{\gamma^2}$，便可以得到一个 training error 为零的分类器。
+\end{theorem}
+\begin{Proof}
+	假设最终输出的分类器错了$m$个样本。一方面，最后所有样本的权重和至少是$m\alpha^{t_0/2}$，因为这$m$个样本需要被分错至少$t_0/2$轮；另一方面，$\gamma$-weak learner的性质保证其每次只会对不超过总权重$(\frac12 - \gamma)$的部分出错，于是若记$\text{weight}(t)$表示第$t$轮后所有样本的总权重，则$\text{weight}(t+1) \le (\alpha(\frac12 - \gamma) + (\frac12 + \gamma))\text{weight}(t) = (1 + 2\gamma)\text{weight}(t)$，从而得到$\text{weight}(t_0) \le n(1 + 2\gamma)^{t_0}$。于是
+	\begin{equation}
+	m\alpha^{t_0/2} \le n(1 + 2\gamma)^{t_0} \quad\Rightarrow\quad m \le n(1 - 2\gamma)^{t_0/2}(1 + 2\gamma)^{t_0/2} = n(1 - 4\gamma^2)^{t_0/2} \le n\text e^{-2t_0\gamma^2}
+	\end{equation}
+	若取$t_0 > \frac{\ln n}{\gamma^2}$，便可得$m < 1$，从而training error为零。
+\end{Proof}
+\newpage
+\section{Algorithms for Massive Data Problems}
+\subsection{Streaming}
+\subsubsection{Picking Elements}
+从数据流中等概率的取一个数$a_i$：维护当前已看过的数的数量$n$和选取的数$x$，当出现一个新数$b$时，以$\frac{1}{n+1}$的概率替换$a$，同时$n \gets n + 1$。
+
+同理还可以带权随机，只需要维护权重前缀和即可。
+\subsubsection{Distinct Elements}
+\begin{proposition}[确定性算法的空间下界]
+	确定性算法对于长度为$m+1$的序列，需要至少$m$比特的存储空间。
+\end{proposition}
+\begin{Proof}
+	考虑把$\{1, 2, \cdots, m\}$的任意非空子集喂给该确定性算法，子集有$2^m-1$种，而状态表示却只有$2^{m-1}$种，故一定产生冲突，寄。
+\end{Proof}
+\begin{theorem}[用$\min$估计]
+	假设序列中不同的元素为$b_1, b_2, \cdots, b_d$，取一个2-universal的哈希函数$h$，其值域为$[0, M-1]$，取$S = \{h(b_1), h(b_2), \cdots, h(b_d)\}$的最小值$\min$。则有至少$\frac23 - \frac{d}{M}$的概率，$\frac d6 \le \frac{M}{\min} \le 6d$。
+\end{theorem}
+\begin{Proof}
+	先证明$\Pr{\min \le \frac{M}{6d}} \le \frac16 + \frac dM$，这一部分并不依赖pairwise independence。$\min$小于一个数说明存在一者小于，这个概率可以union bound放缩成每一者小于的概率之和
+	\begin{equation}
+		\Pr{\min \le \frac{M}{6d}}  = \Pr{\exists k, h(b_k) \le \frac{M}{6d}} \le \sum_{i=1}^{d} \Pr{h(b_i) \le \frac {M}{6d}} \le d\left(\frac{\lceil\frac{M}{6d}\rceil}{M}\right) \le \frac16 + \frac dM
+	\end{equation}	
+	再证明$\Pr{\min \ge \frac{6M}{d}} \le \frac16$，这就需要用到pairwise independence。$\min$大于一个数说明每一者都比这个数大，用一个$\{0, 1\}$变量$y_i$表示$h(b_i)$是否大于等于$\frac{6M}{d}$，再记$y = \sum\limits_{i=1}^{d}y_i$，易得$\E{y} = d\E{y_i} = 6, \Var{y} = d\Var{y_i} = d(\E{y_i^2} - \E{y_i}^2) \le d\E{y_i^2} = d\E{y_i} = \E{y}$，从而根据Chebyshev's Inequality
+	\begin{equation}
+	\Pr{\min \ge \frac{6M}{d}} = \Pr{\forall k, h(b_k) \ge \frac{6M}{d}} = \Pr{y = 0} \le \Pr{|y - \E{y}| \ge \E{y}} \le \frac{\Var{y}}{\E{y}^2} \le \frac{1}{\E{y}} = \frac 16
+	\end{equation}
+	
+\end{Proof}
+\subsubsection{Occurences of a Given Element}
+朴素做法需要$\log n$的空间，因为只需要维护一个计数器。
+
+存在一种$\log \log n$空间的方法：初始记录$0$，每次遇到需要数的元素，设当前记录的数是$k$，就以$1 / 2^k$的概率将这个数$+1$，这样当记录的数字是$k$时，元素的期望出现次数就是$1 + 2 + \cdots + 2^{k-1} = 2^k-1$。
+\subsubsection{Majority Algorithm}
+\begin{proposition}[确定性算法的空间下界]
+	假设元素一共有$m$种，序列长度为$n$，那么确定性算法至少需要$\Omega(\min\{n, m\})$的空间。
+\end{proposition}
+\begin{Proof}
+	考虑序列前$n/2$个元素组成的集合$S \subseteq \{1, 2, \cdots, m\}$，对于不同的集合$S$，算法必须有不同的记录，这是因为一旦对于不同的集合$S, S'$有了相同的记录，就可以在后$n/2$个数中全部写$S \setminus S'$中的一个元素，这样就寄了(正确的结果是前者存在majority而后者不存在)。因此至少需要$\log_2\left(\sum\limits_{i=1}^{n/2}\binom mi\right) = \Omega(\min(n, m))$的空间。
+\end{Proof}
+\begin{definition}[Majority Algorithm]
+	维护一个数$a$和一个计数器$cnt$，遇到一个新数时，如果与$a$相同，就把计数器$+1$；否则如果计数器大于$1$就$-1$，否则用新的数替换$a$并把计数器置为$1$。
+	
+	这个算法可能给出false positive(没有majority的时候给出一个错误的majority)，但不可能有false negative(当majority存在时一定会正确地给出)。
+\end{definition}
+\subsubsection{Frequent Algorithm}
+\begin{definition}[Frequent Algorithm]
+	Frequent Algorithm是Majority Algorithm的升级版，维护$k$个元素以及分别的计数器，每当遇到一个新数，如果与$k$个元素中的某个相同，就将其对应的计数器$+1$，否则若$k$个元素中存在空位，就加入该空位并把计数器置为$1$，若不存在空位，则把所有数的计数器值$-1$，并把计数器为$0$的元素删去。
+\end{definition}
+\begin{theorem}
+	Frequent Algorithm只会把一种元素少数(under count)至多$\frac{n}{k+1}$次。当一个数没有出现在$k$个元素中时，认为这个数被数了$0$次。
+\end{theorem}
+\begin{Proof}
+	每当触发一次“所有计数器$-1$”，都会导致所有数被数的总数减少恰好$k+1$，因此只会触发不超过$\frac{n}{k+1}$次，而一种元素在一次触发中至多只会被少数$1$次，故每个数至多只会被少数$\frac{n}{k+1}$次。
+\end{Proof}
+
+\subsubsection{The Second Moment}
+
+设一个数据流中$s$元素出现了$f_s$次，定义该数据流的second moment为$\sum\limits_{s=1}^{m}f_s^2$，即每个元素出现次数的平方。我们希望估计这个值。取一个哈希函数$h: \{1, 2, \cdots, m\} \to \{-1, 1\}$，并记$h(s) = x_s$，此时有$\E{\sum\limits_{s=1}^{m}x_sf_s} = 0$，考虑计算
+\begin{equation}
+	\E{a \triangleq \left(\sum_{s=1}^{m}x_sf_s\right)^2} = \E{\sum_{s=1}^{m}x_s^2f_s^2} + 2\E{\sum_{s < t}x_sx_tf_sf_t} = \sum_{s=1}^{m}f_s^2
+\end{equation}
+
+第二个等号要想成立，要求$\E{x_sx_t} = \E{x_s}\E{x_t} = 0$，级要求哈希函数$h$满足pairwise independence。
+
+我们希望进一步地限制一下方差，由于期望已经确定了，所以只需要考虑限制$\E{a^2}$。如果$h$满足4-way independence，那么
+\begin{equation}
+\begin{split}
+\E{a^2} &= \E{\sum_{s, t, u, v}x_sx_tx_ux_vf_sf_tf_uf_v} \le \binom{4}{2}\E{\sum_{s < t}x_s^2x_t^2f_sf_t} + \E{\sum_s x_s^4f_s^4}\\
+&=6\sum_{s < t}f_s^2f_t^2 + \sum_{s=1}^{m}f_s^4 \le 3\left( \sum_{s=1}^{m}f_s^2 \right)^2 = 3\E{a}^2
+\end{split}
+\end{equation}
+
+
+\subsection{Hash Functions}
+
+我们说的pairwise independence(或者2-universal)，指的是对于一个哈希函数族$H$，它满足任意$x, y \in \{1, 2, \cdots, m\}$(定义域)满足$x \neq y$和任意$w, z \in \{0, 1, \cdots, M-1\}$(值域)，都有\begin{equation}
+\Pr{h(x) = w \wedge h(y) = z} = \frac{1}{M^2}
+\end{equation}
+随机性来自于$h$从$H$中的选取。
+
+如果进一步要求$k$-way independence，那么要求就改为对于任意$\binom{m}{k}$种定义选取和$M^k$种值域选取，概率都是一样的$1 / M^k$。
+
+\subsection{Sampling \& Sketching}
+\subsubsection{Sketching Matrix Multiplication}
+假设需要sketch的是$m \times n$的矩阵$A$和$n \times p$的矩阵$B$的乘积。记$\alpha_k$表示$A$的第$k$个列向量，$\beta_k$表示$B$的第$k$个行向量，则\begin{equation}
+AB = \sum_{k=1}^{n}\alpha_k\beta_k^{\text T}
+\end{equation}
+考虑以$\{p_k\}$的概率采样$X = \frac{1}{p_k}\alpha_k\beta_k^{\text T}$，这样不论$p$怎么取，用$X$对$AB$的估计都是无偏的，即
+\begin{equation}
+\E{X} = \sum_{k=1}^{n}p_k\frac{1}{p_k}\alpha_k\beta_k^{\text T} = \sum_{k=1}^{n}\alpha_k\beta_k^{\text T} = AB
+\end{equation}
+现在我们对“方差”感兴趣。更形式化的说，我们关注的是这个量
+\begin{equation}
+\E{\|AB - X\|_F^2}
+\end{equation}
+我们希望适当地选取$p$来最小化这个值。一方面，可以找出使这个值最小化的精确结果
+\begin{equation}
+\begin{split}
+\E{\|AB - X\|_F^2} &= \sum_{i,j}\E{x_{ij}^2} - \E{x_{ij}}^2 = \left(\sum_{i,j,k}p_k\left(\frac{1}{p_k}a_{ik}b_{kj}\right)^2\right) - \|AB\|_F^2\\
+&= \sum_k\frac{1}{p_k}\left(\sum_i a_{ik}^2\right)\left(\sum_j b_{kj}^2\right) - \|AB\|_F^2\\&= \sum_{k}\frac{1}{p_k}|\alpha_k|^2|\beta_k|^2- \|AB\|_F^2
+\end{split}
+\end{equation}
+取$p_k \propto |\alpha_k||\beta_k|$即$p_k = \frac{|\alpha_k||\beta_k|}{\sum_j |\alpha_j||\beta_j|}$，可以使上式取到最小值。
+
+另一方面，可以估计一下“方差”的上界(取上述最佳的$p_k$时)。
+
+\begin{equation}
+\E{\|AB - X\|_F^2} \le \left(\sum_k |\alpha_k||\beta_k|\right)^2 \le \left(\sum_k|\alpha_k|^2\right)\left(\sum_k|\beta_k|^2\right) = \|A\|_F^2 \|B\|_F^2
+\end{equation}
+
+增加采样次数可以减少“方差”。形式化的，有如下结论：
+\begin{theorem}
+	设$A$是$m \times n$矩阵，$B$是$n \times p$矩阵，则矩阵乘积$AB$可以被$CR$来估计，其中$C, R$分别是$m \times s, s \times p$的矩阵，其生成方式为：按照$\{p_k\}$随机采样$k_1, \cdots, k_s$，并以$\frac{\alpha_{k_1}}{\sqrt{sp_{k_1}}},\cdots, \frac{\alpha_{k_s}}{\sqrt{sp_{k_s}}}$作为$C$的列向量，以$\frac{\beta_{k_1}}{\sqrt{sp_{k_1}}},\cdots, \frac{\beta_{k_s}}{\sqrt{sp_{k_s}}}$作为$R$的行向量，此时有
+\begin{equation}
+\begin{split}
+\E{CC^{\text T}} &= AA^\text T\\
+\E{R^{\text T}R} &= B^\text TB\\
+\E{\|AB - CR\|_F^2} &\le \frac{\|A\|_F^2\|B\|_F^2}{s}
+\end{split}
+\end{equation}
+\end{theorem}
+\subsubsection{Sketching Matrices}
+这个问题是比前一个问题(sketch矩阵乘积)要难的。可能听起来有点奇怪，但可以给出一个intuitive的解释：假设需要sketch一个$m \times n$的矩阵$A$，将其写成$A = AI$并考虑套用前述方法去sketch等式右边的矩阵乘积。然而$\|I\|_F^2 = n$很大，我们只能得到$\E{\|A - X\|_F^2} \le \frac{n}{s}\|A\|_F^2$的上界。然而如果用全零矩阵去sketch，得到的error也只有$\|A\|_F^2$。换句话说，上述做法想要做得比$0$矩阵好，就需要$s > n$，而这是无意义的，因为有这个容量已经可以把$A$完整地表示出来了。
+
+我们考虑的事情是找到一个“pseudo-identity matrix”$\hat{I}$，使得$A \approx A\hat{I}$，然后用前面的方法去sketch矩阵乘积$A\hat{I}$。构造方法是这样的：
+\begin{enumerate}
+	\item 先按照length square采样$A$的行向量$\alpha_k$，采样$r$次，得到一个$r \times n$的矩阵$R$。
+	
+	注意此时$\E{R^{\text T}R} = A^{\text T}A$，且$\E{\|A^{\text T}A - R^\text{T}R\|_F^2} \le \frac{\|A\|_F^4}{r}$，这是因为这个采样恰好符合前面的形式。
+	\item 构造$\hat{I} = R^{\text T}(RR^{\text T})^{-1}R$。$RR^{\text T}$可能不可逆，此时可以用SVD来构造$RR^{\text T}$的“伪逆”：设$RR^{\text T} = \sum\limits_{i=1}^{r}\sigma_i\mathbf v_i \mathbf v_i^{\text T}$是$RR^{\text T}$的SVD，则取$\hat{I} = R^{\text T}\left( \sum\limits_{i=1}^{r}\frac{1}{\sigma_i}\mathbf v_i \mathbf v_i^{\text T} \right)R$。
+\end{enumerate}
+
+记$R$行向量张成的空间为$V_R$，可以验证$\forall v \in V_R, \hat{I}v = v$，而$\forall v \perp V_R, \hat{I}v = 0$。
+
+$\|\hat{I}\|_F^2$可以限制住，因为$\|\hat{I}\|_F^2 = \text{rank} \hat{I} \le r$。从而对矩阵乘积$A\hat{I}$的估计也可以有限制\begin{equation}
+\E{\|X - A\hat{I}\|_2^2} \le \E{\|X - A\hat{I}\|_F^2} \le \frac{\|A\|_F^2 \|\hat{I}\|_F^2}{s} \le \frac{r}{s}\|A\|_F^2
+\end{equation}
+
+而$\|A - A\hat{I}\|_2^2$也可以被限制住，这是因为
+\begin{equation}
+\begin{split}
+	\|A - A\hat{I}\|_2^2 &= \max_{v}|(A - A\hat{I})v|^2\\
+	&= \max_{v \perp V_R} |Av|^2\\
+	&= \max_{v \perp V_R} v^{\text T}A^{\text T}Av\\
+	&= \max_{v \perp V_R} v^{\text T}(A^{\text T}A - R^{\text T}R)v\\
+	&\le \|A^{\text T}A - R^{\text T}R\|_2\\
+	&\le \|A^{\text T}A - R^{\text T}R\|_F\\
+	&\le \frac{\|A\|_F^2}{\sqrt r}
+\end{split}
+\end{equation}
+
+(由于$\hat{I}, R$的定义是包含随机的，所以严格来说以上的所有东西都需要加上$\E{}$。)
+
+从而根据Spectral norm的三角不等式，$\|X - A\|_2^2$也可以被限制住。形式化地，我们知道$c \le a + b \Rightarrow c^2 \le (a + b)^2 = a^2 + b^2 + 2ab \le 2a^2 + 2b^2$，所以
+\begin{equation}
+\begin{split}
+\E{\|X - A\|_2^2} \le 2\E{\|X - A\hat{I}\|_2^2} + 2\E{\|A - A\hat{I}\|_2^2} \le 2\|A\|_F^2\left(\frac{1}{\sqrt r} + \frac{r}{s}\right)
+\end{split}
+\end{equation}
+\newpage
+\section{Random Graphs}
+\begin{definition}
+	一张随机图$G(n, p)$就是一张$n$点完全图，其中每条边独立地以$p$的概率出现。
+\end{definition}
+\begin{corollary}[关于存在性与不存在性的证明技巧]{\color{white}...}
+	
+	如果想要证明一个性质在图中\textbf{不存在}，可以考虑使用Markov's Inequality
+	\begin{equation}
+		\Pr{X \ge 1} \le \E{X}
+	\end{equation}
+	
+	如果想要证明一个性质在图中\textbf{存在}，可以考虑使用Chebyshev's Inequality
+	\begin{equation}
+		\Pr{X = 0} \le \Pr{|X - \E{X}| \ge \E{X}} \le \frac{\Var{X}}{\E{X}^2}
+	\end{equation}
+	
+	由于分析时前者只用到了期望而后者用到了方差，故通常会把前者称为first moment method，后者称为second moment method。
+\end{corollary}
+
+\begin{definition}[相变阈值]
+	相变阈值(threshold for phase transitions)是针对于图的某个性质$\mathcal P$ (比如说，存在$K_3$)的关于$n$的函数$r(n)$，满足
+	\begin{equation}
+	\Pr{G(n, p(n))\ \text{satisfies}\ \mathcal P} \to \begin{cases}
+	0, & p(n) / r(n) \to 0\\
+	1, & p(n) / r(n) \to \infty\\
+	\end{cases}\quad(n \to \infty)
+	\end{equation}
+	有些时候甚至可以得到精确的常数，即只要偏离该常数一点就会导致概率收敛至$0$或$1$，此时称这个阈值为sharp threshold，同时也有更精确的形式
+	\begin{equation}
+	\Pr{G(n, p(n))\ \text{satisfies}\ \mathcal P} \to \begin{cases}
+	0, & p(n) < r(n) \\
+	1, & p(n) > r(n) \\
+	\end{cases}\quad(n \to \infty)
+	\end{equation}
+\end{definition}
+
+\begin{theorem}[三角形]
+	“图中存在$K_3$”的相变阈值是$r(n) = \Theta(n^{-1})$。
+\end{theorem}
+\begin{Proof}
+	对于$G(n, p)$分析。设图中$K_3$的数量为$X$，则显然$\E{X} = \binom{n}{3}p^3 = \Theta(n^3p^3)$，当$p = o(n^{-1})$时，$\E{X} \to 0$说明$\Pr{X \ge 1} \to 0$，于是$r(n) = \Omega(n^{-1})$。
+	
+	考虑求$\Var{X}$，主要问题在于求$\E{X^2}$，也就是枚举两个$K_3$计算同时存在的概率再求和。这里两个$K_3$有三种情况：要么边不交(完全独立，由Chebyshev's Inequality放缩成$\E{X}^2$)，要么只交一条边($4$个点$5$条边)，要么完全重合($\E{X}$)，因此
+	\begin{equation}
+	\E{X^2} \le \E{X}^2 + \Theta(n^4p^5) + \E{X}, \qquad \frac{\Var{X}}{\E{X}^2} \le \frac{\E{X} + \Theta(n^4p^5)}{\E{X}^2} = \Theta(n^{-3}p^{-3}) + \Theta(n^{-2}p^{-1})
+	\end{equation}
+	当$p = \omega(n^{-1})$时，$\frac{\Var{X}}{\E{X}^2} \to 0$说明$\Pr{X = 0} \to 0$，于是$r(n) = O(n^{-1})$。
+\end{Proof}
+\begin{theorem}[$4$-clique]
+	“图中存在$K_4$”的相变阈值是$r(n) = \Theta(n^{-2/3})$。
+\end{theorem}
+\begin{Proof}
+	设图中$K_4$数量为$X$，$\E{X} = \Theta(n^4p^6)$，当$p = o(n^{-2/3})$时$\E{X} \to 0$，于是$r(n) = \Omega(n^{-2/3})$。
+	
+	两个$K_4$相交有$4$种情况：\num{i}边不交($\E{X}^2$)，\num{ii}交两个点($6$个点$11$条边)，\num{iii}交三个点($5$个点$9$条边)，\num{iv}完全重合($\E{X}$)，故
+	\begin{equation}
+	\begin{split}
+	\E{X^2} \le \E{X}^2 + \Theta(n^6p^{11}) + \Theta(n^5p^9) + \E{X}\\
+	\frac{\Var{X}}{\E{X}^2} \le \Theta(n^{-2}p^{-1}) + \Theta(n^{-3}p^{-3}) + \Theta(n^{-4}p^{-6})
+	\end{split}
+	\end{equation}
+	当$p = \omega(n^{-2/3})$时，$\frac{\Var{X}}{\E{X}^2} \to 0$说明$\Pr{X = 0} \to 0$，于是$r(n) = O(n^{-2/3})$。
+\end{Proof}
+\begin{theorem}[风筝]
+	“图中存在kite”相变阈值是$r(n) = \Theta(n^{-2/3})$。一个kite是指一个$K_4$伸出去一个点。
+\end{theorem}
+\begin{remark}
+	注意并不是$\Theta(n^{-5/7})$，虽然kite有$5$个点$7$条边没错，但kite包含一个$K_4$作为子图，而$K_4$是需要至少$\Theta(n^{-2/3})$的阈值的。可以证明大于这个值也能使kite的出现概率收敛到$1$。
+\end{remark}
+\begin{Proof}
+	风筝数量的期望$\E{\#\text{kite}} = \Theta(n^5p^7)$，说明$r(n) = \Omega(n^{-5/7})$，但实际上可以更强，因为要出现风筝必然要出现$K_4$，而后者的阈值是$\Theta(n^{-2/3})$，因此应该有$r(n) = \Omega(n^{-2/3})$。
+	
+	两个风筝相交的情况很多，但考虑如果相交了$a$个点和$b$条边，那么就会导致$\Var{\#\text{kite}}$的上界中出现$\Theta(n^{10-a}p^{14-b})$一项，于是$\Pr{\#\text{kite} = 0} \le \frac{\Var{X}}{\E{X}^2}$中就有$\Theta(n^{-a}p^{-b})$一项。希望分析得到前者$\to 0$，那么势必需要让$p = \omega(n^{-a/b})$。于是考虑取$-a/b$的最大值即$a/b$的最小值，这恰好是图中最大密度子图的密度的倒数。
+	
+	在这个问题中，风筝的最大密度子图的密度是$\frac32$(有一个$K_4$)，故$r(n) = O(n^{-2/3})$。
+	
+	综上，$r(n) = \Theta(n^{-2/3})$。
+\end{Proof}
+\begin{corollary}[*自己瞎编的，不是书上写的]
+	“图中存在模式子图$T$”的相变阈值是$\Theta(n^{-1/\rho})$，其中$\rho$是$T$的最大密度子图的密度。
+\end{corollary}
+
+\begin{theorem}[直径至多为$2$]
+	“图的直径不超过$2$”有sharp threshold，是$\sqrt{\frac{2\ln n}{n}}$。
+\end{theorem}
+\begin{Proof}
+	只考虑对于$G\left(n, p(n) = c\sqrt{\frac{\ln n}{n}}\right)$分析，其他量级的$p(n)$只需要根据单调性即可推广。
+	
+	$X$表示图中距离大于$2$的点对数量，一对点$i, j$的距离大于$2$，当且仅当边$ij$不存在，且任意$k \in [1, n] \setminus \{i, j\}$，边$ik$与$jk$不同时存在，因此
+	\begin{equation}
+	\begin{split}
+	\E{X} &= \binom{n}{2}(1-p)(1-p^2)^{n-2} \\&= \binom{n}{2}\left(1 - c\sqrt{\frac{\ln n}{n}}\right)\left(1 - c^2\frac{\ln n}{n}\right)^{n-2} \\&= \Theta\left(n^2\text e^{-c^2\ln n}\right) = \Theta(n^{2 - c^2})
+	\end{split}
+	\end{equation}
+	
+	当$c > \sqrt 2$时，$\E{X} \to 0$，得到$r(n) \le \sqrt{\frac{2\ln n}{n}}$。
+	
+	考虑分析$\E{X^2}$，即枚举两对点$(i, j), (i', j')$距离均大于$2$的概率。有三种情况：\num{i}点不交，可以用$\E{X}^2$来bound，\num{ii}有一个点相交，此时对于确定的某三个点$i, j, k$，$i$到$j, k$的距离均大于$2$的概率是$(1-p)^2\left((1-p) + p(1-p)^2\right)^{n-3}$，代入$p = c\sqrt{\frac{\ln n}{n}}$后可分析到$\Theta(n^{-2c^2})$，\num{iii}两对点重合，这部分就是$\E{X}$。综上，可以得到
+	\begin{equation}
+		\frac{\Var{X}}{\E{X}^2} \le \frac{\Theta(n^{3-2c^2}) + \Theta(n^{2-c^2})}{\Theta(n^{4 - 2c^2})}
+	\end{equation}
+	
+	当$c < \sqrt 2$时，$\frac{\Var{X}}{\E{X}^2} \to 0$，于是$r(n) \ge \sqrt{\frac{2\ln n}{n}}$。
+	
+	综上，$r(n) = \sqrt{\frac{2\ln n}{n}}$。
+\end{Proof}
+
+
+\end{document}

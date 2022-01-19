@@ -1,0 +1,369 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+
+
+\title{\heiti\zihao{1} 可计算性理论研读}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\date{\today}
+
+\begin{document}\small
+\pagestyle{fancy}
+\lhead{前沿计算研究实践(I) (2021年秋)}
+\chead{}
+\rhead{可计算性理论研读}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+
+\section{摘要}
+
+可计算性理论(computability theory)是数理逻辑、计算机科学与计算理论的一个重要分支，在上个世纪30年代由 Alonzo Church, Kurt G\"odel 与 Alan Turing 等人创立并发展完善。这篇文章旨在回顾 Turing 在 1936 年发表的名为《论可计算数与其在判定问题中的应用》(\emph{On Computable Numbers, with an Application to the Entscheidungsproblem}, \cite{Turing})的论文(后称为Turing's 1936 Paper)，对Turing定义的可计算理论进行深入的考察。
+
+\section{从可计算到图灵机}
+
+Turing首先“陈述”可计算数就是小数部分可以通过有限的手段计算出来的实数，这里的有限的手段并非只小数位数的有限，而是算法描述上的有限。事实上Turing并未在此给出严格的定义，他的初衷是希望可计算数的含义诉诸直觉的，这种直觉的本质在于人类的记忆必然是有限的。更形式化的定义将在稍后给出。
+
+Turing把一个进行实数演算的人比作一台只能处理有限情况$q_1, q_2, \cdots, q_R$的机器，这些情况被称为m-configuration。一条长长的纸带贯穿这台机器，它被分成许多小格子，每个小格子上可能携带着一个记号。同样是出于直觉地，Turing认为在任意一个时刻，机器只能观察(或者说扫描)纸带上的恰好一个小格，不过它可以通过调节自身的m-configuration来“记住”之前扫描过的小格，而这台机器的行为将会由当前的m-configuration $q_n$以及扫描到的记号$\mathfrak{S}(r)$唯一确定。除了扫描与改变自身m-configuration之外，这台机器还可以进行对纸带的写以及擦除——只能针对于当前扫描的格子——以及把扫描小格向左或者右移动一格。此时，Turing指出上述的操作对于数的计算来说已经是足够的了。为了行文方便，以下把这种机器称作图灵机\footnote{显然这个词不是被Turing首先提出的。}。
+
+接下来引入一些形式化的定义：
+\begin{definition}[自动机 automatic machines]
+	如果一台机器在任何阶段的行为都可以由它当前的配置完全决定，那么就称这台机器为自动机。
+\end{definition}
+
+可以很明显地看出图灵机是一种自动机。在接下来的叙述中，会默认所提及的机器都是自动机。
+
+\begin{definition}[计算机 computing machines]
+	如果一个自动机只输出两类记号，其中第一类(称为figure)只包含$0$和$1$(其余的记号都属于第二类，称为symbol)，那么就称这台机器为计算机。
+\end{definition}
+
+不妨认为图灵机是计算机。考虑一台图灵机被提供了一条全空的纸带，并从某一个m-configuration开始持续工作，它会最终输出一个(可能无限长)的记号序列，将这个记号序列中第一类记号组成的子序列称为\textit{这台计算机计算得到的序列}，而通过把这个序列看做二进制小数从而得到的$[0, 1]$实数被称作\textit{这台计算机计算得到的数}。
+
+在任何一个阶段，图灵机在纸带上扫描的位置、纸带上完整的序列、以及图灵机的m-configuration的组合被称为当前阶段的\textit{整体配置(complete configuration)}。根据自动机的定义，图灵机的后续行为会被某一时刻的整体配置所唯一决定。
+
+\begin{definition}[循环机\&非循环机 circular \& circle-free machines]
+	如果一台计算机永远只能写下有限个figure，那么就称这台计算机是循环机，否则称这台计算机是非循环机。
+\end{definition}
+\begin{definition}[可计算序列 \& 可计算数 computable sequences \& computable numbers]
+	如果一个序列是一台非循环机计算得到的序列，那么就称这个序列是可计算序列。如果一个实数与一个由一台非循环机计算得到的数相差一个整数，那么就称这个数是可计算数。
+\end{definition}
+
+可以发现可计算序列与可计算数这两个概念是高度相关的。为了避免混淆，接下来将更多地使用可计算序列进行叙述。
+
+\section{两个计算机的例子}
+\subsection{输出010101...序列的计算机}\label{3-1}
+可以通过一个简单的例子来学习如何描述一台计算机。前面的定义已经指出计算机的行为会完全由整体配置决定，而其中可以利用的部分(计算机能够观察到的部分)只有扫描到的记号以及自身的m-configuation，而行为表现为对纸带做出左移、右移、写入或者擦除四种操作，以及对自身m-configuration的改变。因此，计算机的行动本质上是一个从配置到行为的映射，可以简单地通过列表的方式描述出来。
+
+考虑一台拥有四种m-configuation $\mathfrak b, \mathfrak c, \mathfrak e, \mathfrak f$的计算机，用大写字母$L, R, P, E$表示操作，其中$L$表示将扫描格子向左移动一格，$R$表示向右移动一格，$P$后面紧跟着一个记号$x$表示写下$x$，而$E$表示擦除。一个实现输出010101...序列的计算机的行为可以被描述为\cref{table1} 的形式。
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cc|cc}
+		\multicolumn{2}{c|}{配置} &  \multicolumn{2}{c}{行为}\\
+		\hline
+		m-config. & 记号 & 操作 & 改变后m-config.\\
+		\hline
+		$\mathfrak b$ & 无 & $P0, R$ & $\mathfrak c$\\
+		$\mathfrak c$ & 无 & $R$ & $\mathfrak e$\\
+		$\mathfrak e$ & 无 & $P1, R$ & $\mathfrak f$\\
+		$\mathfrak f$ & 无 & $R$ & $\mathfrak b$\\
+	\end{tabular}
+	\caption{一个实现输出010101...序列的计算机的行为描述}
+	\label{table1}
+\end{table}
+
+如果认为在一次行动中计算机可以多次移动纸带，就可以进一步简化行为描述，参考\cref{table2}。
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cc|cc}
+		\multicolumn{2}{c|}{配置} &  \multicolumn{2}{c}{行为}\\
+		\hline
+		m-config. & 记号 & 操作 & 改变后m-config.\\
+		\hline
+		\multirow{3}{*}{$\mathfrak b$} & 无 & $P0$ & $\mathfrak b$\\
+		 & $0$ & $R, R, P1$ & $\mathfrak b$\\
+		 & $1$ & $R, R, P0$ & $\mathfrak b$\\
+	\end{tabular}
+	\caption{简化后的行为描述}
+	\label{table2}
+\end{table}
+
+\subsection{输出001011011101111...序列的计算机}
+
+一种直观的想法是记录当前需要输出的连续的$1$的个数，但这是不可能的，因为这个数字会变得无限大，以至于需要记录的m-configuration集合变得无限。Turing在论文中提出了一种巧妙的方法实现了这个任务，如\cref{table3} 所示。
+
+\begin{table}
+	\centering
+	\begin{tabular}{cc|cc}
+		\multicolumn{2}{c|}{配置} &  \multicolumn{2}{c}{行为}\\
+		\hline
+		m-config. & 记号 & 操作 & 改变后m-config.\\
+		\hline
+		$\mathfrak b$ & 无 & $Pe, R, Pe, R, P0, R, R, P0, L, L$ & $\mathfrak o$\\
+		\hline
+		\multirow{2}{*}{$\mathfrak 0$} & $1$ & $R, Px, L, L, L$ & $\mathfrak o$\\
+		& $0$ & 无 & $\mathfrak q$\\
+		\hline
+		\multirow{2}{*}{$\mathfrak q$} & $0$ / $1$ & $R, R$ & $\mathfrak q$\\
+		& 无 & $P1, L$ & $\mathfrak p$\\
+		\hline
+		\multirow{3}{*}{$\mathfrak p$} & $x$ & $E, R$ & $\mathfrak q$\\
+		& $e$ & $R$ & $\mathfrak f$\\
+		& 无 & $L, L$ & $\mathfrak p$\\
+		\hline
+		\multirow{2}{*}{$\mathfrak f$} & $0$ / $1$ & $R, R$ & $\mathfrak f$\\
+		& 无 & $P0, L, L$ & $\mathfrak o$\\
+	\end{tabular}
+	\caption{一个实现输出001011011101111....序列的计算机的行为描述}
+	\label{table3}
+\end{table}
+
+可以简单验证一下这种描述的正确性，考虑归纳证明。基础情况可以模拟验证，对于任意$n$，考虑当前写下的序列末尾是$n$个连续的$1$和一个$0$，且扫描位置处于最后一个$1$，m-configuration为$\mathfrak o$。$\mathfrak o$实现了在$n$个$1$后面各写上一个$x$，之后在这$n$个$1$前面的那个$0$处变成$\mathfrak q$。$\mathfrak{q}$与$\mathfrak{p}$相互合作，其中$\mathfrak{q}$负责往序列右端新写入一个$1$，$\mathfrak{p}$负责寻找写下的$x$并告知$\mathfrak{q}$需要多写一个$1$，由于一开始$\mathfrak o$变成的是$\mathfrak q$，故一共写下了恰好$n+1$个$1$。在这个反复的过程结束之后，$\mathfrak f$负责写下最后一个$0$，并回到恰当的位置变成$\mathfrak o$，进入新的一轮迭代。
+
+在以上描述的两个例子中，可以看到输出的$01$序列总是在纸带上间隔分布的，两两格子之间留下了一个区域用于写下额外的symbol作为辅助记录。Turing把间隔写下figures的序列称为$F$-序列，把间隔写下symbols的序列称为$E$-序列。$E$-序列的功能本质上是用来标记$F$-序列的。注意到$F$-序列的每个格子一定不需要超过一个格子来作为额外的标记，因为总可以通过扩大symbol的集合(但仍是有限的)来做到这一点。接下来，将“在$F$-序列中的一个$\alpha$后面的$E$-序列格子中写下$\beta$”简称为 \textit{$\beta$标记了$\alpha$}。
+
+\section{缩写表}
+
+图灵机的基础功能(行为)是非常简单的，Turing为了能够让其实现更为复杂的运算，在论文的第4章提出了缩写表的概念，其本质思想是对简单操作的封装，以能够更加简洁地描述复杂的运算过程。以下便展示了一例，见\cref{table_f}。
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cc|cc}
+		m-config. & 记号 & 操作 & 改变后m-config.\\
+		\hline
+		\multirow{2}{*}{$\mathfrak f(\mathfrak C, \mathfrak B, a)$} 
+		& $e$ & $L$ & $\mathfrak f_1(\mathfrak C, \mathfrak B, a)$\\
+		& 不是$e$ & $L$ & $\mathfrak f(\mathfrak C, \mathfrak B, a)$\\
+		\hline
+		\multirow{3}{*}{$\mathfrak f_1(\mathfrak C, \mathfrak B, a)$} 
+		& $a$ & 无 & $\mathfrak C$\\
+		& 不是$a$ & $R$ & $\mathfrak f_1(\mathfrak C, \mathfrak B, a)$\\
+		& 无 & $R$ & $\mathfrak f_2(\mathfrak C, \mathfrak B, a)$\\
+		\hline
+		\multirow{3}{*}{$\mathfrak f_2(\mathfrak C, \mathfrak B, a)$}
+		& $a$ & 无 & $\mathfrak C$\\
+		& 不是$a$ & $R$ & $\mathfrak f_1(\mathfrak C, \mathfrak B, a)$\\
+		& 无 & $R$ & $\mathfrak B$\\
+	\end{tabular}
+	\caption{缩写表一例：$\mathfrak f(\mathfrak C, \mathfrak B, a)$}
+	\label{table_f}
+\end{table}
+
+用自然语言描述$\mathfrak f(\mathfrak C, \mathfrak B, a)$的功能，便是：找到序列中第一个$a$出现的位置，并在这个位置上把m-configuration改变成$\mathfrak C$；或者整个序列中就没有出现$a$，此时把m-configuration改变成$\mathfrak B$。这其中$\mathfrak C, \mathfrak B, a$是三个参数都是可以代入任何m-configuration以及记号的，因而$\mathfrak f(\mathfrak C, \mathfrak B, a)$本质上只是描述关于$\mathfrak C, \mathfrak B, a$的某个状态的缩写(abbreviation)。
+
+Turing引入了一系列缩写记号，以扩充图灵机的基础功能。这部分篇幅较长，故未被包含在本文中，详见\cite{Turing}。值得指出的一点是，对缩写记号的无限次代入是不允许的，否则将会产生$\mathfrak q, \mathfrak p(\mathfrak q), \mathfrak p\left(\mathfrak p(\mathfrak q)\right), \mathfrak p\left(\mathfrak p\left(\mathfrak p(\mathfrak q)\right)\right), \cdots$以至于无限的m-configuration。正确的处理方式是只认可使用过的缩写记号，这有点类似\texttt{C++}中的类模板，只会被使用时才会创建出一个实例。
+
+\section{从图灵机到通用计算机}
+
+\begin{lemma}
+	可计算序列$\gamma$可以由计算得到$\gamma$的计算机的行为描述所决定。
+\end{lemma}
+
+Turing提出了这样一条相当直观的结论，但也是卓有意义的——因为计算机的行为描述都是有限长的。更具体地，Turing考虑对所有计算机进行一定的“编码”，他首先指出行为描述表中的每一行都可形如如下的规范化形式：
+\begin{table}[h]
+	\centering
+	\begin{tabular}{ccccc}
+		m-config. & 记号 & 操作 & 改变后m-config. &\\
+		\hline
+		$q_i$ & $S_j$ & $PS_kL$ & $q_l$ & $(N_1)$ \\
+		$q_i$ & $S_j$ & $PS_kR$ & $q_l$ & $(N_2)$ \\
+		$q_i$ & $S_j$ & $PS_k$ & $q_l$ & $(N_3)$ \\
+	\end{tabular}
+	\caption{行为描述表的规范化形式}
+	\label{uniform}
+\end{table}
+
+其中$q_1, q_2, \cdots, q_R$表示计算机的m-configuration，$S_0, S_1, \cdots, S_m$表示记号集合，其中不失一般性地，令$S_0$表示空格。单纯的左移右移或者擦除操作也可以表述成以上的形式，只需要令$S_k = S_j$或者$S_0$即可。
+
+对于以上$(N_1), (N_2), (N_3)$的三种不同形式的行，可以分别编码为$q_iS_jS_kLq_l, q_iS_jS_kRq_l, q_iS_jS_kNq_l$。把$q_i$替换成大写字母$D$后面跟着$i$个字母$A$，把$S_j$替换成字母$D$后面跟着$j$个字母$C$，并在相邻的行之间插入分号“$;$”，便得到了这台计算机的\textit{标准描述(standard description, S.D.)}。标准描述是一个字符集大小为$\text{card}\{A, C, D, L, R, N, ;\} = 7$的有限字符串。更进一步的，把这$7$中字符分别替换成$1\sim 7$的阿拉伯数字，连起来后就可以得到一个很大的整数，这个整数被称为这台计算机的一个\textit{描述数(description number, D.N.)}。接下来，会用记号$\mathcal M(N)$来表示以$N$作为描述数的计算机。
+
+\begin{definition}[可满足数 satisfactory number]
+	如果一个整数$N$满足$\mathcal M(N)$是非循环机，那么就称$N$是可满足数。
+\end{definition}
+
+举个例子。\cref{3-1} 中描述的计算机可以写成如下的规范化形式
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cccc}
+		m-config. & 记号 & 操作 & 改变后m-config. \\
+		\hline
+		$q_1$ & $S_0$ & $PS_1, R$ & $q_2$\\
+		$q_2$ & $S_0$ & $PS_0, R$ & $q_3$\\
+		$q_3$ & $S_0$ & $PS_2, R$ & $q_4$\\
+		$q_4$ & $S_0$ & $P_S0, R$ & $q_1$\\
+	\end{tabular}
+	\caption{\cref{table1} 的规范化形式}
+	\label{table1.1}
+\end{table}
+从而可以写下其标准描述
+\begin{equation}
+DADDCRDAA;DAADDRDAAA;DAAADDCCRDAAAA;DAAAADDRDA;
+\end{equation}
+以及其描述数
+\begin{equation}
+31332531173113353111731113322531111731111335317
+\end{equation}
+
+注意到一台计算机可以对应多个描述数(通过交换行的顺序或者m-configuration的标号都可以导致其描述数改变)，但一个整数至多成为一台计算机的描述数，即至多对应一台计算机。这直接指出了计算机的基数小于等于自然数的基数，因此说明计算机的数量是至多可数的，这指出了
+
+\begin{theorem}
+	可计算序列是至多可数的，或者说是可数的，因为总可以构造出无限个可计算序列。
+	\label{seq-countable}
+\end{theorem}
+
+在论文的第8章，Turing证明了不存在通用的方法来判断一个数是不是可满足数，这个结果与最终将要解决的判定问题(Entscheidungsproblem)是密切相关的。
+
+Turing还构想了一种通用计算机(universal computing machine)，即这台计算机在理论上可以实现任何一台计算机的行为，只需要在工作开始前给出对需要实现的计算机的描述(以前述的S.D.的形式)。从现代计算机的角度出发，这已然可以称得上是编译了。Turing的工作，本质上，就是设计了基于图灵机的编译器。
+
+编译器的实现也较为复杂，而且与本文论述的关系不大，故未被包含，参见\cite{Turing}。接下来，这台通用计算机$\mathcal U$将被认为是可实现的，它以一台计算机$\mathcal M$的标准描述作为输入的第一部分，随后对于输入的第二部分，便可以表现出与$\mathcal M$完全相同的行为。
+
+\section{对角线法则}
+
+Cantor证明了实数是不可数的\cite{Cantor}，于是便有类似的观点试图证明可计算序列是不可数的，如下便是一种尝试：
+
+\textbf{证明(?)} \textit{如果可计算序列是可数的，那么就可以把它们排成一排，记作$\alpha_1, \alpha_2, \cdots, \alpha_n$，令$\phi_n(m)$表示$\alpha_n$的第$m$位(即第$m$个figure)，考虑令$\beta$为一个序列，其第$n$位为$\phi_n(n)$，那么这个$\beta$将与任意一个$\alpha_n$都不相同。此时的$\beta$是一个可计算序列\footnote{对吗？}，因此应当存在一个整数$K$使得$\beta = \alpha_K$，然而$\forall n, \beta \neq \alpha_n$产生了矛盾，因此可计算序列是不可数的。
+}
+
+这与\cref{seq-countable} 构成了直接矛盾，那么一定有什么地方出了问题。这段证明中最大的争议点(或者直言，最大的疏漏之处)在于认为$\beta$是可计算的，理论依据是$\{\alpha_n\}$可数，因而对于任意$n$，$\phi_n(n)$都是通过有限步骤得到的。但问题在于，其实很难去枚举——即使客观存在——这个“可计算数构成的序列$\{\alpha_n\}$”，因为这等价于对于给出的一个数，判断其是否是一台非循环机的描述数(即，是否是可满足的)。Turing给出了如下结论：
+
+\begin{theorem}
+	不存在一种通用的方法(无法构造这样一台计算机$\mathcal D$)，可以用于判断给定数字是否是可满足的。
+\end{theorem}
+
+假设这台计算机$\mathcal D$存在，把$\mathcal D$与通用计算机$\mathcal U$合在一起，便可以得到一台称为$\mathcal H$的计算机，它的工作机制是从小到大枚举所有的正整数$n$，判断$n$是否可满足($\mathcal M(n)$是否是非循环机)，若是，则进一步输出$\mathcal M(n)$的输出结果的第$R(n)$位(这部分由$\mathcal U$来实现)，$R(n)$表示前$n$个正整数中有多少个可满足数，这个结果对于$\mathcal H$来说是可以获取的。
+
+此时，$\mathcal H$是非循环的，这是因为对于每个正整数$n$，$\mathcal H$都可以在有限步内将其处理完(这是根据$\mathcal D$的存在性假设，对于任意正整数$n$，$\mathcal D$必然可以在有限步内判断\footnote{事实上，当我们提到“判断”一词的时候，其实已经暗含了这个过程应当是有限步内可以结束的。}其是否是可满足数)。那么就有$\mathcal H = \mathcal M(K)$其中$K$是可满足数，此时$\mathcal H$处理$K$的过程就变成了——把之前做过的所有事情重复一遍，得到$\mathcal M(K)$输出的前$R(K)-1$位，然后再次回到$\mathcal H$处理$K$的过程。可以发现此时$H$会反复地递归调用自身，而永远都不可能产生新的输出。因此，$\mathcal H$是循环的。从而，Turing根据归谬的方法证明了$\mathcal D$不可能存在。
+
+此外，Turing还给出了关于以上结果的一个推论，这对于证明接下来的判定问题不可解是至关重要的。
+
+\begin{corollary}
+无法构造这样的一台计算机$\mathcal E$，使其可以对于任意给出的描述数$n$，判断$\mathcal M(n)$是否会输出一个给定的字符。
+\label{output0}
+\end{corollary}
+
+不失一般性地，可以认为给定的字符就是$0$。事实上，如果这样的$\mathcal E$存在，那么就能够构造另一台计算机$\mathcal E'$，用于判断$\mathcal M(n)$是否会输出无限多个$0$。构造的方式很简单：记$\mathcal M_0 = \mathcal M(n)$，以及$\mathcal M_k$表示输出与$\mathcal M_{k-1}$完全相同序列的计算机，除了输出第一个$0$时改为输出$\overline{0}$(这是很好构造的)。我们再构造一台计算机$\mathcal G$，它先对于输入$n$，连续输出$\mathcal M_0 = \mathcal M(n), \mathcal M_1, \mathcal M_2, \cdots$的描述数，再调用$\mathcal E$作为子过程来判断每个$\mathcal M_k$是否输出$0$，如果没有，则写下一个$0$。于是，若$\mathcal M(n)$原本会输出无限多个$0$，那么将$n$送给$\mathcal G$就将不会输出$0$，否则将输出无限个$0$。因此把$\mathcal G$的描述数送给$\mathcal E$做判断，便实现可判断$\mathcal M(n)$是否会输出无限多个$0$。
+
+如果实现了判断$\mathcal M(n)$是否会输出无限多个$0$，那自然也可以实现判断$\mathcal M(n)$是否会输出无限多个$1$。结合两者，这意味着实现了判断$\mathcal M(n)$是否会输出无限多个字符，等价于实现了判断$\mathcal M(n)$是否是非循环机。这是不可能的，因而根据归谬，$\mathcal E$也是不可能实现的。
+
+\section{Turing对判定问题的证明}
+
+判定问题由 David Hilbert 和 Wilhelm Ackermann 两人提出的。其大致形如在一个形式化公理系统中，是否存在一种通用的算法以判断任何一条符合规范的陈述是否能够从公理推导而来，或者更通俗地来讲，能够被证明或者是证伪。
+
+Turing非常聪明地把判定问题规约到了图灵机模型上。他对于任何一台图灵机$\mathcal M$，提出了一条陈述$\mathrm{Un}(\mathcal M)$，其正确性等价于$\mathcal M$是否会输出记号$0$。这时候，他便直接引用\cref{output0} 的结果，指出由于不存在有限的方法(不存在一台计算机)能够判断$\mathcal M$是否输出$0$，那么自然也不可能存在一种通用的方法能够判断$\mathrm{Un}(\mathcal M)$是否正确。
+
+这个问题的证明过程是较为繁琐的，因为将Turing定义的图灵机语言转化为公理系统中的逻辑语言需要花费不少功夫，故本文中将不再提及。但其中蕴含的思想与理念则是清晰而直观的。
+
+\section{Turing's 1936 Paper 的影响}
+
+在Turing's 1936 Paper中，非常能够体现作者鲜明观点的一处是他尝试将直观的可计算概念与形式化定义联系在一起，这在书中第250页体现地尤为明显，他对图灵机与人类思维进行类比。具体地，他把图灵机对纸带的读写操作比作小学生做算术题，以解释如何自然直观地定义“一次操作”，以及为什么对于图灵机的定义中，要求每次可观察到的纸带范围有限(一格)、m-configuration集合有限——他指出这是因为人类思维中，人类在单位时间里只能感受到有限的外界输入，同时人类的心理状态也是有限的。
+
+作为同一时期的计算理论学者，G\"odel对Turing对于可计算的定义表示了认同，但他不愿相信Turing写下的一件事情，那就是人类的心理状态/机器的configuration集合是有限的。他对“人类大脑没有无限多个状态”的观点提出了异议，尽管这并非Turing论证的本意，但也确实引发了关于机器与人脑差异的哲学讨论。
+
+此外，Turing's 1936 Paper还引发了一些饱受争议的论点，它们一同指向了一个结论，那就是人类思维具有的数理逻辑能力已经超出了图灵机的局限。关于这一点，G\"odel就曾声称没有任何一台机器能够等同于人类的思维，这相较于Turing来说是一个很尖锐的观点。但Turing不以为然，他认为虽然单台图灵机的m-configuration是有限的，但图灵机的总量是无限的，因此在机器之间切换就能完成无限多的任务。更进一步地，Turing认为可以教会机器向人类一样思考，对不同的问题选择不同的处理方式，并在不同的思维状态之间移动。从现代的观点来讲，这已然是人工智能的核心。
+
+所以从本质上来讲，Turing设计了理论计算机，然后又是实用计算机，并且开创了人工智能的时代。不得不提的是，这位计算机理论学者从未在现实生活中见过计算机，而在他的身后，以现代计算机为基础的信息时代滚滚而来。
+
+\bibliographystyle{unsrt}
+\bibliography{ref}
+
+\iffalse
+\section*{附录}
+
+\begin{appendices}
+\section{完整的缩写表}\label{abbr_table}
+表格中“记号”一栏留空表示匹配任何记号(包括空格)，操作一栏留空表示没有操作。
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cccc|c}
+		m-config. & 记号 & 操作 & 改变后m-config. & 自然语言描述\\
+		\hline
+		$\mathfrak{e}(\mathfrak C, \mathfrak B, a)$ & & & $\mathfrak f(\mathfrak e_1(\mathfrak C, \mathfrak B, a), \mathfrak B, a)$ & \multirow{3}{180}{$\mathfrak{e}(\mathfrak C, \mathfrak B, a)$表示擦除序列中的第一个$a$，成功则变为$\mathfrak C$，失败则变成$\mathfrak B$。 $\mathfrak e(\mathfrak B, a)$表示擦除序列中所有$a$，完成后变成$\mathfrak B$。}\\
+		$\mathfrak e_1(\mathfrak C, \mathfrak B, a)$ & & $E$ & $\mathfrak C$ & \\
+		$\mathfrak e(\mathfrak B, a)$ & & & $\mathfrak e(\mathfrak e(\mathfrak B, a), \mathfrak B, a)$ & \\
+		\hline
+		
+		
+		$\mathfrak{pe}(\mathfrak C, \beta)$ & & & $\mathfrak f(\mathfrak{pe}_1(\mathfrak C, \beta), \mathfrak C, e)$ & \multirow{4}{180}{$\mathfrak{pe}(\mathfrak C, \beta)$表示在序列末尾写上$\beta$，$\mathfrak{pe}_2(\mathfrak {C}, \alpha, \beta)$表示在序列末尾写上$\alpha$和$\beta$。}\\
+		\multirow{2}{*}{$\mathfrak{pe}_1(\mathfrak C, \beta)$} & 任何记号 & $R, R$ & $\mathfrak{pe}_1(\mathfrak C, \beta)$ & \\
+		& 无 & $P\beta$ & $\mathfrak C$ &\\
+		$\mathfrak{pe}_2(\mathfrak C, \alpha, \beta)$ & & & $\mathfrak{pe}(\mathfrak{pe}(\mathfrak C, \beta), \alpha)$ &\\
+		\hline
+		$\mathfrak l(\mathfrak C)$ & & $L$ & $\mathfrak C$ & \multirow{4}{180}{
+		$\mathfrak {f}^{'}(\mathfrak C, \mathfrak B, a)$，$\mathfrak {f}^{''}(\mathfrak C, \mathfrak B, a)$与$\mathfrak {f}(\mathfrak C, \mathfrak B, a)$的功能相同，只是在找到$a$后额外向左/右移动一格。}\\
+		$\mathfrak r(\mathfrak C)$ & & $R$ & $\mathfrak C$ &\\
+		$\mathfrak {f}^{'}(\mathfrak C, \mathfrak B, a)$ & & & $\mathfrak f(\mathfrak l(\mathfrak C), \mathfrak B, a)$ & \\
+		$\mathfrak {f}^{''}(\mathfrak C, \mathfrak B, a)$ & & & $\mathfrak f(\mathfrak r(\mathfrak C), \mathfrak B, a)$ & \\
+	\end{tabular}
+\end{table}
+
+
+\section{通用计算机的“编译器”}\label{compile}
+\end{appendices}
+
+\fi
+	
+\end{document}
