@@ -44,7 +44,7 @@ $\mathbb F = \mathbb Z_p[x] / h(x)$
 
 
 
-## AKS correctness
+## AKS Correctness
 
 + 先把 $n = a^b$ 这种情况干掉
 + 找最小的 $r$ 满足 $(r, n) = 1$ 且 $o_r(n) > \log^2n$
@@ -119,4 +119,34 @@ $g$ 是可任取的，那么取 $g$ 为 $\mathcal G$ 的生成元，就有 $|\ma
 
 ## AKS Complexity
 
-咕咕咕，明天写
+
+
+**Lem. ** 对于 $n \ge 2$ ，都存在 $r \le \max\{3, \lceil \log^5n + \log n \rceil\}$ 且 $\gcd(r, n) = 1$，满足 $o_r(n) > \log^2n$。
+
+$n = 2$ 的情况是平凡的
+
+对于 $n > 2$，反证，假设该范围内与 $n$ 互质的所有数都满足 $o_r(n) \le \log^2n$
+
+那么它们都将整除 $\prod_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < n^{\log^4n} = 2^{\log^5n}$
+
+加上那些与 $n$ 不互质的，我们知道了不超过该范围的所有数都整除 $n\prod_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < 2^{\lceil\log^5n+\log n \rceil}$， 即 $\text{LCM}$ 不会超过这个数 
+
+但是 $\lceil \log^5n + \log n \rceil \ge 7$ 而 $\text{LCM}(m) \ge 2^m (\forall m \ge 7)$，所以矛盾了。
+
+
+
+**Claim: ** 两个 $m$ bit 数的四则运算所需复杂度是 $\tilde O(m)$ (FFT)
+
+两个以 $m$ bit 数为系数的 $d$ 次多项式乘法所需复杂度是 $\tilde O(d \cdot m)$
+
+
+
+算法的总时间复杂度是 $\tilde O(\log^{10.5}n)$
+
++ 第一步的复杂度是 $\tilde O(\log^3n)$ ，因为假设 $n = a^b$ ，那么显然 $b \le \log n$ ，可以枚举 $b$ 二分求 $a$，注意到一共有 $O(\log^2n)$ 对 $(a, b)$ 需要计算 $a^b$，而单次计算的复杂度是 $\tilde O(\log n)$ (因为可以对 $b$ 快速幂) ，所以总复杂度是 $\tilde O(\log^3n)$
++ 第二步需要从小到大枚举 $r$ 并检验，每个 $r$ 的检验需要做 $O(\log^2n)$ 次乘法，不过因为是 $\bmod r$ 所以乘法的复杂度是 $O(\log \log n)$ 级别的可以不管，总复杂度是 $\tilde O(r\log^2n) = \tilde O(\log^7n)$
++ 第三步需要算 $r$ 次 $\gcd$ ，每次都是 $n$ 和一个 $\le r$ 的数算，那么一次计算的复杂度是 $\tilde O(\log n)$ ，因为复杂度的瓶颈其实只在第一次用 $n$ 去试除 $r$ 。
++ 第五步需要进行 $\lfloor\sqrt{\varphi(r)}\log n\rfloor$ 次检验，每次检验需要做 $O(\log n)$ 次 $r$ 次、系数 $O(\log n)$ bit 的多项式乘法 复杂度是 $\tilde O(r\log^2n) = \tilde O(\log^7n)$ ，检验次数是 $O(\log^{3.5}n)$ 所以总复杂度是 $\tilde O(\log^{10.5} n)$
+
+
+
