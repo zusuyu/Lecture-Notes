@@ -1,3 +1,4 @@
+
 \documentclass{beamer}
 \usepackage{ctex, hyperref}
 \setCJKmainfont[ItalicFont=Noto Sans CJK SC Bold, BoldFont=Noto Sans CJK SC Black]{Noto Sans CJK SC}
@@ -7,6 +8,29 @@
 % other packages
 \usepackage{latexsym,amsmath,xcolor,multicol,booktabs,calligra}
 \usepackage{graphicx,pstricks,listings,stackengine}
+\usepackage{color, cleveref}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{amssymb}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+
+\usepackage{bibentry}
+\hypersetup{
+	colorlinks=false,
+	linkcolor=none
+}
+\useoutertheme{infolines}
+
 
 \author{陈威宇 \ 黄兆鋆 \ 周书予}
 \title{《\textsf{PRIMES} is in \textbf{P}》 论文精讲}
@@ -16,12 +40,27 @@
 \usepackage{PekingU}
 
 % defs
+\def\P#1{\mathbb{P}\left({#1}\right)}
+
 \def\cmd#1{\texttt{\color{red}\footnotesize $\backslash$#1}}
 \def\env#1{\texttt{\color{blue}\footnotesize #1}}
 \definecolor{deepblue}{rgb}{0,0,0.5}
 \definecolor{deepred}{rgb}{0.6,0,0}
 \definecolor{deepgreen}{rgb}{0,0.5,0}
 \definecolor{halfgray}{gray}{0.55}
+
+\definecolor{uibred}  {HTML}{db3f3d}
+\definecolor{uibblue} {HTML}{4ea0b7}
+\definecolor{uibgreen}{HTML}{789a5b}
+\definecolor{uibgray} {HTML}{d0cac2}
+\definecolor{uiblink} {HTML}{00769E}
+\setbeamercolor{block body} {bg = uibgray}
+\setbeamercolor{block title}{fg = white,bg = uibred}
+
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\ord{\textrm{ord}}
+
 
 \lstset{
     basicstyle=\ttfamily\small,
@@ -34,6 +73,7 @@
     frame=shadowbox,
 }
 
+\usefonttheme[onlymath]{serif}
 
 \begin{document}
 
@@ -49,10 +89,158 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}
-    \tableofcontents[sectionstyle=show,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+%\begin{frame}
+ %   \tableofcontents[sectionstyle=show,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+%\end{frame}
+
+\section{Intro: PRIMES in Complexity Theory}
+\begin{frame}{Introduction}
+	$$\mathsf{PRIMES} = \{w | w \text{ is binary representation of a prime number}\}$$
+
+	~\\
+
+	\textsf{PRIMES} 属于以下复杂度类:
+	\begin{itemize}
+		\item \textbf{EXP}, 比如众所周知的有 \textit{Sieve of Eratosthenes}.
+		\item \textbf{coNP}, 因为 $\overline{\textsf{PRIMES}} = \textsf{COMPOSITES} \in \textbf{NP}$.
+		\item \textbf{NP}, \cite{Pratt75}.
+		\item \textbf{BPP}, \cite{AB99}.
+		\item \textbf{P}, \cite{AKS02}.
+	\end{itemize}
+
 \end{frame}
 
-\section{lalala}
+\subsection{PRIMES is in NP}
+\begin{frame}{\cite{Pratt75}: Every Prime Has a Succinct Certificate}
+	\begin{block}{Lucas Primality Test}
+		正整数 $n \ge 3$ 是质数当且仅当存在整数 $1 < a < n$满足 $a^{n-1} \equiv 1 \mod 1$ 且对于 $n-1$ 的每个质因子 $p$ 都有 $a^{(n-1)/p} \not\equiv 1 \bmod n$.
+	\end{block}
+	\begin{proof}
+		$\Leftarrow$: 考虑$\ord_{n}(a)$. $\Rightarrow$: 取 $n$ 的原根作为 $a$.
+	\end{proof}
+	
+	想验证 $p$ 是质数, 只需要给出 $p - 1$ 的质因数分解 $p - 1 = \prod\limits_{i=1}^{k}p_i$, \textbf{同时}进一步验证 $p_i$ 都是质数.  
+
+	可以归纳证明验证 $p$ 时所需的 certificate 长度为 $O(\log p)$ , 从而说明了 $\textsf{PRIMES} \in \textbf{NP}$.	
+	
+\end{frame}
+
+\subsection{PRIMES is in BPP}
+\begin{frame}{Generalization of Fermat's Little Theorem}
+	\begin{block}{Theorem}
+		正整数 $n \ge 2$ 是质数当且仅当存在与 $n$ 互质的整数 $a$, 满足 $$(x + a)^n \equiv x^n + a \mod n$$
+	\end{block}
+
+	这个结论常被戏称为 freshman's dream.
+
+	\begin{proof}
+		$n$ 是质数 $\Rightarrow$ $n | \binom{n}{k} \ (\forall 1 \le k < n)$, $(x + a)^n - x^n - a^n$ 系数全为 $0$.
+
+		$n$ 不是质数 $\Rightarrow$ 若 $p^k \| n$, 则 $p^k \nmid \binom{n}{p} = \frac{n \times (n-1) \times \cdots \times (n-p+1)}{1 \times 2 \times \cdots \times p}$, $p$次项系数非零.
+	\end{proof}
+	
+\end{frame}
+
+\begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
+	前述结论用于素数测试的一大障碍在于需要计算的多项式次数太大了.\\~\\
+	
+	所以可以考虑随机选取一个模数多项式 $r(x) \in \mathbb Z[x]$, 然后检验$(x + a)^n \equiv x^n + a \bmod (r(x), n)$ 是否成立.\\~\\
+
+	\begin{block}{Theorem}
+		设$n$ 是一个含有质因子 $p \ge 17$ 的非质数, 且不是某个质数的整数次幂.
+		
+		在$\mathbb Z[x]$中随机选取一个 $l = \lceil \log n \rceil$ 次首一多项式 $r(x)$, 则有至少 $60\%$ 的概率, $(x + 1)^n \not\equiv x^n + 1 \bmod (r(x), n)$.
+	\end{block}
+	
+\end{frame}
+\begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
+	令 $P_n(x) = (x + 1)^n - 1 - x^n$. 当 $n$ 不是质数时, $P_n(x) \not\equiv 0 \bmod p$, 这是因为$[x^{p^k}] P_n(x) = \binom{n}{p^k} = \frac{n \times (n-1) \times \cdots \times (n-p^k+1)}{(p^k)!} \not\equiv 0 \bmod p$, 其中 $p^k \| n$, 这里要求了 $n \neq p^k$.\\~\\
+
+	于是我们在 $\mathbb Z_p[x]$ 下考虑问题. 注意到 $\mathbb Z_p[x]$ 下存在唯一分解, 不可约因式的概念, 记 $I(d)$ 表示其中 $d$ 次不可约多项式的数量, 由 M\"obius 反演可以估计其下界
+
+	$$ I(d) = \frac{1}{d}\sum_{e | d}\mu(e)p^{d/e} \ge \frac{1}{d}\left( p^d -  \sum_{e < d, e | d}p^{d/e}\right) \ge \frac{p^d}{d} - p^{d/2} $$
+\end{frame}
+\begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
+	记 $\mathcal C$ 表示 $\mathbb Z_p[x]$ 中含有 $> \frac{l}{2}$ 次不可约因式的$l$次首一多项式集合. 
+	
+	同样对 $|\mathcal C|$ 估计下界
+
+	$$|\mathcal C| = \sum_{k = \lfloor \frac l2 \rfloor + 1}^{l}I(k)p^{l-k} \ge \sum_{k = \lfloor \frac l2 \rfloor + 1}^{l}p^l\left(\frac 1k - \frac{1}{p^{k/2}}\right) \ge \left(\ln 2 - \frac{1}{48}\right)p^l$$
+
+	(其中利用了 $p \ge 17$.)
+
+	注意一个 $l$ 次多项式中不可能包含超过一个$> \frac{l}{2}$ 次不可约因式.
+\end{frame}
+\begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
+	因为 $\deg P_n(x) < n$， $P_n(x)$ 只有不超过 $\frac{2n}{l}$ 个 $>\frac{l}{2}$次不可约因式, 从而 $\mathcal C$ 中只有不超过 $\frac{2n}{l} \cdot p^{\frac l2 - 1}$ 个多项式可能是 $P_n(x)$ 的因式.
+
+	\begin{align*}
+		\P{r \textrm{ doesn't divide } P_n} &\ge \P{r \in \mathcal C \wedge r \textrm{ doesn't divide } P_n}\\
+		&= \P{r \in \mathcal C} - \P{r \in \mathcal C \wedge r \textrm{ divides } P_n}\\
+		&\ge \left(\ln 2 - \frac{1}{48}\right) - \frac{2n}{l} \cdot p^{\frac l2 - 1} / p^l\\
+		& \ge \ln 2 - \frac{1}{48} - \frac{2n}{l4^{\frac l2 + 1}} > \frac 35
+	\end{align*}
+
+	(注意到 $n > p \ge 17, l = \lceil \log n \rceil \ge 5$.)
+\end{frame}
+
+\section{Notations \& Preliminaries}
+\subsection{Notations \& Preliminaries}
+\begin{frame}{Notations \& Preliminaries}
+	在这一部分我们引入一些记号.\\~\\
+
+	当 $\gcd(a, r) = 1$ 时, 满足 $a^k \equiv 1 \bmod r$ 的正整数 $k$ 是一定存在的, 称其中最小的为 $a$ 模 $r$ 的阶, 记作$\ord_{r}(a)$. 用欧拉函数 $\varphi(r)$ 表示比 $r$ 小的与 $r$ 互质的数的数量, 容易验证 $\ord_r(a) | \varphi(r)$.\\~\\
+
+	当 $p$ 是素数, $h(x)$是$\mathbb Z_p[x]$中不可约多项式, 则 $\mathbb Z_p[x] / h(x)$ 构成一个有限域. 下文中将不加声明地用记号 $\mathbb F$ 表示 $\mathbb Z_p[x] / h(x)$.\\~\\
+
+	$\tilde O(f(n)) = O(f(n) \textrm{ poly}(\log f(n))) = O(f^{1 + \varepsilon}(n)) $ 表示忽略对数因子.
+
+\end{frame}
+\section{AKS Primality Test}
+\subsection{Algorithm}
+\begin{frame}{Natural Language Description}
+	算法分为如下五个步骤: 
+	\begin{enumerate}
+		\item 第一步检查 $n$ 是否是“整数幂”形式的非素数.
+		\item 第二步求出最小的满足 $\ord_r(n) \ge \log^2n$ 的正整数 $r$.
+		\item 第三步检查 $n$ 是否有不超过 $r$ 的非平凡因子.
+		\item 第四步是平凡的: 如果 $n \le r$ 没有不超过 $r$ 的非平凡因子, 此时 $n$ 一定是质数.
+		\item 第五步对于 $a = 1, \cdots, \lfloor\sqrt{\varphi(r)}\log n\rfloor$, 检查$(x + a)^n \equiv x^n + a \bmod (x^r - 1, n)$是否成立, 若存在不满足则 $n$ 不是质数, \textit{否则 $n$ 是质数}.
+	\end{enumerate}
+
+	只有最后一句话的正确性是非平凡的.
+\end{frame}
+\begin{frame}{Pseodocode}
+	\begin{algorithmic}[1]
+		\Function{AKS\_PRIMALITY\_TESTING}{$n$}
+			\If{$n = a^b$ for $a \in \mathbb N$ and $b > 1$}
+				\State \Return \texttt{COMPOSITE}
+			\EndIf
+			\State $r \gets \min\{m \in \mathbb N | \ord_m(n) > \log^2n\}$
+			\If{$1 < \gcd(a, n) < n$ for some $a \le r$}
+				\State \Return \texttt{COMPOSITE}
+			\EndIf
+			\If{$n \le r$}
+				\State \Return \texttt{PRIME}
+			\EndIf
+			\For{$a = 1 \to \lfloor \sqrt{\varphi(r) \log n}\rfloor$}
+				\If{$(x + a)^n \not\equiv x^n + a \bmod (x^r - 1, n)$}
+					\State \Return \texttt{COMPOSITE}
+				\EndIf
+			\EndFor
+			\State \Return \texttt{PRIME}
+		\EndFunction
+	\end{algorithmic}
+
+\end{frame}
+\subsection{Correctness}
+\subsection{Complexity Analysis}
+\subsection{Future Work}
+\section{Reference}
+\begin{frame}{Reference}
+	\bibliographystyle{amsalpha}
+	\bibliography{ref}
+\end{frame}
+	
 
 \end{document}
