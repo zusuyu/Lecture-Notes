@@ -1,0 +1,231 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+
+\title{\heiti\zihao{1} 代数结构与组合数学\ 第一次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{代数结构与组合数学}
+\chead{2022 Spring}
+\rhead{第一次作业}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\iffalse
+课本p. 238: 9, 11, 14, 16
+（以下内容周四会讲到）
+p. 238: 18
+p. 239: 24(1)(3), 29, 30
+\fi
+
+\section*{15.9}
+
+\begin{itemize}
+	\item 交换律满足, 因为$\forall x, y \in \mathbb Q, x * y = x + y - xy = y + x - yx = y * x$.
+	\item 结合律满足, 因为$\forall x, y, z \in \mathbb Q$, \begin{align*}
+		(x * y) * z &= (x + y - xy) * z = x + y + z - xy - xz - yz + xyz\\
+		x * (y * z) &= x * (y + z - yz) = x + y + z - xy - xz - yz + xyz\\
+	\end{align*}
+	\item 幂等律不满足, 比如$5 * 5 = 5 + 5 - 25 = -15 \neq 5$.
+	\item 单位元是$0$, 因为$\forall x \in \mathbb Q, x * 0 = x + 0 - 0x = x$.
+	\item 零元是$1$，因为$\forall x \in \mathbb Q, x * 1 = x + 1 - 1x = 1$.
+	\item 对于$\forall x \neq 1$, 存在逆元$x^{-1} = \frac{x}{x-1}$, 因为$x * \frac{x}{x-1} = x + \frac{x}{x-1} - \frac{x^2}{x-1} = 0$.
+\end{itemize}
+
+\section*{15.11}
+
+\begin{itemize}
+	\item 交换律不满足, 比如说$\langle 1, 2 \rangle \circ \langle 3, 4 \rangle = \langle 3, 6 \rangle \neq \langle 3, 10 \rangle = \langle 3, 4 \rangle \circ \langle 1, 2 \rangle$.
+	\item 结合律满足, 因为$\forall a, b, c, d, e, f \in \mathbb Q$, \begin{align*}
+		(\langle a, b \rangle \circ \langle c, d \rangle) \circ \langle e, f \rangle &= \langle ac, ad + b \rangle \circ \langle e, f \rangle = \langle ace, acf + ad + b \rangle\\
+		\langle a, b \rangle \circ (\langle c, d \rangle \circ \langle e, f \rangle) &= \langle a, b \rangle \circ \langle ce, cf + d \rangle = \langle ace, acf + ad + b \rangle\\
+	\end{align*}
+	\item 单位元是 $\langle 1, 0 \rangle$, 因为$\forall x, y \in \mathbb Q$, $\langle 1, 0 \rangle \circ \langle x, y \rangle = \langle x, y \rangle, \langle x, y \rangle \circ \langle 1, 0 \rangle = \langle x, y \rangle$.
+	\item 零元不存在, 因为不可能存在 $z_1, z_2 \in \mathbb Q$ 使得 $\langle x, y \rangle \circ \langle z_1, z_2 \rangle = \langle xz_1, xz_2 + y \rangle$ 和 $\langle x, y' \rangle \circ \langle z_1, z_2 \rangle = \langle xz_1, xz_2 + y' \rangle$ 同时等于 $\langle z_1, z_2 \rangle$.
+	\item $\forall a, b \in \mathbb Q$其中$a \neq 0$, 存在逆元$\langle a, b \rangle^{-1} = \langle \frac 1a, -\frac{b}{a} \rangle$.
+\end{itemize}
+\section*{15.14}
+
+子代数有 $\langle \{0, 1, 2, 3, 4, 5\}, \oplus \rangle , \langle \{0, 2, 4\}, \oplus \rangle , \langle \{0, 3\}, \oplus \rangle , \langle \{0\}, \oplus \rangle $, 其中第一者是平凡子代数, 其余是真子代数.
+
+\section*{15.16}
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|cccccc}
+		$\oplus$ & $\langle 0, 0 \rangle$ & $\langle 0, 1 \rangle$ & $\langle 1, 0 \rangle$ & $\langle 1, 1 \rangle$ & $\langle 2, 0 \rangle$ & $\langle 2, 1 \rangle$ \\ \hline
+		$\langle 0, 0 \rangle$ & $\langle 0, 0 \rangle$ & $\langle 0, 1 \rangle$ & $\langle 1, 0 \rangle$ & $\langle 1, 1 \rangle$ & $\langle 2, 0 \rangle$ & $\langle 2, 1 \rangle$ \\
+		$\langle 0, 1 \rangle$ & $\langle 0, 1 \rangle$ & $\langle 0, 0 \rangle$ & $\langle 1, 1 \rangle$ & $\langle 1, 0 \rangle$ & $\langle 2, 1 \rangle$ & $\langle 2, 0 \rangle$ \\
+		$\langle 1, 0 \rangle$ & $\langle 1, 0 \rangle$ & $\langle 1, 1 \rangle$ & $\langle 2, 0 \rangle$ & $\langle 2, 1 \rangle$ & $\langle 0, 0 \rangle$ & $\langle 0, 1 \rangle$ \\
+		$\langle 1, 1 \rangle$ & $\langle 1, 1 \rangle$ & $\langle 1, 0 \rangle$ & $\langle 2, 1 \rangle$ & $\langle 2, 0 \rangle$ & $\langle 0, 1 \rangle$ & $\langle 0, 0 \rangle$ \\
+		$\langle 2, 0 \rangle$ & $\langle 2, 0 \rangle$ & $\langle 2, 1 \rangle$ & $\langle 0, 0 \rangle$ & $\langle 0, 1 \rangle$ & $\langle 1, 0 \rangle$ & $\langle 1, 1 \rangle$ \\
+		$\langle 2, 1 \rangle$ & $\langle 2, 1 \rangle$ & $\langle 2, 0 \rangle$ & $\langle 0, 1 \rangle$ & $\langle 0, 0 \rangle$ & $\langle 1, 1 \rangle$ & $\langle 1, 0 \rangle$ \\
+	\end{tabular}
+	\caption{$V_1 \times V_2$的运算表}
+	\label{tab}
+\end{table}
+
+
+\begin{enumerate}
+	\item 见\cref{tab} .
+	\item 单位元是 $\langle 0, 0 \rangle$.
+			
+	$\langle 0, 0 \rangle^{-1} = \langle 0, 0 \rangle$,
+ 		$\langle 0, 1 \rangle^{-1} = \langle 0, 1 \rangle$,
+ 		$\langle 1, 0 \rangle^{-1} = \langle 2, 0 \rangle$,
+ 		$\langle 1, 1 \rangle^{-1} = \langle 2, 1 \rangle$,
+ 		$\langle 2, 0 \rangle^{-1} = \langle 1, 0 \rangle$,
+ 		$\langle 2, 1 \rangle^{-1} = \langle 1, 1 \rangle$.
+
+\end{enumerate}
+
+\section*{15.18}
+取$f: \mathbb C \to B$满足$f(a + bi) = \begin{pmatrix}
+	a&b\\-b&a
+\end{pmatrix}\ (\forall a, b \in \mathbb R)$.
+
+容易看出 $f$ 是双射, 只需要再验证 $f$ 保运算:
+\begin{align*}
+	f((a + bi) + (c + di)) &= f(a + c + (b + d)i) \\&= \begin{pmatrix}
+		a+c&b+d\\-b-d&a+c
+	\end{pmatrix} = \begin{pmatrix}
+		a&b\\-b&a
+	\end{pmatrix} + \begin{pmatrix}
+		c&d\\-d&c
+	\end{pmatrix} \\&= f(a + bi) + f(c + di)\\
+	f((a + bi)(c + di)) &= f((ac-bd) + (bc+ad)i) \\&= \begin{pmatrix}
+		ac-bd & bc + ad \\ -bc - ad & ac - bd
+	\end{pmatrix} = \begin{pmatrix}
+		a&b\\-b&a
+	\end{pmatrix} \begin{pmatrix}
+		c&d\\-d&c
+	\end{pmatrix} \\&= f(a + bi)f(c + di)
+\end{align*}
+故$V_1$ 与 $V_2$ 同构.
+\section*{15.24}
+
+\begin{enumerate}
+	\item 不是同态.
+	\item 是同态, $\im \varphi = \mathbb R_{\ge 0}$.
+	\item 是同态, $\im \varphi = \{0\}$.
+	\item 不是同态.
+\end{enumerate}
+
+\section*{15.29}
+\begin{enumerate}
+	\item 只需要验证 $\varphi$ 保运算: $$\varphi(\Delta x) = \varphi(x + 1) = (x + 1) \bmod 2 = (x \bmod 2 + 1) \bmod 2 = \overline{\Delta}(\varphi(x))$$
+	\item $x \sim y \Leftrightarrow \varphi(x) = \varphi(y) \Leftrightarrow x \bmod 2 = y \bmod 2$, 因此$\varphi$在$V_1$上的划分是 $\mathbb Z = (2\mathbb Z) \sqcup (2\mathbb Z + 1)$.
+\end{enumerate}
+\section*{15.30}
+\begin{enumerate}
+	\item 只需要验证 $\varphi$ 保运算： $$\varphi(x + y) = n(x + y) = nx + ny = \varphi(x) + \varphi(y)$$
+	\item $x \sim y \Leftrightarrow \varphi(x) = \varphi(y) \Leftrightarrow n(x - y) = 0$.
+	
+	\begin{itemize}
+		\item 当 $n = 0$ 时, $x \sim y$ 对 $\forall x, y \in A_k$ 均成立, 从而$V_1 / \sim = \langle \{A_k\}, \oplus \rangle$, 其中 $A_k \oplus A_k = A_k$.
+
+		\item 当 $n \neq 0$ 时, $x \sim y \Leftrightarrow x = y$, 从而$V_1 / \sim = \langle \{\{x\} | x \in A_k\}, \oplus \rangle$, 其中$\forall x, y \in A_k, \{x\} \oplus \{y\} = \{x + y\}$.
+	\end{itemize}
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,151 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left[{#1}\right]}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+
+\title{\heiti\zihao{1} Machine Learning Homework: Week 1}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{Machine Learning}
+\chead{2022 Spring}
+\rhead{机器学习}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+\subsection*{Statement}
+
+	Random variable $X \sim \mathcal N(0, 1)$, let $f(x) = \P{X \ge x}$, find an elementary function $g(x)$ satisfying $\lim\limits_{x \to \infty} \frac{f(x)}{g(x)} = 1$. Furthermore, find such elementary functions $g_{u}(x)$ and $g_{l}(x)$ satisfying $g_l(x) \le f(x) \le g_u(x)$ for $\forall t \in \mathbb R^+$.
+
+\subsection*{Solution}
+
+	$$g_l(x) = \left( \frac{1}{x} - \frac{1}{x^3} \right)\frac{\e^{-x^2/2}}{\sqrt{2\pi}}, \qquad g_u(x) = \frac{\e^{-x^2/2}}{\sqrt{2\pi}x}.$$
+
+	We first prove that $g_l(x)$ and $g_u(x)$ are the lowerbound and upperbound of $f(x)$ respectively. Notice that $$f(x) = \int_{x}^{+\infty}\frac{\e^{-t^2/2}}{\sqrt{2\pi}}\text dt$$ by the technique of \obj{integration by parts}, we have
+
+	\begin{align}
+		\sqrt{2\pi}f(x) = \int_{x}^{+\infty} \frac{1}{t} \text d\left( -\e^{-t^2/2} \right) = -\frac{\e^{-t^2/2}}{t}\bigg|_{x}^{+\infty} - \int_{x}^{+\infty}\frac{\e^{-t^2/2}}{t^2}\text dt \le \frac{\e^{-x^2/2}}{x} = \sqrt{2\pi} g_u(x)
+	\end{align}
+
+	Furthermore, applying such technique to the remaining part above gives
+
+	\begin{align}
+		\int_{x}^{+\infty}\frac{\e^{-t^2/2}}{t^2}\text dt = \int_x^{+\infty}\frac{1}{t^3}\text d \left( -\e^{-t^2/2} \right) = -\frac{\e^{-t^2/2}}{t^3}\bigg|_{x}^{+\infty} - \int_{x}^{+\infty}\frac{3\e^{-t^2/2}}{t^4}\text dt \le \frac{\e^{-x^2/2}}{x^3}
+	\end{align}
+	and thus
+	\begin{align}
+		\sqrt{2\pi}f(x) \ge \left( \frac{1}{x} - \frac{1}{x^3} \right)\e^{-x^2/2} = \sqrt{2\pi} g_l(x)
+	\end{align}
+	
+	$\lim\limits_{x \to +\infty}\frac{f(x)}{g_u(x)} = 1$ and $\lim\limits_{x \to +\infty}\frac{f(x)}{g_l(x)} = 1$ can be easily proved using \obj{L'Hôpital's rule}:
+
+	\begin{align}
+		\lim_{x \to +\infty}\frac{f(x)}{g_u(x)} = \lim_{x \to +\infty}\frac{f'(x)}{g_u'(x)} = \lim_{x \to +\infty} \frac{-\e^{-x^2/2}}{-\left(1 + \frac{1}{x^2}\right)\e^{-x^2/2}} = 1\\
+		\lim_{x \to +\infty}\frac{f(x)}{g_l(x)} = \lim_{x \to +\infty}\frac{f'(x)}{g_l'(x)} = \lim_{x \to +\infty} \frac{-\e^{-x^2/2}}{-\left(1 + \frac{3}{x^4}\right)\e^{-x^2/2}} = 1
+	\end{align}
+\end{document}

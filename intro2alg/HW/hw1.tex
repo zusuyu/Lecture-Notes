@@ -1,0 +1,176 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+
+\title{\heiti\zihao{1} 算分第一次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{算法设计与分析}
+\chead{2022 Spring}
+\rhead{Algorithm Design and Analysis}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+\section{}
+\iffalse
+\subsection*{1.2}
+\begin{enumerate}
+	\item 第$i$轮\texttt{for}循环中需要进行$n - i$次比较, 因此最坏情况下比较次数是$\sum_{i=1}^{n-1}(n-i) = \frac{n(n-1)}{2}$.
+	\item 当输入的$n$个数以严格降序排列时, 交换次数达到最大, 也为$\frac{n(n-1)}{2}$.
+\end{enumerate}
+
+\subsection*{1.6}
+该算法实现了对于多项式$P(t) = \sum_{i=0}^{n}P[i]t^i$求$x$处的点值.
+
+该算法需要$2n$次乘法与$n$次加法.
+\fi
+
+\subsection*{1.7}
+\begin{enumerate}
+	\item 最坏需要进行$1 + 2(n-2) = 2n-3$次比较.
+	\item 考虑$S$中第$i\ (3 \le i \le n)$个数$S[i]$, 如果它是前$i$个数$S[1 \cdots i]$中最小的或者次小的, 则会贡献两次比较; 否则会贡献一次比较. 因此, 平均比较次数为$$1 + \sum_{i=3}^{n}\left(2\cdot \frac{2}{i} + 1 \cdot \frac{i-2}{i}\right) \approx n-4 + 2\ln n$$
+\end{enumerate}
+
+\iffalse
+\subsection*{1.15}
+\begin{enumerate}
+	\item $f(n) = (n^2-n)/2, g(n) = 6n \Rightarrow g(n) = O(f(n)).$
+	\item $f(n) = n + 2\sqrt n, g(n) = n^2 \Rightarrow f(n) = O(g(n)).$
+	\item $f(n) = n + n\log n, g(n) = n\sqrt n \Rightarrow f(n) = O(g(n)).$
+	\item $f(n) = 2\log^2n, g(n) = \log n + 1 \Rightarrow g(n) = O(f(n)).$
+	\item $f(n) = \log(n!), g(n) = n^{1.05} \Rightarrow f(n) = O(g(n)).$
+\end{enumerate}
+
+\subsection*{1.18}
+\begin{align*}
+	n! &>_a 2^{2n} >_a n2^n >_a (\log n)^{\log n} = n^{\log \log n} >_a n^3 >_a n\log n = \Theta(\log(n!)) \\
+	&>_a n = \Theta(\log 10^n) >_a 2^{\log\sqrt n} >_a 2^{\sqrt{2\log n}} >_a \log n = \Theta\left(\sum_{k=1}^{n}\frac 1k\right) >_a \log\log n
+\end{align*}
+
+其中$f(n) >_a g(n)$表示$f(n) = \omega(g(n))$.
+\fi
+
+\subsection*{1.19}
+\subsubsection*{(1)}
+\begin{align*}
+	T(n) = T(n-1) + n^2 = T(n-2) + (n-1)^2 + n^2 = \cdots = \sum_{i=1}^{n}i^2 = \frac{n(n+1)(2n+1)}{6}
+\end{align*}
+\subsubsection*{(3)}
+根据递归树
+\begin{align*}
+	T(n) = cn + \frac{3}{4}cn + \left(\frac34\right)^2cn + \cdots = \left[1 + \frac34 + \left(\frac34\right)^2 + \cdots \right]cn = \Theta(n)
+\end{align*}
+\subsubsection*{(5)}
+使用主定理, 其中$a = 5, b = 2, f(n) = n^2\log^2n = O(n^{\log_25 - \varepsilon})$, 从而$T(n) = \Theta(n^{\log_25})$.
+\subsubsection*{(7)}
+\begin{align*}
+	T(n) = T(n-1) + \frac1n = T(n-2) + \frac{1}{n-1} + \frac1n = \cdots = \sum_{i=1}^{n}\frac1i = \Theta(\log n)
+\end{align*}
+
+\iffalse
+\subsection*{1.21}
+\begin{itemize}
+	\item 算法A: $T_A(n) = 5T_A(n/2) + O(n) \Rightarrow T_A(n) = \Theta(n^{\log_25})$.
+	\item 算法B: $T_B(n) = 2T_B(n-1) + O(1) \Rightarrow T_B(n) = \Theta(2^n)$.
+	\item 算法C: $T_C(n) = 9T_C(n/3) + O(n^3) \Rightarrow T_C(n) = \Theta(n^3)$.
+\end{itemize}
+
+$T_B(n) >_a T_C(n) >_a T_A(n)$, 算法A是时间复杂度最低的.
+\fi
+
+\section{}
+\begin{itemize}
+	\item $(\lg n)! = \Omega(k^{\log n}) = \Omega(n^{\log k})\ (\forall k > 0)$.
+	\item $(\sqrt 2)^{\lg n} = n^{\lg \sqrt 2}$.
+	\item $\lg (2^{\sqrt{2\lg n}}) = \Theta(\lg^{0.5}n), \lg(\lg^2n) = \Theta(\lg\lg n) \Rightarrow 2^{\sqrt{2\lg n}} =  \Omega(\lg^2n) $.
+\end{itemize}
+
+因此
+\begin{align*}
+	(\lg n)! \ge_a n^2 \ge_a (\sqrt 2)^{\lg n} \ge_a 2^{\sqrt{2\lg n}} \ge_a \lg^2n 
+\end{align*}
+
+其中$f(n) \ge_a g(n)$表示$f(n) = \Omega(g(n))$.
+
+\section{}
+
+设生成函数为$A(x) = \sum\limits_{n \ge 0}a_nx^n$. 
+
+\begin{align*}
+	& A(x) + 2x - 1 = 5x(A(x) - 1) - 6x^2A(x) \\ \Rightarrow & A(x) = \frac{1-7x}{6x^2-5x+1} = \frac{5}{1-2x} - \frac{4}{1-3x} = \sum_{n \ge 0}\left(5(2x)^n - 4(3x)^n\right)
+\end{align*}
+
+从而$a_n = 5 \cdot 2^n - 4 \cdot 3^n$.
+
+\end{document}
