@@ -156,7 +156,7 @@
 \begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
 	令 $P_n(x) = (x + 1)^n - 1 - x^n$. 当 $n$ 不是质数时, $P_n(x) \not\equiv 0 \bmod p$, 这是因为$[x^{p^k}] P_n(x) = \binom{n}{p^k} = \frac{n \times (n-1) \times \cdots \times (n-p^k+1)}{(p^k)!} \not\equiv 0 \bmod p$, 其中 $p^k \| n$, 这里要求了 $n \neq p^k$.\\~\\
 
-	于是我们在 $\mathbb Z_p[x]$ 下考虑问题. 注意到 $\mathbb Z_p[x]$ 下存在唯一分解, 不可约因式的概念, 记 $I(d)$ 表示其中 $d$ 次不可约多项式的数量, 由 M\"obius 反演可以估计其下界
+	于是我们在 $\mathbb Z_p[x]$ 下考虑问题. 注意到 $\mathbb Z_p[x]$ 下存在唯一分解, 不可约因式的概念, 记 $I(d)$ 表示其中 $d$ 次不可约首一多项式的数量, 可以估计其下界\footnote{\tiny 这个结论不太初等, 就不在此过多阐述了, 可详细参考 \cite{lidl_niederreiter_1994}.}
 
 	$$ I(d) = \frac{1}{d}\sum_{e | d}\mu(e)p^{d/e} \ge \frac{1}{d}\left( p^d -  \sum_{e < d, e | d}p^{d/e}\right) \ge \frac{p^d}{d} - p^{d/2} $$
 \end{frame}
