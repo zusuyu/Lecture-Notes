@@ -73,7 +73,7 @@ $\mathbb F = \mathbb Z_p[x] / h(x)$ 是域，但我们不方便(或者说不能)
 
 称 $m \in \mathbb Z$ 对 $f \in \mathbb F$ 内省，如果 $f^m(x) = f(x^m)$。
 
-惊喜地发现“内省”对数乘和多项式乘都是封闭的，所以只要我们知道了两个小集合 $S_1 \subseteq \mathbb Z, S_2 \subseteq \mathbb F$ 之间存在两两内省关系，那么由 $S_1, S_2$ 分别作为生成元得到的大集合之间也就存在两两的内省关系。
+惊喜地发现“内省”对数乘和多项式乘都是封闭的，所以只要我们知道了两个小集合 $S_1 \subseteq \mathbb Z, S_2 \subseteq \mathbb F$ 之间存在两两内省关系，那么由 $S_1, S_2$ 分别作为生成元得到的大集合之间也就存在两两的内省关系。	
 
 我们知道 $p, \frac np$ 对 $x, x + 1, \cdots, x + l$ 内省，从而 $I = \langle p, \frac np \rangle$ 对 $P = \langle x, x + 1, \cdots, x + l \rangle$ 内省。因为 $x^r \equiv 1 \bmod x^r-1$，所以可以对 $I$ 中元素模 $r$ 得到有限群 $G \leqslant \mathbb Z_p^*$；同理 $P$ 中元素模 $h(x)$ 得到有限群 $\mathcal G \leqslant \mathbb F$。
 
@@ -97,6 +97,8 @@ $\mathbb F = \mathbb Z_p[x] / h(x)$ 是域，但我们不方便(或者说不能)
 
 
 
+/* *感觉这种证法还复杂一点， 不讲了*
+
 **Lem. ** 任意域的有限乘法子群都是循环群。
 
 **Proof. ** 分析元素的阶数即可。
@@ -107,9 +109,17 @@ $\mathbb F = \mathbb Z_p[x] / h(x)$ 是域，但我们不方便(或者说不能)
 
 $g$ 是可任取的，那么取 $g$ 为 $\mathcal G$ 的生成元，就有 $|\mathcal G| \mid |a - b|$。
 
+*/
+
+
+
 **Lem. ** 如果 $n$ 不是 $p$ 的整数次幂，那么 $|\mathcal G| \le n^{\lfloor \sqrt{|G|} \rfloor}$
 
-**Proof. ** 考虑集合 $\{(\frac np)^ip^j | 0 \le i, j \le \lfloor \sqrt {|G|}\rfloor \}$ ，如果 $n$ 不是 $p$ 的整数次幂，那么这个集合内的数是两两不同的，同时一定存在两个数之差是 $r$ 的倍数(因为集合大小超过了 $|G|$，一定有两个数被映到 $G$ 中的相同元素)，根据前面的引理，可知 $|\mathcal G| \le $ 两数之差 $\le n^{\lfloor \sqrt{|G|} \rfloor}$
+**Proof. ** 考虑集合 $\{(\frac np)^ip^j | 0 \le i, j \le \lfloor \sqrt {|G|}\rfloor \}$ ，如果 $n$ 不是 $p$ 的整数次幂，那么这个集合内的数是两两不同的，同时一定存在两个数之差是 $r$ 的倍数(因为集合大小超过了 $|G|$，一定有两个数被映到 $G$ 中的相同元素)
+
+假设 $m_1 > m_2$ 满足 $x^{m_1} \equiv x^{m_2} \bmod (x^r - 1)$
+
+任取 $f \in \mathcal G$, 由于 $f^{m_1}(x) = f(x^{m_1}) = f(x^{m_2}) = f^{m_2}(x)$, 故 $Q(Y) = Y^{m_1} - Y^{m_2} \in \mathbb F[Y]$ 以 $\mathcal G$ 中任意元素为根, 从而 $|\mathcal G| \le \deg Q = m_1 \le (\frac np \cdot p)^{\lfloor \sqrt {|G|}\rfloor} = n^{\lfloor \sqrt {|G|}\rfloor}$
 
 
 
@@ -132,6 +142,18 @@ $n = 2$ 的情况是平凡的
 加上那些与 $n$ 不互质的，我们知道了不超过该范围的所有数都整除 $n\prod_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < 2^{\lceil\log^5n+\log n \rceil}$， 即 $\text{LCM}$ 不会超过这个数 
 
 但是 $\lceil \log^5n + \log n \rceil \ge 7$ 而 $\text{LCM}(m) \ge 2^m (\forall m \ge 7)$，所以矛盾了。
+
+
+
+Kummer's Theorem 
+
+for given integers $n \ge m \ge 0$ and a prime number $p$, $v_p(\binom{n}{m})$ is equal to the number of carriers when $m$ is added to $n - m$ in base $p$.
+
+Proof: notice that $v_p(n!) = \frac{n - \sum_{k=0}^{d}a_k}{p-1}$ where $\sum_{k=0}^{d}a_kp^k = n$ .
+
+所以可以证明 $\binom{2n}{n} | LCM(2n)$
+
+
 
 
 

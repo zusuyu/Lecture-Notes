@@ -89,9 +89,9 @@
     \end{figure}
 \end{frame}
 
-%\begin{frame}
- %   \tableofcontents[sectionstyle=show,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
-%\end{frame}
+\begin{frame}
+    \tableofcontents[sectionstyle=show,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+\end{frame}
 
 \section{Intro: PRIMES in Complexity Theory}
 \begin{frame}{Introduction}
@@ -105,7 +105,7 @@
 		\item \textbf{coNP}, 因为 $\overline{\textsf{PRIMES}} = \textsf{COMPOSITES} \in \textbf{NP}$.
 		\item \textbf{NP}, \cite{Pratt75}.
 		\item \textbf{BPP}, \cite{AB99}.
-		\item \textbf{P}, \cite{AKS02}.
+		\item \textbf{P}, \cite{AKS}.
 	\end{itemize}
 
 \end{frame}
@@ -119,9 +119,9 @@
 		$\Leftarrow$: 考虑$\ord_{n}(a)$. $\Rightarrow$: 取 $n$ 的原根作为 $a$.
 	\end{proof}
 	
-	想验证 $p$ 是质数, 只需要给出 $p - 1$ 的质因数分解 $p - 1 = \prod\limits_{i=1}^{k}p_i$, \textbf{同时}进一步验证 $p_i$ 都是质数.  
+	想验证 $p$ 是质数, 只需要给出满足条件的 $a$ 以及 $p - 1$ 的质因数分解 $p - 1 = \prod\limits_{i=1}^{k}p_i$, \textbf{同时}进一步验证 $p_i$ 都是质数.  
 
-	可以归纳证明验证 $p$ 时所需的 certificate 长度为 $O(\log p)$ , 从而说明了 $\textsf{PRIMES} \in \textbf{NP}$.	
+	可以归纳证明验证 $p$ 时所需的 certificate 长度为 $O(\textrm{poly}(\log p))$ , 从而说明了 $\textsf{PRIMES} \in \textbf{NP}$.	
 	
 \end{frame}
 
@@ -131,7 +131,7 @@
 		正整数 $n \ge 2$ 是质数当且仅当存在与 $n$ 互质的整数 $a$, 满足 $$(x + a)^n \equiv x^n + a \mod n$$
 	\end{block}
 
-	这个结论常被戏称为 freshman's dream.
+	上述定理中的等式常被称为 freshman's dream.
 
 	\begin{proof}
 		$n$ 是质数 $\Rightarrow$ $n | \binom{n}{k} \ (\forall 1 \le k < n)$, $(x + a)^n - x^n - a^n$ 系数全为 $0$.
@@ -172,7 +172,7 @@
 	注意一个 $l$ 次多项式中不可能包含超过一个$> \frac{l}{2}$ 次不可约因式.
 \end{frame}
 \begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
-	因为 $\deg P_n(x) < n$， $P_n(x)$ 只有不超过 $\frac{2n}{l}$ 个 $>\frac{l}{2}$次不可约因式, 从而 $\mathcal C$ 中只有不超过 $\frac{2n}{l} \cdot p^{\frac l2 - 1}$ 个多项式可能是 $P_n(x)$ 的因式.
+	因为 $\deg P_n(x) < n$,  $P_n(x)$ 只有不超过 $\frac{2n}{l}$ 个 $>\frac{l}{2}$次不可约因式, 从而 $\mathcal C$ 中只有不超过 $\frac{2n}{l} \cdot p^{\frac l2 - 1}$ 个多项式可能是 $P_n(x)$ 的因式.
 
 	\begin{align*}
 		\P{r \textrm{ doesn't divide } P_n} &\ge \P{r \in \mathcal C \wedge r \textrm{ doesn't divide } P_n}\\
@@ -185,13 +185,12 @@
 \end{frame}
 
 \section{Notations \& Preliminaries}
-\subsection{Notations \& Preliminaries}
 \begin{frame}{Notations \& Preliminaries}
 	在这一部分我们引入一些记号.\\~\\
 
 	当 $\gcd(a, r) = 1$ 时, 满足 $a^k \equiv 1 \bmod r$ 的正整数 $k$ 是一定存在的, 称其中最小的为 $a$ 模 $r$ 的阶, 记作$\ord_{r}(a)$. 用欧拉函数 $\varphi(r)$ 表示比 $r$ 小的与 $r$ 互质的数的数量, 容易验证 $\ord_r(a) | \varphi(r)$.\\~\\
 
-	当 $p$ 是素数, $h(x)$是$\mathbb Z_p[x]$中不可约多项式, 则 $\mathbb Z_p[x] / h(x)$ 构成一个有限域. 下文中将不加声明地用记号 $\mathbb F$ 表示 $\mathbb Z_p[x] / h(x)$.\\~\\
+	当 $p$ 是素数, $h(x)$是$\mathbb Z_p[x]$中不可约多项式时, $\mathbb Z_p[x] / h(x)$ 是有限域. 之后我们会用记号 $f(x) \equiv g(x) \bmod (h(x), p)$ 来表示 $f(x)$ 和 $g(x)$ 在 $\mathbb F \triangleq \mathbb Z_p[x] / h(x)$ 中相等.\\~\\
 
 	$\tilde O(f(n)) = O(f(n) \textrm{ poly}(\log f(n))) = O(f^{1 + \varepsilon}(n)) $ 表示忽略对数因子.
 
@@ -202,7 +201,7 @@
 	算法分为如下五个步骤: 
 	\begin{enumerate}
 		\item 第一步检查 $n$ 是否是“整数幂”形式的非素数.
-		\item 第二步求出最小的满足 $\ord_r(n) \ge \log^2n$ 的正整数 $r$.
+		\item 第二步求出最小的满足 $\ord_r(n) > \log^2n$ 的正整数 $r$.
 		\item 第三步检查 $n$ 是否有不超过 $r$ 的非平凡因子.
 		\item 第四步是平凡的: 如果 $n \le r$ 没有不超过 $r$ 的非平凡因子, 此时 $n$ 一定是质数.
 		\item 第五步对于 $a = 1, \cdots, \lfloor\sqrt{\varphi(r)}\log n\rfloor$, 检查$(x + a)^n \equiv x^n + a \bmod (x^r - 1, n)$是否成立, 若存在不满足则 $n$ 不是质数, \textit{否则 $n$ 是质数}.
@@ -234,13 +233,112 @@
 
 \end{frame}
 \subsection{Correctness}
+\begin{frame}
+	正确性证明中, 非平凡的部分只有“证明通过第五步测试的 $n$ 是质数”. \\~\\
+
+	任取这样的 $n$ 的一个满足 $\ord_r(p) > 1$ 的质因子 $p$, 注意到有 $p > r$.\\~\\
+
+	根据有限域上分圆多项式那套理论, $x^r - 1$ 在 $\mathbb Z_p$ 下有一个 $\ord_r(p)$ 次不可约多项式因子 $h(x)$. 以下记 $\mathbb F = \mathbb Z_p[x] / h(x)$. 事实上我们没有显式地给出 $p$ 和 $h(x)$ 的具体值, 只是考虑在 $\bmod (x^r - 1, n)$ 下做运算, 是因为 $f(x) \equiv g(x) \bmod (x^r-1, n) \Rightarrow f(x) \equiv g(x) \bmod (h(x), p)$.\\~\\
+
+	注意到前述算法中我们只限制了 $\ord_r(n) \ (> \log^2n)$, 而没有限制 $\ord_r(p)$. 原作者在 2002 年的预印版论文\footnote{\tiny \href{https://www.cse.iitk.ac.in/users/manindra/algebra/primality_original.pdf}{\color{red}这里有下载链接}}中使用了一些解析数论手段来限制 $\ord_r(p)$, 但后来 Hendrik Lenstra Jr. 的工作简化了证明.\\~\\
+
+	{\kaishu 谢谢你, Hendrik Lenstra Jr. !}
+\end{frame}
+\begin{frame}{Introspectivity: Generalization of Freshman's Dream}
+	对于 $a = 0, 1, \cdots, l \triangleq \lfloor \sqrt{\varphi(r)} \log n \rfloor$, $(x + a)^m \equiv x^m + a \bmod (x^r-1, p)$ 对于 $m = n$ (由第五步验证)和 $m = p$ (由扩展费马小)均成立.\\~\\
+	
+	我们指出它对于 $m = \frac np$ 也成立, 这是因为
+	$$(x^p + a)^{\frac np} \equiv [(x + a)^p]^{\frac np} \equiv (x + a)^n \equiv x^n + a \equiv (x^p)^{\frac np} + a$$
+
+	用 $x$ 替代\footnote{\tiny 为什么可以替代呢?} $x^p$ 即可. 我们可以从中抽象出这样的概念:
+
+	\begin{definition}[内省]
+		如果 $m \in \mathbb N$ 和多项式 $f \in \mathbb Z[x]$ 满足 $f(x^m) \equiv f^m(x) \bmod (x^r-1, p)$, 则称 $m$ 对 $f$ 内省(introspective).
+	\end{definition}
+	惊喜地发现内省性对数乘和多项式乘都是封闭的.
+\end{frame}
+\begin{frame}{Introspectivity: Generalization of Freshman's Dream}
+	
+	\begin{lemma}[数乘封闭性]
+		如果 $m_1$ 和 $m_2$ 都对 $f$ 内省, 则 $m_1m_2$ 对 $f$ 内省.
+	\end{lemma}
+	\begin{proof}
+		$f(x^{m_1m_2}) \equiv [f(x^{m_1})]^{m_2} \equiv [f^{m_1}(x)]^{m_2} \equiv f^{m_1m_2}(x)$, 其中第一个 $\equiv$ 在 $\bmod (x^{m_1r} - 1, p)$ 下成立, 但这比在 $\bmod (x^{r} - 1, p)$ 下要强.
+	\end{proof}
+	\begin{lemma}[多项式乘封闭性]
+		如果 $m$ 对 $f_1$ 和 $f_2$ 都内省, 则 $m$ 对 $f_1f_2$ 内省.
+	\end{lemma}
+	\begin{proof}
+		$[f_1(x)f_2(x)]^m \equiv f_1^m(x)f_2^m(x) \equiv f_1(x^m)f_2(x^m) \equiv f_1f_2(x^m)$
+	\end{proof}
+\end{frame}
+\begin{frame}{Introspectivity: Generalization of Freshman's Dream}
+	由于 $p, \frac np$ 对 $x, x + 1, \cdots, x + l$ 分别内省, 两边分别作为生成元得到集合 $I = \left\{p^i \left(\frac np\right)^j \bigg| i, j \le 0\right\}$ 和 $P = \left\{\prod\limits_{a=0}^{l}(x + a)^{e_a} \bigg| e_a \ge 0\right\}$ 也两两内省. \\~\\
+
+	因为模 $x^r - 1$ 下 $x^{kr + b}$ 和 $x^b$ 是一样的, 考虑对 $I$ 中元素模 $r$ 得到 $\mathbb Z_r^*$ 的子群 $G$. 记 $|G| = t$, 注意到 $\langle n \rangle \le G$, 故 $t \ge \ord_r(n) > \log^2n$.\\~\\
+
+	类似的, 把 $P$ 中元素映到 $\mathbb F$ 上得到 $\mathbb F$ 的乘法子群 $\mathcal G$. \\~\\
+
+	接下来的工作就是给出 $\mathcal G$ 大小的上下界, 并从中归谬得出 “$n$ 是质数”的结论.
+\end{frame}
+\begin{frame}{lowerbound of $|\mathcal G|$}
+	\begin{lemma}[Hendrik Lenstra Jr.]
+		$|\mathcal G| \ge \binom{t + l}{t - 1}$.
+	\end{lemma}
+	考虑证明 $P$ 中任意两个不同的小于 $t$ 次多项式映到 $\mathbb F$ 上仍不同. 反证, 假设 $f, g \in P$ 映到 $\mathbb F$ 上相同, 那么根据内省性, $d \triangleq f - g$ 代入所有 $x^m$ 后映到 $\mathbb F$ 上都是 $\mathbf{0}$, 其中 $m \in G, x^m \in \mathbb F$. 这说明如果我们把 $d$ 看成 $\mathbb F[y]$ 的元素, $d$ 在 $\mathbb F$ 上就有至少 $t$ 个根\footnote{\tiny 这里有赖于 $x^m$ 在 $\mathbb F$ 中两两不同, 即所谓“$x$ 是 $\mathbb F$的 $r$ 次本原根”.}, 而 $\deg (d) < t$ 产生了矛盾. 
+
+	$P$ 中小于 $t$ 次多项式个数是 $\binom{t + l}{t - 1}$, 这是不定方程 $\sum\limits_{a=0}^{l}e_a < t$ 的解数.\\~\\
+
+	{\kaishu 在 Hendrik Lenstra Jr. 之前, 一个平凡的结论是 $|\mathcal G| \ge \binom{\ord_r(p) + l}{\ord_r(p) - 1}$.}
+
+\end{frame}
+\begin{frame}{upperbound of $|\mathcal G|$}
+	\begin{lemma}
+		如果 $n$ 不是 $p$ 的整数次幂, 那么 $|\mathcal G| \le n^{\lfloor\sqrt{t}\rfloor}$.
+	\end{lemma}
+	考虑集合 $\hat{I} = \left\{p^i\left(\frac np\right)^j \bigg| 0 \le i, j \le \lfloor \sqrt {t}\rfloor \right\}$ , 如果 $n$ 不是 $p$ 的整数次幂, 那么$\hat{I}$ 中有 $(\lfloor\sqrt t\rfloor + 1)^2 > t$ 个互异元素, 且一定存在两个数之差是 $r$ 的倍数.
+	
+	不妨设为 $m_1, m_2 \in \hat{I}$, 满足 $x^{m_1} \equiv x^{m_2} \bmod (x^r-1, p)$. 任取 $f \in \mathcal G$, 由于 $f^{m_1}(x) \equiv f(x^{m_1}) \equiv f(x^{m_2}) \equiv f^{m_2}(x)$, 故 $Q(Y) = Y^{m_1} - Y^{m_2} \in \mathbb F[Y]$ 以 $\mathcal G$ 中任意元素为根, 从而 $|\mathcal G| \le \deg Q = m_1 \le (p \cdot \frac np)^{\lfloor \sqrt {t}\rfloor} = n^{\lfloor \sqrt {t}\rfloor}$.
+
+\end{frame}
+\begin{frame}{sufficiency for AKS Prime Testing}
+	\begin{align*}
+		|\mathcal G| &\ge \binom{t + l}{t - 1} = \binom{t + l}{l + 1} & \\
+		&\ge \binom{\lfloor \sqrt{t}\log n\rfloor + 1 + l}{l + 1} & \textrm{since} \ t > \log^2n \Rightarrow t \ge \lfloor \sqrt{t}\log n\rfloor\\
+		&= \binom{\lfloor \sqrt{t}\log n\rfloor + 1 + l}{\lfloor \sqrt{t}\log n\rfloor} & \\
+		&\ge \binom{2\lfloor \sqrt{t}\log n\rfloor + 1 }{\lfloor \sqrt{t}\log n\rfloor} & \textrm{since} \ G \le \mathbb Z_r^* \Rightarrow t \le \varphi(r) \\
+		&>2^{\lfloor \sqrt{t}\log n\rfloor}+1 & \textrm{since} \ \binom{2k+1}{k} > 2^{k+1} \ \textrm{for} \ k > 1\\
+		&\ge n^{\lfloor \sqrt t \rfloor}&
+	\end{align*}
+\end{frame}
+\begin{frame}{sufficiency for AKS Prime Testing}
+	上下界的矛盾导致了 $n$ 只能是 $p$ 的整数次幂, 而由第一步, 这个幂次不能大于 $1$, 所以 $n = p$ 是质数.
+\end{frame}
 \subsection{Complexity Analysis}
-\subsection{Future Work}
+\section{Future Work}
+\begin{frame}{}
+	在算法的第五步中, 我们取了 $l = \lfloor \sqrt{\varphi(r)}\log n \rfloor$ 以保证 $|\mathcal G|$ 足够大. 能不能减小一点呢?
+
+	如果以下猜想成立, 复杂度就可以被优化至 $\tilde O(\log^3n)$.
+
+	\begin{block}{Conjecture}
+		如果 $r$ 是与 $n$ 互质的质数, 且满足 $(x - 1)^n \equiv x^n - 1 \bmod (x^r-1, n)$, 则要么 $n$ 是质数, 要么 $n^2 \equiv 1 \bmod r$.
+	\end{block}
+
+	做法是找到一个不整除 $n^2 - 1$ 的质数 $r$, 并判定 $(x - 1)^n \equiv x^n - 1 \bmod (x^r-1, n)$ 是否成立, 若成立则根据猜想 $n$ 是质数, 否则 $n$ 一定不是质数.
+
+	上述要求的 $r$ 是一定存在, 且不超过 $2\ln n$ 的, 这是因为根据\cite{APO}, 不超过 $x$ 的质数乘积至少是 $\mathrm{e}^x$, 故不超过 $2 \ln n$ 的质数乘积至少是 $\mathrm{e}^{2 \ln n} = n^2$, 它们不可能都是 $n^2 - 1$ 的因子.
+
+	\cite{KS} 验证了该猜想在 $r \le 100, n \le 10^{10}$ 时是成立的.
+\end{frame}
+
 \section{Reference}
-\begin{frame}{Reference}
+\begin{frame}[allowframebreaks]{Reference}
 	\bibliographystyle{amsalpha}
 	\bibliography{ref}
 \end{frame}
-	
+\begin{frame}
+	Q. \& A.
+\end{frame}	
 
 \end{document}
