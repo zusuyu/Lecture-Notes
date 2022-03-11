@@ -112,9 +112,9 @@
 
 \subsection{PRIMES is in NP}
 \begin{frame}{\cite{Pratt75}: Every Prime Has a Succinct Certificate}
-	\begin{block}{Lucas Primality Test}
+	\begin{theorem}[Lucas Primality Test]
 		正整数 $n \ge 3$ 是素数当且仅当存在整数 $1 < a < n$满足 $a^{n-1} \equiv 1 \mod 1$ 且对于 $n-1$ 的每个素因子 $p$ 都有 $a^{(n-1)/p} \not\equiv 1 \bmod n$.
-	\end{block}
+	\end{theorem}
 	\begin{proof}
 		$\Leftarrow$: 考虑$\ord_{n}(a)$. $\Rightarrow$: 取 $n$ 的原根作为 $a$.
 	\end{proof}
@@ -127,9 +127,9 @@
 
 \subsection{PRIMES is in BPP}
 \begin{frame}{Generalization of Fermat's Little Theorem}
-	\begin{block}{Theorem}
+	\begin{theorem}
 		正整数 $n \ge 2$ 是素数当且仅当存在与 $n$ 互素的整数 $a$, 满足 $$(x + a)^n \equiv x^n + a \mod n$$
-	\end{block}
+	\end{theorem}
 
 	上述定理中的等式常被称为 freshman's dream.
 
@@ -146,11 +146,11 @@
 	
 	所以可以考虑随机选取一个模数多项式 $r(x) \in \mathbb Z[x]$, 然后检验$(x + a)^n \equiv x^n + a \bmod (r(x), n)$ 是否成立.\\~\\
 
-	\begin{block}{Theorem}
+	\begin{theorem}
 		设$n$ 是一个含有素因子 $p \ge 17$ 的非素数, 且不是某个素数的整数次幂.
 		
 		在$\mathbb Z[x]$中随机选取一个 $l = \lceil \log n \rceil$ 次首一多项式 $r(x)$, 则有至少 $60\%$ 的概率, $(x + 1)^n \not\equiv x^n + 1 \bmod (r(x), n)$.
-	\end{block}
+	\end{theorem}
 	
 \end{frame}
 \begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
@@ -276,7 +276,7 @@
 	\end{proof}
 \end{frame}
 \begin{frame}{Introspectivity: Generalization of Freshman's Dream}
-	由于 $p, \frac np$ 对 $x, x + 1, \cdots, x + l$ 分别内省, 两边分别作为生成元得到集合 $I = \left\{p^i \left(\frac np\right)^j \bigg| i, j \le 0\right\}$ 和 $P = \left\{\prod\limits_{a=0}^{l}(x + a)^{e_a} \bigg| e_a \ge 0\right\}$ 也两两内省. \\~\\
+	由于 $p, \frac np$ 对 $x, x + 1, \cdots, x + l$ 分别内省, 两边分别作为生成元得到集合 $I = \left\{p^i \left(\frac np\right)^j \bigg| i, j \ge 0\right\}$ 和 $P = \left\{\prod\limits_{a=0}^{l}(x + a)^{e_a} \bigg| e_a \ge 0\right\}$ 也两两内省. \\~\\
 
 	因为模 $x^r - 1$ 下 $x^{kr + b}$ 和 $x^b$ 是一样的, 考虑对 $I$ 中元素模 $r$ 得到 $\mathbb Z_r^*$ 的子群 $G$. 记 $|G| = t$, 注意到 $\langle n \rangle \le G$, 故 $t \ge \ord_r(n) > \log^2n$.\\~\\
 
@@ -319,16 +319,21 @@
 \end{frame}
 \subsection{Complexity Analysis}
 \begin{frame}{Existence \& Upperbound of $r$}
-	\begin{lemma}
+	\begin{center}
+		{\kaishu 黄大哥有高论, 大家听黄大哥讲.}	
+	\end{center}
+	\pause 
+	\begin{lemma}[弱一点的]
 		存在 $r \le \max\{3, \lceil \log^5n + \log n \rceil\}$ 满足 $\ord_r(n) > \log^2n$.
 	\end{lemma}
+
 	$n = 2$ 的情况是平凡的, 取 $r = 3$ 即可.
 
-	对于 $n > 2$, 反证, 假设该范围内与 $n$ 互素的所有数都满足 $\ord_r(n) \le \log^2n$, 那么它们都将整除 $\prod\limits_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < n^{\log^4n} = 2^{\log^5n}$
+	对于 $n > 2$, 反证, 假设该范围内与 $n$ 互素的所有数都满足 $\ord_r(n) \le \log^2n$, 那么它们都将整除 $\prod\limits_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < n^{\log^4n} = 2^{\log^5n}$.
 
-	加上那些与 $n$ 不互素的, 我们知道了不超过该范围的所有数都整除 $n\prod\limits_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < 2^{\lceil\log^5n+\log n \rceil}$,  即它们的 $\textrm{LCM}$ 不会超过这个数 
+	加上那些与 $n$ 不互素的, 我们知道了不超过该范围的所有数都整除 $n\prod\limits_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < 2^{\lceil\log^5n+\log n \rceil}$,  即它们的 $\textrm{LCM}$ 不会超过这个数.
 
-	但是 $\lceil \log^5n + \log n \rceil \ge 7$ 而 $\textrm{LCM}(m) \ge 2^m (\forall m \ge 7)$, 所以矛盾了.
+	但是 $\lceil \log^5n + \log n \rceil \ge 7$ 而 $\textrm{LCM}(m) > 2^m (\forall m \ge 7)$, 所以矛盾了.
 \end{frame}
 \begin{frame}{$\textrm{LCM}(m) > 2^m ?$}
 	\begin{lemma}
