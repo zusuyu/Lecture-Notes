@@ -113,13 +113,13 @@
 \subsection{PRIMES is in NP}
 \begin{frame}{\cite{Pratt75}: Every Prime Has a Succinct Certificate}
 	\begin{block}{Lucas Primality Test}
-		正整数 $n \ge 3$ 是质数当且仅当存在整数 $1 < a < n$满足 $a^{n-1} \equiv 1 \mod 1$ 且对于 $n-1$ 的每个质因子 $p$ 都有 $a^{(n-1)/p} \not\equiv 1 \bmod n$.
+		正整数 $n \ge 3$ 是素数当且仅当存在整数 $1 < a < n$满足 $a^{n-1} \equiv 1 \mod 1$ 且对于 $n-1$ 的每个素因子 $p$ 都有 $a^{(n-1)/p} \not\equiv 1 \bmod n$.
 	\end{block}
 	\begin{proof}
 		$\Leftarrow$: 考虑$\ord_{n}(a)$. $\Rightarrow$: 取 $n$ 的原根作为 $a$.
 	\end{proof}
 	
-	想验证 $p$ 是质数, 只需要给出满足条件的 $a$ 以及 $p - 1$ 的质因数分解 $p - 1 = \prod\limits_{i=1}^{k}p_i$, \textbf{同时}进一步验证 $p_i$ 都是质数.  
+	想验证 $p$ 是素数, 只需要给出满足条件的 $a$ 以及 $p - 1$ 的素因数分解 $p - 1 = \prod\limits_{i=1}^{k}p_i$, \textbf{同时}进一步验证 $p_i$ 都是素数.  
 
 	可以归纳证明验证 $p$ 时所需的 certificate 长度为 $O(\textrm{poly}(\log p))$ , 从而说明了 $\textsf{PRIMES} \in \textbf{NP}$.	
 	
@@ -128,15 +128,15 @@
 \subsection{PRIMES is in BPP}
 \begin{frame}{Generalization of Fermat's Little Theorem}
 	\begin{block}{Theorem}
-		正整数 $n \ge 2$ 是质数当且仅当存在与 $n$ 互质的整数 $a$, 满足 $$(x + a)^n \equiv x^n + a \mod n$$
+		正整数 $n \ge 2$ 是素数当且仅当存在与 $n$ 互素的整数 $a$, 满足 $$(x + a)^n \equiv x^n + a \mod n$$
 	\end{block}
 
 	上述定理中的等式常被称为 freshman's dream.
 
 	\begin{proof}
-		$n$ 是质数 $\Rightarrow$ $n | \binom{n}{k} \ (\forall 1 \le k < n)$, $(x + a)^n - x^n - a^n$ 系数全为 $0$.
+		$n$ 是素数 $\Rightarrow$ $n | \binom{n}{k} \ (\forall 1 \le k < n)$, $(x + a)^n - x^n - a^n$ 系数全为 $0$.
 
-		$n$ 不是质数 $\Rightarrow$ 若 $p^k \| n$, 则 $p^k \nmid \binom{n}{p} = \frac{n \times (n-1) \times \cdots \times (n-p+1)}{1 \times 2 \times \cdots \times p}$, $p$次项系数非零.
+		$n$ 不是素数 $\Rightarrow$ 若 $p^k \| n$, 则 $p^k \nmid \binom{n}{p} = \frac{n \times (n-1) \times \cdots \times (n-p+1)}{1 \times 2 \times \cdots \times p}$, $p$次项系数非零.
 	\end{proof}
 	
 \end{frame}
@@ -147,14 +147,14 @@
 	所以可以考虑随机选取一个模数多项式 $r(x) \in \mathbb Z[x]$, 然后检验$(x + a)^n \equiv x^n + a \bmod (r(x), n)$ 是否成立.\\~\\
 
 	\begin{block}{Theorem}
-		设$n$ 是一个含有质因子 $p \ge 17$ 的非质数, 且不是某个质数的整数次幂.
+		设$n$ 是一个含有素因子 $p \ge 17$ 的非素数, 且不是某个素数的整数次幂.
 		
 		在$\mathbb Z[x]$中随机选取一个 $l = \lceil \log n \rceil$ 次首一多项式 $r(x)$, 则有至少 $60\%$ 的概率, $(x + 1)^n \not\equiv x^n + 1 \bmod (r(x), n)$.
 	\end{block}
 	
 \end{frame}
 \begin{frame}{\cite{AB99}: \textsf{PRIMES} is in \textbf{BPP}}
-	令 $P_n(x) = (x + 1)^n - 1 - x^n$. 当 $n$ 不是质数时, $P_n(x) \not\equiv 0 \bmod p$, 这是因为$[x^{p^k}] P_n(x) = \binom{n}{p^k} = \frac{n \times (n-1) \times \cdots \times (n-p^k+1)}{(p^k)!} \not\equiv 0 \bmod p$, 其中 $p^k \| n$, 这里要求了 $n \neq p^k$.\\~\\
+	令 $P_n(x) = (x + 1)^n - 1 - x^n$. 当 $n$ 不是素数时, $P_n(x) \not\equiv 0 \bmod p$, 这是因为$[x^{p^k}] P_n(x) = \binom{n}{p^k} = \frac{n \times (n-1) \times \cdots \times (n-p^k+1)}{(p^k)!} \not\equiv 0 \bmod p$, 其中 $p^k \| n$, 这里要求了 $n \neq p^k$.\\~\\
 
 	于是我们在 $\mathbb Z_p[x]$ 下考虑问题. 注意到 $\mathbb Z_p[x]$ 下存在唯一分解, 不可约因式的概念, 记 $I(d)$ 表示其中 $d$ 次不可约首一多项式的数量, 可以估计其下界\footnote{\tiny 这个结论不太初等, 就不在此过多阐述了, 可详细参考 \cite{lidl_niederreiter_1994}.}
 
@@ -188,7 +188,7 @@
 \begin{frame}{Notations \& Preliminaries}
 	在这一部分我们引入一些记号.\\~\\
 
-	当 $\gcd(a, r) = 1$ 时, 满足 $a^k \equiv 1 \bmod r$ 的正整数 $k$ 是一定存在的, 称其中最小的为 $a$ 模 $r$ 的阶, 记作$\ord_{r}(a)$. 用欧拉函数 $\varphi(r)$ 表示比 $r$ 小的与 $r$ 互质的数的数量, 容易验证 $\ord_r(a) | \varphi(r)$.\\~\\
+	当 $\gcd(a, r) = 1$ 时, 满足 $a^k \equiv 1 \bmod r$ 的正整数 $k$ 是一定存在的, 称其中最小的为 $a$ 模 $r$ 的阶, 记作$\ord_{r}(a)$. 用欧拉函数 $\varphi(r)$ 表示比 $r$ 小的与 $r$ 互素的数的数量, 容易验证 $\ord_r(a) | \varphi(r)$.\\~\\
 
 	当 $p$ 是素数, $h(x)$是$\mathbb Z_p[x]$中不可约多项式时, $\mathbb Z_p[x] / h(x)$ 是有限域. 之后我们会用记号 $f(x) \equiv g(x) \bmod (h(x), p)$ 来表示 $f(x)$ 和 $g(x)$ 在 $\mathbb F \triangleq \mathbb Z_p[x] / h(x)$ 中相等.\\~\\
 
@@ -197,14 +197,14 @@
 \end{frame}
 \section{AKS Primality Test}
 \subsection{Algorithm}
-\begin{frame}{Natural Language Description}
+\begin{frame}{Description}
 	算法分为如下五个步骤: 
 	\begin{enumerate}
 		\item 第一步检查 $n$ 是否是“整数幂”形式的非素数.
-		\item 第二步求出最小的满足 $\ord_r(n) > \log^2n$ 的正整数 $r$.
+		\item 第二步求出最小的\footnote{\tiny 我们会在下一个 section 中证明这样的 $r$ 的存在性并给出上界.}满足 $\gcd(n, r) = 1$ 且 $\ord_r(n) > \log^2n$ 的正整数 $r$.
 		\item 第三步检查 $n$ 是否有不超过 $r$ 的非平凡因子.
-		\item 第四步是平凡的: 如果 $n \le r$ 没有不超过 $r$ 的非平凡因子, 此时 $n$ 一定是质数.
-		\item 第五步对于 $a = 1, \cdots, \lfloor\sqrt{\varphi(r)}\log n\rfloor$, 检查$(x + a)^n \equiv x^n + a \bmod (x^r - 1, n)$是否成立, 若存在不满足则 $n$ 不是质数, \textit{否则 $n$ 是质数}.
+		\item 第四步是平凡的: 如果 $n \le r$ 没有不超过 $r$ 的非平凡因子, 此时 $n$ 一定是素数.
+		\item 第五步对于 $a = 1, \cdots, \lfloor\sqrt{\varphi(r)}\log n\rfloor$, 检查$(x + a)^n \equiv x^n + a \bmod (x^r - 1, n)$是否成立, 若存在不满足则 $n$ 不是素数, \textit{否则 $n$ 是素数}.
 	\end{enumerate}
 
 	只有最后一句话的正确性是非平凡的.
@@ -215,7 +215,7 @@
 			\If{$n = a^b$ for $a \in \mathbb N$ and $b > 1$}
 				\State \Return \texttt{COMPOSITE}
 			\EndIf
-			\State $r \gets \min\{m \in \mathbb N | \ord_m(n) > \log^2n\}$
+			\State $r \gets \min\{m \in \mathbb N | \gcd(n, m) = 1 \wedge \ord_m(n) > \log^2n\}$
 			\If{$1 < \gcd(a, n) < n$ for some $a \le r$}
 				\State \Return \texttt{COMPOSITE}
 			\EndIf
@@ -234,15 +234,17 @@
 \end{frame}
 \subsection{Correctness}
 \begin{frame}
-	正确性证明中, 非平凡的部分只有“证明通过第五步测试的 $n$ 是质数”. \\~\\
+	正确性证明中, 非平凡的部分只有“证明通过第五步测试的 $n$ 是素数”. \\~\\
 
-	任取这样的 $n$ 的一个满足 $\ord_r(p) > 1$ 的质因子 $p$, 注意到有 $p > r$.\\~\\
+	任取这样的 $n$ 的一个满足 $\ord_r(p) > 1$ 的素因子 $p$, 注意到有 $p > r$.\\~\\
 
 	根据有限域上分圆多项式那套理论, $x^r - 1$ 在 $\mathbb Z_p$ 下有一个 $\ord_r(p)$ 次不可约多项式因子 $h(x)$. 以下记 $\mathbb F = \mathbb Z_p[x] / h(x)$. 事实上我们没有显式地给出 $p$ 和 $h(x)$ 的具体值, 只是考虑在 $\bmod (x^r - 1, n)$ 下做运算, 是因为 $f(x) \equiv g(x) \bmod (x^r-1, n) \Rightarrow f(x) \equiv g(x) \bmod (h(x), p)$.\\~\\
 
-	注意到前述算法中我们只限制了 $\ord_r(n) \ (> \log^2n)$, 而没有限制 $\ord_r(p)$. 原作者在 2002 年的预印版论文\footnote{\tiny \href{https://www.cse.iitk.ac.in/users/manindra/algebra/primality_original.pdf}{\color{red}这里有下载链接}}中使用了一些解析数论手段来限制 $\ord_r(p)$, 但后来 Hendrik Lenstra Jr. 的工作简化了证明.\\~\\
+	前述算法中我们只限制了 $\ord_r(n) \ (> \log^2n)$, 而没有限制 $\ord_r(p)$. 原作者在 2002 年的预印版论文\footnote{\tiny \href{https://www.cse.iitk.ac.in/users/manindra/algebra/primality_original.pdf}{\color{red}这里有下载链接}}中使用了一些解析数论手段来限制 $\ord_r(p)$, 但后来 Hendrik Lenstra Jr. 的工作简化了证明.
 
-	{\kaishu 谢谢你, Hendrik Lenstra Jr. !}
+	\begin{center}
+		{\zihao{-5}\kaishu 谢谢你, Hendrik Lenstra Jr. !}		
+	\end{center}
 \end{frame}
 \begin{frame}{Introspectivity: Generalization of Freshman's Dream}
 	对于 $a = 0, 1, \cdots, l \triangleq \lfloor \sqrt{\varphi(r)} \log n \rfloor$, $(x + a)^m \equiv x^m + a \bmod (x^r-1, p)$ 对于 $m = n$ (由第五步验证)和 $m = p$ (由扩展费马小)均成立.\\~\\
@@ -265,6 +267,7 @@
 	\begin{proof}
 		$f(x^{m_1m_2}) \equiv [f(x^{m_1})]^{m_2} \equiv [f^{m_1}(x)]^{m_2} \equiv f^{m_1m_2}(x)$, 其中第一个 $\equiv$ 在 $\bmod (x^{m_1r} - 1, p)$ 下成立, 但这比在 $\bmod (x^{r} - 1, p)$ 下要强.
 	\end{proof}
+	\pause
 	\begin{lemma}[多项式乘封闭性]
 		如果 $m$ 对 $f_1$ 和 $f_2$ 都内省, 则 $m$ 对 $f_1f_2$ 内省.
 	\end{lemma}
@@ -279,20 +282,20 @@
 
 	类似的, 把 $P$ 中元素映到 $\mathbb F$ 上得到 $\mathbb F$ 的乘法子群 $\mathcal G$. \\~\\
 
-	接下来的工作就是给出 $\mathcal G$ 大小的上下界, 并从中归谬得出 “$n$ 是质数”的结论.
+	接下来的工作就是给出 $\mathcal G$ 大小的上下界, 并从中归谬得出 “$n$ 是素数”的结论.
 \end{frame}
-\begin{frame}{lowerbound of $|\mathcal G|$}
+\begin{frame}{Lowerbound of $|\mathcal G|$}
 	\begin{lemma}[Hendrik Lenstra Jr.]
 		$|\mathcal G| \ge \binom{t + l}{t - 1}$.
 	\end{lemma}
 	考虑证明 $P$ 中任意两个不同的小于 $t$ 次多项式映到 $\mathbb F$ 上仍不同. 反证, 假设 $f, g \in P$ 映到 $\mathbb F$ 上相同, 那么根据内省性, $d \triangleq f - g$ 代入所有 $x^m$ 后映到 $\mathbb F$ 上都是 $\mathbf{0}$, 其中 $m \in G, x^m \in \mathbb F$. 这说明如果我们把 $d$ 看成 $\mathbb F[y]$ 的元素, $d$ 在 $\mathbb F$ 上就有至少 $t$ 个根\footnote{\tiny 这里有赖于 $x^m$ 在 $\mathbb F$ 中两两不同, 即所谓“$x$ 是 $\mathbb F$的 $r$ 次本原根”.}, 而 $\deg (d) < t$ 产生了矛盾. 
 
-	$P$ 中小于 $t$ 次多项式个数是 $\binom{t + l}{t - 1}$, 这是不定方程 $\sum\limits_{a=0}^{l}e_a < t$ 的解数.\\~\\
+	$P$ 中小于 $t$ 次多项式个数是 $\binom{t + l}{t - 1}$, 这是不定方程 $\sum\limits_{a=0}^{l}e_a < t$ 的解数\footnote{\tiny 这里还需要说明 $x, \cdots, x + l$ 映到 $\mathbb F$ 中互不相同.}.\\~\\
 
-	{\kaishu 在 Hendrik Lenstra Jr. 之前, 一个平凡的结论是 $|\mathcal G| \ge \binom{\ord_r(p) + l}{\ord_r(p) - 1}$.}
+	{\kaishu\zihao{-5} 在 Hendrik Lenstra Jr. 之前, 一个平凡的结论是 $|\mathcal G| \ge \binom{\ord_r(p) + l}{\ord_r(p) - 1}$.}
 
 \end{frame}
-\begin{frame}{upperbound of $|\mathcal G|$}
+\begin{frame}{Upperbound of $|\mathcal G|$}
 	\begin{lemma}
 		如果 $n$ 不是 $p$ 的整数次幂, 那么 $|\mathcal G| \le n^{\lfloor\sqrt{t}\rfloor}$.
 	\end{lemma}
@@ -301,7 +304,7 @@
 	不妨设为 $m_1, m_2 \in \hat{I}$, 满足 $x^{m_1} \equiv x^{m_2} \bmod (x^r-1, p)$. 任取 $f \in \mathcal G$, 由于 $f^{m_1}(x) \equiv f(x^{m_1}) \equiv f(x^{m_2}) \equiv f^{m_2}(x)$, 故 $Q(Y) = Y^{m_1} - Y^{m_2} \in \mathbb F[Y]$ 以 $\mathcal G$ 中任意元素为根, 从而 $|\mathcal G| \le \deg Q = m_1 \le (p \cdot \frac np)^{\lfloor \sqrt {t}\rfloor} = n^{\lfloor \sqrt {t}\rfloor}$.
 
 \end{frame}
-\begin{frame}{sufficiency for AKS Prime Testing}
+\begin{frame}{Sufficiency for AKS Prime Testing}
 	\begin{align*}
 		|\mathcal G| &\ge \binom{t + l}{t - 1} = \binom{t + l}{l + 1} & \\
 		&\ge \binom{\lfloor \sqrt{t}\log n\rfloor + 1 + l}{l + 1} & \textrm{since} \ t > \log^2n \Rightarrow t \ge \lfloor \sqrt{t}\log n\rfloor\\
@@ -311,29 +314,92 @@
 		&\ge n^{\lfloor \sqrt t \rfloor}&
 	\end{align*}
 \end{frame}
-\begin{frame}{sufficiency for AKS Prime Testing}
-	上下界的矛盾导致了 $n$ 只能是 $p$ 的整数次幂, 而由第一步, 这个幂次不能大于 $1$, 所以 $n = p$ 是质数.
+\begin{frame}{Sufficiency for AKS Prime Testing}
+	上下界的矛盾导致了 $n$ 只能是 $p$ 的整数次幂, 而由第一步, 这个幂次不能大于 $1$, 所以 $n = p$ 是素数.
 \end{frame}
 \subsection{Complexity Analysis}
-\section{Future Work}
+\begin{frame}{Existence \& Upperbound of $r$}
+	\begin{lemma}
+		存在 $r \le \max\{3, \lceil \log^5n + \log n \rceil\}$ 满足 $\ord_r(n) > \log^2n$.
+	\end{lemma}
+	$n = 2$ 的情况是平凡的, 取 $r = 3$ 即可.
+
+	对于 $n > 2$, 反证, 假设该范围内与 $n$ 互素的所有数都满足 $\ord_r(n) \le \log^2n$, 那么它们都将整除 $\prod\limits_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < n^{\log^4n} = 2^{\log^5n}$
+
+	加上那些与 $n$ 不互素的, 我们知道了不超过该范围的所有数都整除 $n\prod\limits_{i=1}^{\lfloor\log^2n\rfloor}(n^i-1) < 2^{\lceil\log^5n+\log n \rceil}$,  即它们的 $\textrm{LCM}$ 不会超过这个数 
+
+	但是 $\lceil \log^5n + \log n \rceil \ge 7$ 而 $\textrm{LCM}(m) \ge 2^m (\forall m \ge 7)$, 所以矛盾了.
+\end{frame}
+\begin{frame}{$\textrm{LCM}(m) > 2^m ?$}
+	\begin{lemma}
+		对于正整数 $m \ge 7$, 有$$\textrm{LCM}(m) \triangleq \textrm{lcm}(1, 2, \cdots, m) > 2^m$$
+	\end{lemma}
+
+	证明...\sout{我不好说了.}
+
+	\cite{farhi2009identity} 解析地给出了一个稍弱的结论, 可供参考.
+\end{frame}
+\begin{frame}{Complexity Analysis}
+	两个 $m$ 比特数的四则运算复杂度为 $\tilde O(m)$.
+
+	两个以 $m$ 比特数为系数的不超过 $d$ 次多项式乘法的复杂度为 $\tilde O(dm)$.
+
+	\begin{theorem}
+		算法的渐进时间复杂度为 $\tilde O(\log^{10.5}n)$.
+	\end{theorem}
+\end{frame}
+\begin{frame}{Complexity Analysis}
+	\begin{itemize}
+		\item 第一步的复杂度是 $\tilde O(\log^3n)$ , 因为如果 $n = a^b$ , 那么 $b \le \log n$ , 可以先枚举 $b$ 再二分求 $a$, 注意到一共有 $O(\log^2n)$ 对有序对 $(a, b)$ 需要计算 $a^b$, 而单次计算的复杂度是 $\tilde O(\log n)$ (对 $b$ 快速幂) , 所以总复杂度是 $\tilde O(\log^3n)$. \pause
+		\item 第二步需要从小到大枚举 $r$ 并检验, 每个 $r$ 的检验需要做 $O(\log^2n)$ 次乘法, 不过由于是 $\bmod r$ 所以乘法的复杂度是 $O(\log^{\varepsilon} n)$ 可以忽略, 总复杂度是 $\tilde O(r\log^2n) = \tilde O(\log^7n)$.
+	\end{itemize}
+\end{frame}
+\begin{frame}{Complexity Analysis}
+	\begin{itemize}
+		\item 第三步需要算 $r$ 次 $\gcd$ , 每次都是 $n$ 和一个 $\le r$ 的数, 因为瓶颈只在于第一次用 $n$ 去试除 $r$, 那么一次的复杂度是 $\tilde O(\log n)$ , 总复杂度是 $\tilde O(r\log n) = \tilde O(\log^6n)$. \pause
+		\item 第五步需要进行 $\lfloor\sqrt{\varphi(r)}\log n\rfloor$ 轮检验, 每轮检验需要做 $O(\log n)$ 次以 $O(\log n)$ 比特数为系数的$r$次多项式乘法, 复杂度是 $\tilde O(r\log^2n)$ , 检验轮数是 $O(r^{0.5}\log n)$ 所以总复杂度是 $\tilde O(r^{1.5}\log^{3} n) = \tilde O(\log^{10.5}n)$.
+	\end{itemize}
+\end{frame}
+\begin{frame}{Improvements via Conjectures}
+	\begin{block}{Sophie-Germain Prime Density Conjecture}
+		若素数 $p$ 满足 $\frac{p-1}{2}$ 也是素数, 则称它为苏菲-热尔曼素数. 苏菲-热尔曼素数在渐进意义下有 $\frac{2C_2m}{\ln^2m}$ 个, 其中 $C_2$ 是孪生素数常数($\approx 0.66$).
+	\end{block}
+
+	可选取常数 $c_1, c_2$ 使得 $[c_1\log^2, c_2\log^2n(\log\log n)^2]$ 之间有 $O(\log^2n)$ 个苏菲-热尔曼素数. 因为 $\ord_p(n) | \varphi(p) = p - 1$, 这些苏菲-热尔曼素数要么 $\ord_{p}(n) \le 2$, 要么 $\ord_p(n) \ge \frac{p-1}{2}$. 满足前者的 $p$ 都是 $n^2 - 1$ 的约数, 不会有超过 $O(\log n)$ 个, 因此存在$r = \tilde O(\log^2n)$ 满足 $\ord_r(n) \ge \frac{r-1}{2} = O(\log^2n)$.
+\end{frame}
+\begin{frame}{Improvements via Conjectures (proved)}
+	\begin{lemma}[Fouvry, \cite{Fouvry1985}]
+		记 $P(n)$ 表示 $n$ 的最大素因子. 满足$P(q - 1) > q^{\frac23}$ 的素数 $p$ 在渐进意义下有 $c\frac{m}{\ln m}$ 个, 其中 $c > 0$ 是常数.
+	\end{lemma}
+
+	类似前面的分析方式, 我们可以给出 $r = O(\log^3n)$ 的上界, 从而把算法的复杂度优化至 $\tilde O(\log^{7.5}n)$.
+\end{frame}
+\subsection{Future Work}
 \begin{frame}{}
 	在算法的第五步中, 我们取了 $l = \lfloor \sqrt{\varphi(r)}\log n \rfloor$ 以保证 $|\mathcal G|$ 足够大. 能不能减小一点呢?
 
 	如果以下猜想成立, 复杂度就可以被优化至 $\tilde O(\log^3n)$.
 
 	\begin{block}{Conjecture}
-		如果 $r$ 是与 $n$ 互质的质数, 且满足 $(x - 1)^n \equiv x^n - 1 \bmod (x^r-1, n)$, 则要么 $n$ 是质数, 要么 $n^2 \equiv 1 \bmod r$.
+		如果 $r$ 是与 $n$ 互素的素数, 且满足 $(x - 1)^n \equiv x^n - 1 \bmod (x^r-1, n)$, 则要么 $n$ 是素数, 要么 $n^2 \equiv 1 \bmod r$.
 	\end{block}
 
-	做法是找到一个不整除 $n^2 - 1$ 的质数 $r$, 并判定 $(x - 1)^n \equiv x^n - 1 \bmod (x^r-1, n)$ 是否成立, 若成立则根据猜想 $n$ 是质数, 否则 $n$ 一定不是质数.
+	做法是找到一个不整除 $n^2 - 1$ 的素数 $r$, 并判定 $(x - 1)^n \equiv x^n - 1 \bmod (x^r-1, n)$ 是否成立, 若成立则根据猜想 $n$ 是素数, 否则 $n$ 一定不是素数.
 
-	上述要求的 $r$ 是一定存在, 且不超过 $2\ln n$ 的, 这是因为根据\cite{APO}, 不超过 $x$ 的质数乘积至少是 $\mathrm{e}^x$, 故不超过 $2 \ln n$ 的质数乘积至少是 $\mathrm{e}^{2 \ln n} = n^2$, 它们不可能都是 $n^2 - 1$ 的因子.
+	上述要求的 $r$ 是一定存在, 且不超过 $2\ln n$ 的, 这是因为根据\cite{APO}, 不超过 $x$ 的素数乘积至少是 $\mathrm{e}^x$, 故不超过 $2 \ln n$ 的素数乘积至少是 $\mathrm{e}^{2 \ln n} = n^2$, 它们不可能都是 $n^2 - 1$ 的因子.
 
 	\cite{KS} 验证了该猜想在 $r \le 100, n \le 10^{10}$ 时是成立的.
 \end{frame}
-
-\section{Reference}
-\begin{frame}[allowframebreaks]{Reference}
+\section{Acknowledgments \& References}
+\begin{frame}[fragile]{Acknowledgments}
+	参考了如下文章.
+	\begin{itemize}
+		\item \href{https://guyutongxue.github.io/blogs/primes_is_in_p.html}{\color{red} 多项式复杂度内的素性检测算法
+		PRIMES is in P - guyutongxue}
+		\item \href{https://www.bananaspace.org/wiki/%E7%94%A8%E6%88%B7:Rushcheyo/%E3%80%8A%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E8%AE%BE%E8%AE%A1%E3%80%8B%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/PRIMES_is_in_P}{\color{red}《算法分析与设计》论文阅读/PRIMES is in P - Rushcheyo}
+	\end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]{References}
 	\bibliographystyle{amsalpha}
 	\bibliography{ref}
 \end{frame}
