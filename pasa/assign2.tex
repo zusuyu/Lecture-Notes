@@ -1,0 +1,249 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+
+\title{\heiti\zihao{2} 概率统计(A)课程作业: 随机变量及其分布}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{概率统计(A)}
+\chead{2022 Spring}
+\rhead{随机变量及其分布}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+\begin{enumerate}
+	\item $\P{X = 3} = F(3) - \lim\limits_{x \to 3^-}F(x) = \frac{1}{12}$.
+	\item $\P{\frac12 < X \le \frac32} = F(\frac32) - F(\frac12) = \frac58 - \frac18 = \frac12$.
+	\item $\P{X < 2} = \lim\limits_{x \to 2^-}F(x) = \frac34$.
+\end{enumerate}
+
+\section{}
+\begin{equation}
+	\P{S_n = 2k - n} = \begin{cases}
+	\binom{n}{k}p^kq^{n-k}, & k \in [0, n] \cap \mathbb Z\\
+	0, & \textrm{otherwise}
+\end{cases}
+\end{equation}
+
+\section{}
+设 $L$ 表示左口袋火柴盒先空, $R$ 表示右口袋火柴盒先空. 设随机变量 $X$ 表示剩余火柴数量.
+
+\begin{equation}
+\begin{split}
+	\P{X = r} &= \P{L \wedge X = r} + \P{R \wedge X = r} \\&= 2\P{L \wedge X = r} \\&= 2\binom{2N-r}{N}\left(\frac12\right)^{2N-r+1} \\&= \binom{2N-r}{N}\left(\frac12\right)^{2N-r}
+\end{split}
+\end{equation}
+
+\section{}
+设成虫数量为 $X$, 产卵数量为 $Y$.
+
+\begin{equation}
+	\begin{split}
+		\P{X = x} &= \sum_{y = x}^{\infty} \P{X = x | Y = y} \P{Y = y}\\
+		&= \sum_{y = x}^{\infty} \binom{y}{x}p^x(1-p)^{y-x}\e^{-\lambda}\frac{\lambda^y}{y!}\\
+		&= \e^{-\lambda}\frac{(\lambda p)^x}{x!} \sum_{y=x}^{\infty} \frac{(\lambda(1-p))^{y-x}}{(y-x)!}\\
+		&= \e^{-\lambda}\frac{(\lambda p)^x}{x!} \e^{\lambda(1-p)}\\
+		&= \e^{-\lambda p}\frac{(\lambda p)^x}{x!}
+	\end{split}
+\end{equation}
+
+\section{}
+废品数量 $X \sim B(1000, 0.005)$, 可以用 Poisson 分布 $\pi(\lambda = 5)$ 来近似.
+\begin{enumerate}
+	\item $\P{X \ge 2} = 1 - \P{X = 0} - \P{X = 1} \approx 1 - \e^{-5} - 5\e^{-5} \approx 0.95957$.
+	\item $\P{X \le 5} \approx \sum_{k=0}^{5}\e^{-5}\frac{5^k}{k!} \approx 0.61596$.
+	\item $\P{X \le 7} \approx 0.86662, \P{X \le 8} \approx 0.93190$. 能以 $90\%$ 的概率希望废品件数不超过 $8$ 件.
+\end{enumerate}
+
+\section{}
+
+注意到 $S(x) = 1 - F(x), S'(x) = -f(x)$, 于是有 $\lambda(x) = -\frac{S'(x)}{S(x)} = -\left[\ln(S(x))\right]'$, 因此
+
+$$S(x) = 1 - F(x) = 1 - \int_{0}^{x}f(t)\text dt = \exp\left(-\int_0^x \lambda(t)\text dt\right)$$
+
+当 $\xi \sim \textrm{Exp}(\lambda)$ 时, $f(x) = \lambda \e^{-\lambda x}, F(x) = 1 - \e^{-\lambda x}, S(x) = \e^{-\lambda x}, \lambda(x) \equiv \lambda$. 易验证上述关系成立.
+
+\section{}
+
+已知 $f_{\theta}(x) = \begin{cases}
+	1 / \pi, & x \in [-\pi / 2, \pi / 2] \\
+	0, & \textrm{otherwise}
+\end{cases}$, $\psi$ 的取值范围是 $(-\infty, +\infty)$.
+
+\begin{equation}
+	\begin{split}
+		F_{\psi}(x) &= \P{\psi \le x} \\
+		&= \P{\tan \theta \le x}\\
+		&= \P{\theta \le \arctan x}\\
+		&= F_{\theta}(\arctan x)
+	\end{split}
+\end{equation}
+
+因此 $f_{\psi}(x) = f_{\theta}(\arctan x) \left(\arctan x\right)' = \frac{1}{\pi(x^2+1)}$.
+
+\section{}
+
+$X \sim \mathcal N(0, 1)$ 的概率密度函数为 $f_X(x) = \frac{1}{\sqrt{2\pi}}\e^{-x^2/2}$.
+
+\begin{enumerate}
+	\item 记 $Y = X^2$, 显然 $Y$ 的取值范围是 $[0, +\infty)$.
+	
+	$F_Y(y) = \P{Y \le y} = \P{X^2 \le y} = 2\P{X \le \sqrt{y}} - 1$, 故 $f_Y(y) = 2f_X(\sqrt{y})(\sqrt{y})' = \frac{1}{\sqrt{2\pi}}\frac{\e^{-y/2}}{\sqrt y}$.
+
+	\item 记 $Z = \e^X$, 显然 $Z$ 取值范围是 $(0, +\infty)$.
+	
+	$F_Z(z) = \P{Z \le z} = \P{\e^X \le z} = \P{X \le \ln z} = f_X(\ln z)$, 故 $f_Z(z) = f_X(\ln z)(\ln z)' = \frac{1}{\sqrt{2\pi}}\frac{\e^{-\frac{\ln^2 z}{2}}}{z}$.
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item 令 $\alpha = X^2$, $f_{\alpha}(x) = \frac{1}{2\sqrt x}f_X(\sqrt{x}) = \frac{1}{2N\sqrt x}$.
+	\item 令 $\beta = [\alpha]$, 此时 $\beta$ 是离散型随机变量, $\P{\beta = k} = \int_{k}^{k+1}f_{\alpha}(x)\text dx = \begin{cases}
+		\frac{\sqrt{k+1} - \sqrt k}{N}, & k \in [0, N^2 - 1] \cap \mathbb Z\\
+		0, & \textrm{otherwise}
+	\end{cases}$.
+	\item 令 $\gamma = \alpha - \beta$, 易知 $\gamma \in [0, 1)$, 而对于 $x \in [0, 1)$ 有 $\P{\gamma \le x} = \sum\limits_{k = 0}^{N^2-1} \P{k \le \alpha \le k + x} = \sum\limits_{k=0}^{N^2-1}\frac{\sqrt{k + x} - \sqrt k}{N}$, 因此 $\gamma$ 的分布函数为\begin{equation} F_{\gamma}(x) = \begin{cases}
+		0, & x \le 0\\
+		\sum\limits_{k=0}^{N^2-1} \frac{\sqrt{k+x} - \sqrt k}{N}, & 0 \le x < 1\\
+		1, & x \ge 1
+	\end{cases}\end{equation}
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item 在 Pascal 分布 $\binom{k-1}{r-1}p^{r}q^{k-r}$ 中, 代入 $k = \frac{t}{\Delta t}, p = \lambda \Delta t$, 同时令 $\Delta t \to 0$, 可以得到
+	\begin{equation}
+		\begin{split}
+			&\lim_{\Delta t \to 0} \binom{\frac{t}{\Delta t} - 1}{r - 1} (\lambda \Delta t)^r(1 - \lambda \Delta t)^{\frac{t}{\Delta t}-r+1} / \Delta t \\= &\lim_{\Delta t \to 0} \frac{(\frac{t}{\Delta t} - 1) \cdots (\frac{t}{\Delta t} - r + 1)}{(r-1)!}\left(\frac{\lambda \Delta t}{1 - \lambda \Delta t}\right)^r(1 - \lambda \Delta t)^{\frac{t}{\Delta t}} / \Delta t
+			\\= &\lim_{\Delta t \to 0} \left(\prod_{i=1}^{r-1}(1 - \frac{i\Delta t}{t})\right) \frac{\lambda^r t^{r-1}}{(r-1)!}\e^{-\lambda t}
+			\\= &\frac{\lambda^r t^{r-1}}{(r-1)!}\e^{-\lambda t}
+			\\= &f_{\lambda, r}(t)
+		\end{split}
+	\end{equation} 
+
+	即“Pascal 分布的极限是 Erlang 分布”.
+
+	\item \begin{lemma}[几何分布的极限是指数分布] 随机变量 $X$ 服从几何分布 $G(\lambda \Delta t)$, 对于任意 $x > 0$, 有
+		\begin{equation}
+			\lim_{\Delta t \to 0} \P{X = \left\lfloor \frac{x}{\Delta t} \right\rfloor} \big/ \Delta t = \lambda \e^{-\lambda x}
+		\end{equation}
+	\end{lemma}
+	\begin{proof}
+		\begin{equation}
+			\begin{split}
+				\lim_{\Delta t \to 0} \P{X = \left\lfloor \frac{x}{\Delta t} \right\rfloor} \big/ \Delta t&= \lim_{\Delta t \to 0}\lambda \Delta t (1 - \lambda \Delta t)^{\left\lfloor \frac{x}{\Delta t} \right\rfloor} \big/ \Delta t\\
+				&= \lambda \lim_{\Delta t \to 0} (1 - \lambda \Delta t)^{\left\lfloor \frac{x}{\Delta t} \right\rfloor}\\
+				&= \lambda\e^{-\lambda x}
+			\end{split}
+		\end{equation}
+	\end{proof}
+\end{enumerate}
+
+\end{document}
+

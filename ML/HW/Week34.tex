@@ -1,0 +1,209 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+
+\title{\heiti\zihao{2} Machine Learning Homework: Week 3 \& 4}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{机器学习}
+	\chead{2022 Spring}
+	\rhead{Machine Learning}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+\subsection*{Statement}
+Prove that
+\begin{equation}
+	\begin{split}
+		\frac12 \P{\sup_{\phi \in \Phi}\left|\mathbb E_z{\phi(z)} - \frac1n\sum_{i=1}^{n}\phi(z_i)\right| \ge 2\varepsilon} 
+		&\le \P{\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon} \\
+		&\le 2\P{\sup_{\phi \in \Phi}\left|\mathbb E_z{\phi(z)} - \frac1n\sum_{i=1}^{n}\phi(z_i)\right| \ge \frac{\varepsilon}{2}}
+	\end{split}
+\end{equation}
+\subsection*{Solution}
+\begin{equation}
+	\begin{split}
+		&\P{\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon} \\
+		=& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| > \varepsilon - \delta} \\
+		\le& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > \frac{\varepsilon - \delta}{2} \text{ or } \left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| > \frac{\varepsilon - \delta}{2}} \\
+		\le& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > \frac{\varepsilon - \delta}{2} } + \P{ \forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| > \frac{\varepsilon - \delta}{2}} \\
+		=& \P{\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i)-\mathbb E_z{\phi(z)}\right| \ge \frac{\varepsilon}{2}} + \P{\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i)-\mathbb E_z{\phi(z)}\right| \ge \frac{\varepsilon}{2}}\\
+		=& 2\P{\sup_{\phi \in \Phi}\left|\mathbb E_z{\phi(z)} - \frac1n\sum_{i=1}^{n}\phi(z_i)\right| \ge \frac{\varepsilon}{2}}
+	\end{split}
+\end{equation}
+
+which provides the proof for the inequality on the right side. 
+
+\begin{equation}
+	\begin{split}
+		&\P{\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon} \\
+		=& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| > \varepsilon - \delta} \\
+		\ge& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2(\varepsilon - \delta) \text{ and } \left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| < \varepsilon - \delta} \\
+		\ge& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2(\varepsilon - \delta) }\P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. }\left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| < \varepsilon - \delta} \\
+	\end{split}
+\end{equation}
+
+By Chernoff bound we obtain that $\P{\left|\frac1n\sum\limits_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| < \varepsilon} \ge \frac12$ when $n \ge \frac{\ln 2}{\varepsilon^2}$, which gives the proof for the inequality on the left side
+
+\begin{equation}
+	\begin{split}
+		\cdots &\ge \frac12 \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2(\varepsilon - \delta) }\\
+		&= \frac12 \P{\sup_{\phi \in \Phi}\left|\mathbb E_z{\phi(z)} - \frac1n\sum_{i=1}^{n}\phi(z_i)\right| \ge 2\varepsilon} 
+	\end{split}
+\end{equation}
+
+
+\section{}
+\subsection*{Statement}
+Prove that $$\sum_{k=0}^d\binom{n}{k} < \left(\frac{\e n}{d}\right)^d$$ for any $n \in \mathbb N^+$ and $1 \le d \le n$.
+\subsection*{Solution}
+By Taylor expansion we have $$\e^d = \sum_{k = 0}^{\infty}\frac{d^k}{k!} > \sum_{k=0}^d\frac{d^k}{k!}$$ where immediately follows the proof 
+\begin{equation}
+	\begin{split}
+		\left(\frac{\e n}{d}\right)^d &> n^d\sum_{k=0}^{d}\frac{d^{k-d}}{k!}\\
+		&\ge n^d\sum_{k=0}^{d}\frac{n^{k-d}}{k!}\\
+		&= \sum_{k=0}^{d}\frac{n^k}{k!}\\
+		&\ge \sum_{k=0}^{d}\frac{n^{\underline k}}{k!}\\
+		&= \sum_{k=0}^d\binom nk
+	\end{split}
+\end{equation}
+
+\section{}
+\subsection*{Statement}
+Prove that the following two programming problems are equivalent. For simplicity, we assume that the first problem has non-trivial solution, i.e. there exists $t > 0$ satisfying $y_i(\mathbf w^{\text T}\mathbf x_i + b) \ge t \ (\forall i \in [n])$.\\
+
+\begin{center}
+\begin{tabular}{cc}
+	$\max\limits_{\mathbf w, b, t}$ & $t$\\
+	s.t. & $y_i(\mathbf w^{\text T}\mathbf x_i + b) \ge t \ (\forall i \in [n])$\\
+	& $\|\mathbf w\| = 1$
+\end{tabular} \qquad
+\begin{tabular}{cc}
+	$\min\limits_{\mathbf w, b, t}$ & $\frac12 \|\mathbf w\|$\\
+	s.t. & $y_i(\mathbf w^{\text T}\mathbf x_i + b) \ge 1 \ (\forall i \in [n])$
+\end{tabular}
+\end{center}
+
+\subsection*{Solution}
+
+Let the solution to the two problems above be $t_0$ and $\mathbf w_0$ respectively. By the assumption, we have $t_0 > 0$.
+
+By dividing the inequality in the first problem by $t_0$ we obtain $y_i\left(\frac{\mathbf w^{\text T}}{t_0}\mathbf x_i + \frac{b}{t_0}\right) \ge 1$, so $\mathbf w' = \frac{\mathbf w}{t_0}$ is a candidate for the second problem, and thus $\|\mathbf w_0\| \le \|\mathbf w'\| = \frac{1}{t_0}$.
+
+By dividing the inequality in the second problem by $\|w_0\|$ we obtain $y_i \left(\frac{\mathbf w_0}{\|\mathbf w_0\|}\mathbf x_i + \frac{b}{\|\mathbf w_0\|}\right) \ge \frac{1}{\|\mathbf w_0\|}$, thus $t \ge \frac{1}{\|\mathbf w_0\|}$ since $\left\|\frac{\mathbf w_0}{\|\mathbf w_0\|}\right\| = 1$.
+
+So we know that $\|\mathbf w_0\|t_0 = 1$, which shows the equivalence relationship between these two programming problems.
+\end{document}
+
+

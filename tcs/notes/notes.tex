@@ -30,10 +30,18 @@
 \usepackage{extarrows}
 \usepackage{qcircuit}
 \usepackage{fancyhdr}
+\usepackage{fancyvrb}
+
+\fvset{showspaces=true}
+\SaveVerb{verbspace}! !
+\newcommand{\aspace}{\UseVerb{verbspace}}%
 \usepackage{cleveref}
 
-
+\usepackage{pgf}
+\usepackage{totpages}
 \usepackage{tikz}  
+\usetikzlibrary{arrows,automata}
+
 \usetikzlibrary{arrows.meta}%画箭头用的包
 
 \makeatletter
@@ -94,6 +102,7 @@
 \def\Pr#1{\text{Pr}\left[{#1}\right]}
 \def\E#1{\mathbb{E}\left[{#1}\right]}
 \def\Var#1{\text{Var}\left[{#1}\right]}
+\def\rep#1{\llcorner{#1}\lrcorner}
 
 \def\DTIME{\textbf{DTIME}}
 \def\NTIME{\textbf{NTIME}}
@@ -115,11 +124,14 @@
 \date{\today}
 
 \begin{document}
-\pagestyle{fancy}
-\lhead{Introduction to the Theory of Computation}
-\rhead{计算理论导论\ 课程笔记}
-\chead{2022 Spring}
-
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Introduction to the Theory of Computation}
+	\chead{2022 Spring}
+	\rhead{计算理论导论\ 课程笔记}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
 
 \crefname{theorem}{定理}{定理}
 \crefname{lemma}{引理}{引理}
@@ -312,7 +324,13 @@
 		\item $S \in V$称为\obj{起始变量}. 
 	\end{itemize}
 
-	上下文无关语言就是上下文无关文法导出的语言, 即$\{w \in \Sigma^* | S \overset{*}{\Rightarrow} w\}$. 
+	上下文无关语言就是上下文无关文法导出/生成的语言, 即$\{w \in \Sigma^* | S \overset{*}{\Rightarrow} w\}$. 
+\end{definition}
+\begin{definition}[parse tree]
+	形如这样子的东西.
+	\begin{center}
+		\includegraphics*[scale=0.4]{pic/parse_tree.png}	
+	\end{center}
 \end{definition}
 \begin{proposition}
 	CFG 的描述能力严格强于有限自动机(或者正则表达式). 
@@ -323,12 +341,15 @@
 	而显然存在可被 CFG 描述的非正则语言, 比如$\{0^n1^n | n \in \mathbb N\}$. 
 \end{proof}
 \begin{definition}[歧义性]
-	
+	称一个串 $w$ 由 CFG $G$ 歧义生成, 如果存在 $G$ 下 $w$ 的两种 lestmost derivation (每次只替换最左边的变量)方式, 或者说存在两棵不同的 parse tree 可以生成 $w$. 称一个 CFG $G$ 是歧义的, 如果它可以歧义生成某些串.
 \end{definition}
-\begin{definition}[Chomsky 范式]
-	
+\begin{definition}[固有歧义]
+	称一个 CFL $L$ 是固有歧义的, 如果 $L$ 只能由歧义的 CFG $G$ 生成.
 \end{definition}
-\begin{definition}[Pushdown Automata, PDA]
+\begin{example}
+	$\{a^ib^jc^k | i = j \textrm{ or } j = k\}$ 是固有歧义的.
+\end{example}
+\begin{definition}[Pushdown Automaton, PDA]
 	下推自动机是一个六元组$(Q, \Sigma, \Gamma, \delta, q_0, F)$, 其中
 	\begin{itemize}
 		\item $Q$是状态集, 
@@ -339,7 +360,7 @@
 		\item $F \subseteq Q$是接受态集合. 
 	\end{itemize}
 
-	其中$\Sigma_{\varepsilon}, \Gamma_{\varepsilon}$分别表示$\Sigma \cup \{\varepsilon\}, \Gamma \cup \{\varepsilon\}$, 幂集$\mathcal P$暗含了下推自动机是 nondeterministic 的. 
+	其中$\Sigma_{\varepsilon}, \Gamma_{\varepsilon}$分别表示$\Sigma \cup \{\varepsilon\}, \Gamma \cup \{\varepsilon\}$. $(q', b) \in \delta(q, c, a)$ 表示在状态 $q$ 上被输入 $c$ 字符时, 会先从栈顶 pop 出字符 $a$, 再向栈顶 push 进字符 $b$, 最后转移到状态 $q'$. 幂集$\mathcal P$暗含了下推自动机是 nondeterministic 的. 
 
 	称字符串$w = w_1w_2\cdots w_m(w_i \in \Sigma_{\varepsilon})$可以被 PDA $M = (Q, \Sigma, \Gamma, \delta, q_0, F)$接受, 如果存在状态序列$r_0, r_1, \cdots, r_m \in Q$和字符串(栈)序列$s_0, s_1, \cdots, s_m \in \Gamma^*$, 满足
 	\begin{itemize}
@@ -353,16 +374,32 @@
 	一个语言是上下文无关的, 当且仅当存在某个下推自动机可以识别它. 
 \end{theorem}
 \begin{proof}
-	“$\Rightarrow$”: 需要根据 CFG 来构造 PDA. 一开始把 CFG 的起始变量写在栈上, 利用 nondeterminism 尝试每一种变量的替换方式. 每次只考虑替换栈顶的变量, 而如果栈顶是一个终止符, 就直接和输入匹配掉, 保证栈顶始终是一个尚未替换的变量. 当输入匹配完且栈为空时, 代表输入串可接受. 
+	“$\Rightarrow$”: 需要根据 CFG 来构造 PDA. 一开始把 CFG 的起始变量写在栈上, 并保证在替换过程中栈顶始终是一个尚未替换的变量. 利用 nondeterminism 尝试每一种变量的替换方式. 每次只考虑替换栈顶的变量, 而如果栈顶是一个终止符, 就直接和输入匹配掉. 当输入匹配完且栈为空时, 代表输入串可接受. 
 
-	“$\Leftarrow$”: 需要根据 PDA 来构造 CFG. 不妨假设\footnote{需要简短地说明转化的可行性. }该 PDA 有如下特性：\num{i}只有一个接受态$q_{\text{accept}}$, \num{ii}会在接受前清空栈, \num{iii}每次转移都会要么 push 要么 pop, 没有 both 和 neither 的情况. 构造变量$A_{pq}$表示所有能够使 PDA 从“状态$p$且栈空”转移到“状态$q$且栈空”的串组成的语言, 其中$A_{q_0q_{\text{accept}}}$是该 CFG 的起始变量. 按如下方式构造 CFG 的规则集合：
+	\begin{center}
+		\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+			thick,base node/.style={circle,draw,minimum size=16pt}, real node/.style={double,circle,draw,minimum size=35pt}]
+
+			\node[initial, state] (1) {$q_{\text{start}}$};
+			\node[state] (2) [below of=1] {$q_{\text{loop}}$};
+			\node[state, accepting] [below of=2] (3) {$q_{\text{accept}}$};
+
+			\path[]
+			(1) edge node {$\varepsilon, \varepsilon \to S\$$ } (2)
+			(2) edge node {$\varepsilon, \$ \to \varepsilon$ } (3)
+			(2) edge [loop right] node {$\begin{cases}\varepsilon, A \to w, & \text{for rule } A \to w\\ a, a \to \varepsilon, & \text{for terminal }a\end{cases}$} (2);
+			
+		\end{tikzpicture}
+	\end{center}
+
+	“$\Leftarrow$”: 需要根据 PDA 来构造 CFG. 不妨假设\footnote{需要简短地说明转化的可行性. 前两条只需要添加额外的结束状态和转移函数即可, 第三条需要在所有 both 和 neither 的转移中间插入中间状态.}该 PDA 有如下特性：\num{i}只有一个接受态$q_{\text{accept}}$, \num{ii}会在接受前清空栈, \num{iii}每次转移都会要么 push 要么 pop, 没有 both 和 neither 的情况. 构造变量$A_{pq}$表示所有能够使 PDA 从“状态$p$且栈空”转移到“状态$q$且栈空”的串组成的语言, 其中$A_{q_0q_{\text{accept}}}$是该 CFG 的起始变量. 按如下方式构造 CFG 的规则集合：
 	\begin{itemize}
 		\item 对于任意$p, q, r, s \in Q, u \in \Gamma, a, b \in \Sigma_{\varepsilon}$, 如果$(r, u) \in \delta(p, a, \varepsilon), (q, \varepsilon) \in \delta(s, b, u)$, 就添加规则$A_{pq} \to a A_{rs} b$, 
 		\item 对于任意$p, q, r \in Q$, 添加规则$A_{pq} \to A_{pr}A_{rq}$, 
 		\item 对于任意$p \in Q$, 添加规则$A_{pp} \to \varepsilon$. 
 	\end{itemize}
 
-	构造思路来源于考虑压栈弹栈的括号序列, 该序列要么被一个大括号包裹(第一种), 要么由两个括号序列组成(第二种). 可以归纳证明构造方式与含义的等价性. 
+	构造思路来源于考虑压栈弹栈的括号序列, 该序列要么被一个大括号包裹(第一种), 要么由两个括号序列组成(第二种). 可以归纳证明 $A_{pq}$ 的构造方式与其含义的等价性. 
 \end{proof}
 \begin{theorem}[Pumping Lemma for CFL]
 	如果$A$是上下文无关语言, 那么存在一个数$p$(称为\obj{pumping length}), 使得对于任意$A$中长度至少为$p$的字符串$s$, $s$都可以分成五部分$s = uvxyz$满足
@@ -373,67 +410,153 @@
 	\end{itemize}
 \end{theorem}
 \begin{proof}
-	设$b$为规则中的最大“度数”, 即替换字符串的最大长度. 如果 parse tree 的树高是$h$(不计叶子), 那么生成的字符串长度至多为$b^h$. 
+	设$b$为规则中的最大“度数”, 即替换字符串的最大长度. 如果 parse tree 的树高是$h$(根的深度是 $0$), 那么生成的字符串长度至多为$b^h$. 
 
-	取 pumping length $p$ 为$b^{|V|+1}$. 一方面, 长度至少为$p$的串对应的 parse tree 树高至少为$|V| + 1$, 即存在一条“直链”上有至少$|V| + 1$个变量, 根据\obj{鸽巢原理}, 存在一个变量出现至少两次, 记为$R$, 那么对于$R$就可以无限复制或者把两次出现压缩成一次(如图). 
+	取 pumping length $p$ 为$b^{|V|+1}$. 长度至少为$p$的串对应的 parse tree 树高至少为$|V| + 1$, 故存在一条“直链”上有至少$|V| + 1$个变量, 根据\obj{鸽巢原理}, 存在一个变量出现至少两次, 记为$R$, 那么对于$R$就可以无限复制或者把两次出现压缩成一次(如图). 
 
-	为了满足第三个条件, 取$R$为满足条件的“深度最大”的, 即两个$R$都出现在最底下$|V| + 1$层. 此时$|vxy|$对应第一个$R$的子树大小, 受深度限制不超过$b^{|V| + 1} = p$. 
+	为了满足第二个条件, 我们要求 parse tree 必须是"最简"的, 因为只有冗余的替换方式才会导致两次 $R$ 的出现之间没有任何字符实际生成.
+
+	为了满足第三个条件, 取$R$为满足条件的“深度最大”的, 即两个$R$都出现在最底下$|V| + 1$层. 此时$|vxy|$对应上面的$R$的子树大小, 受深度限制不超过$b^{|V| + 1} = p$. 
 	\begin{center}
 		\includegraphics[scale=0.3]{pic/pumping_for_CFL.png}		
 	\end{center}
 \end{proof}
 \begin{example}
-	$B = \{a^nb^nc^n | n \ge 0\}, C = \{a^ib^jc^k | 0 \le i \le j \le k\}, D = \{ww | w \in \{0, 1\}^*\}$都不是上下文无关语言. 
+	$B = \{a^nb^nc^n | n \ge 0\}$不是上下文无关语言.
 \end{example}
+\begin{proof}
+	假设 B 是正则语言, 那么就存在 pumping length $p$. 考虑串 $a^pb^pc^p$, 注意到 $|vxy| \le p$ 故不可能含有超过两种字符, 那么在重复时就不可能保证三种字符出现次数仍然相同, 从而 $B$ 不是上下文无关语言.
+\end{proof}
+\begin{example}
+	$C = \{a^ib^jc^k | 0 \le i \le j \le k\}$ 不是上下文无关语言.
+\end{example}
+\begin{proof}
+	考虑串 $a^{p}b^{p}b^{p}$, 注意 $v, y$ 分别只能包含一种字符, 否则就会出现顺序错乱. 无论分别包含什么字符, 考虑 pumping up 或者 pumping down, 总可以使得生成的新字符串不属于 $C$, 从而 $C$ 不是上下文无关语言.
+\end{proof}
+\begin{example}
+	$D = \{ww | w \in \{0, 1\}^*\}$ 不是上下文无关语言. 
+\end{example}
+\begin{proof}
+	考虑 $s = 0^p1^p0^p1^p$. 
+
+	首先指出 $vxy$ 必须跨域 $s$ 的中点. 假设 $vxy$ 只出现在 $s$ 的左半边, 那么 $uv^2xy^2z$ 中, 中点右侧的字符一定是 $1$(因为 $|vy| \le p$, 只会把 $\frac{|vy|}{2} \le \frac p2$ 个 $1$ 推到右半边), 而起始字符是 $0$ 说明该串不是 $ww$ 形式的. 
+
+	但如果 $vxy$ 跨越 $s$ 的中点, 那么就一定跟前 $p$ 个 $0$ 与后 $p$ 个 $1$ 无交, 因此 $uxz$ 就会形如 $0^p1^i0^j1^p$, 其中 $i, j < p$, 这显然不属于 $D$.
+\end{proof}
 
 \newpage
 \section{图灵机}
 
-\begin{definition}[图灵机]
-	一台图灵机(Turing Machine, TM)$M$可用三元组$(\Gamma, Q, \delta)$来描述, 其中
+\begin{definition}[(Deterministic Turing Machine, TM)]
+	(确定性)图灵机是一个七元组 $(Q, \Sigma, \Gamma, \delta, q_0, q_{\text{accept}}, q_{\text{reject}})$, 其中
 	\begin{itemize}
-		\item 有限集$\Gamma$为$M$的字符集. 我们认为$\Gamma$中包含$\Box$表示空格, 以及$\triangleright$表示起始标识. 
-		\item 有限集$Q$为$M$的状态集. 我们认为$Q$中包含$q_{\text{start}}$表示起始状态, 以及$q_{\text{halt}}$表示停机状态. 
-		\item 转移函数$\delta: Q \times \Gamma^{k} \to Q \times \Gamma^{k-1} \times \{L, S, R\}^{k}$, 其中$k \ge 2$为纸带条数. 
+		\item $Q$ 是状态集.
+		\item $\Sigma$ 是不包含空格符$\Box$的输入字符集, $\Gamma$ 是纸带字符集. $\Sigma \subseteq \Gamma$.
+		\item $\delta: Q \times \Gamma^k \to Q \times \Gamma^k \times \{L, S, R\}^k$ 是转移函数.
+		\item $q_0, q_{\text{accept}}, q_{\text{reject}}$ 分别是起始态, 接受态和拒接态.
 	\end{itemize}
-	除非特殊说明, 一般认为第一张纸带是\obj{只读}的. 
+
+	输入字符串写在第一条纸带的开头, 之前有一个 $\triangleright$ 作为起始表示.
+
+	当图灵机运行到 $q_{\text{accept}}$ 或者 $q_{\text{reject}}$ 时, 会停机. 因此可以将其看成一个 $\Sigma^* \to \{0, 1\}$ 的函数.
+
+	一个 \obj{configuration} 包含当前所在状态, 当前所有纸带上的信息, 和当前所有纸带头的位置. 称图灵机 $M$ 接受字符串 $w$, 如果存在一个 configuration 序列 $C_0, C_1, \cdots, C_t$ 满足 \num{i} $C_0$ 是起始 configuration, \num{ii} 每个 $C_i$ 都在一步内跳转到 $C_{i+1}$, \num{iii} $C_t$ 是接受 configuration.
+\end{definition}
+\begin{definition}[图灵可识别与图灵可判定]
+	称一个语言是\obj{图灵可识别(Turing-recognizable)}的, 如果存在一台图灵机可以识别它(i.e. 接受其中的每一个字符串). 称一台图灵机是一个 \obj{decider}, 如果它对于任何输入都不会无限循环. 称一个语言是\obj{图灵可判定(Turing-decidable)}的, 如果存在一台 decider 可以识别它.
 \end{definition}
 \begin{definition}[函数的计算, 运行时间]
-	设函数$f: \{0,  1\}^* \to \{0, 1\}^*$以及$T: \mathbb{N} \to \mathbb{N}$, 令$M$为一图灵机. 我们称$M$计算了函数$f$, 如果对于任意$x \in \{0, 1\}^*$, 只要$M$的输入被初始化为$x$, 它就能在输出纸带上写下$f(x)$并停机. 称$M$在$T(n)$的时间内计算了$f$, 如果它计算每个$x$都只需要不超过$T(|x|)$的时间. 
+	考虑函数 $f: \{0,  1\}^* \to \{0, 1\}^*$ 以及 $T: \mathbb{N} \to \mathbb{N}$, 令 $M$ 为一图灵机. 我们称 $M$ 计算了函数 $f$, 如果对于任意 $x \in \{0, 1\}^*$, 只要 $M$ 的输入被初始化为$x$, 它就能在输出“输出纸带”上写下 $f(x)$ 并停机. 称 $M$ 在 $T(n)$ 的时间内计算了 $f$, 如果它计算每个 $x$ 都可以在 $T(|x|)$ 步内停机.
 \end{definition}
-\begin{definition}[Time constructible functions]
-	称一个函数$T: \mathbb N \to \mathbb N$是time constructible的, 如果$T(n) \ge n$且存在运行时间为$T(n)$的计算函数$x \to T(|x|)$的图灵机$M$. 
+\begin{definition}[Time-constructible functions]
+	称一个函数 $T: \mathbb N \to \mathbb N$ 是 time-constructible的, 如果 $T(n) \ge n$ 且存在运行时间为 $T(n)$ 的计算函数 $x \to \rep{T(|x|)}$ 的图灵机 $M$, 其中 $\rep{x}$ 表示 $x$ 的 binary representation.
 \end{definition}
+\begin{example}
+	$A = \{w \# w | w \in \{0, 1\}^*\}$ 可以被(单纸带)图灵机识别.
+\end{example}
+\begin{proof}
+	给待匹配的两个位置打上标记, 每次前后移动找标记, 用状态记录已经看过的字符, 若比较失败则直接 reject, 否则向后移动标记继续比较直到全部比完. 以上的描述的图灵机的运行时间是 $T(n) = O(n^2)$ 的.
+\end{proof}
+\begin{example}
+	$B = \{ww | w \in \{0, 1\}^*\}$ 可以被双纸带图灵机识别.
+\end{example}
+\begin{proof}
+	\textit{没有 \# 记号, 无法方便地找到中间位置.} 可以在二号纸带上把输入复制一遍, 然后二号纸带头移动到中间(一号纸带头走一步, 二号纸带头走两步), 顺序比较即可. 运行时间是 $O(n)$.
+\end{proof}
+
+图灵机由字符集大小, 纸带数量等的不同, 产生了许多不同的变种. 它们在计算能力上会有所不同吗?
+
 \begin{proposition}[大字符集规约到小字符集]
-	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time constructible的函数$T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被图灵机$M$以$T(n)$时间计算, 那么它也可以被一台字符集为$\{0, 1, \Box, \triangleright\}$的图灵机$\tilde{M}$以$4\log |\Gamma|T(n)$的时间计算. 
+	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time-constructible function $T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被图灵机$M$以$T(n)$时间计算, 那么它也可以被一台字符集为$\{0, 1, \Box, \triangleright\}$的图灵机$\tilde{M}$以$O(T(n)\log |\Gamma|)$的时间计算. 
 \end{proposition}
-\begin{proposition}[多条纸带规约到一条纸袋]
-	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time constructible的函数$T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被有$k$条纸带的图灵机$M$以$T(n)$时间计算, 那么它也可以被一台单纸带图灵机$\tilde{M}$以$5kT^2(n)$的时间计算. 单纸带指的是只有一条可读可写的纸带, 它同时扮演了输入、工作和输出纸带的角色. 
+\begin{proof}
+	任意 $\Gamma$ 中的字符都可以用 $\log |\Gamma|$ 个比特表示. 每步转移时先用 $\log |\Gamma|$ 步读出纸带上一个字符的 encoding 并存入状态, 再根据转移函数进行移动, 最后用 $\log |\Gamma|$ 步写下新字符的 encoding 表示.
+\end{proof}
+\begin{proposition}[多纸带规约到单纸袋]
+	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time-constructible function $T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被有$k$条纸带的图灵机$M$以$T(n)$时间计算, 那么它也可以被一台单纸带图灵机$\tilde{M}$以$O(kT^2(n))$的时间计算. 单纸带指的是只有一条可读可写的纸带, 它同时扮演了输入、工作和输出纸带的角色. 
 \end{proposition}
+\begin{proof}
+	把单条纸带上的位置按照模 $k$ 余数分配给 $k$ 条纸带, 对每种字符 $a$ 新建字符 $\hat a$ 表示所在纸带的纸带头指向这个字符. 注意到运行时间 $T(n)$ 的图灵机, 对于长度为 $n$ 的输入, 最多只会用到前 $T(n)$ 个位置, 所以每步转移时花费 $O(T(n))$ 的代价搜索每个纸带头的位置, 运行时间为 $O(kT^2(n))$.
+\end{proof}
 \begin{remark}[健忘的图灵机, oblivious Turing Machine]
 	头部移动与输入长度有关, 而与输入的具体内容无关, 即对于任意$x \in \{0, 1\}^*$以及$i \in \mathbb N$, $M(x)$执行到第$i$步时读写头的位置是只关于$|x|$和$i$的函数. 可以证明图灵机可以平方规约到健忘的图灵机. 
 \end{remark}
 \begin{proposition}[双向图灵机规约到单向图灵机]
-	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time constructible的函数$T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被双向图灵机(纸带的两个方向都有无限长)$M$以$T(n)$时间计算, 那么它也可以被一台单向图灵机$\tilde{M}$以$4T(n)$的时间计算. 
+	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time-constructible function $T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被双向图灵机(纸带的两个方向都有无限长)$M$以$T(n)$时间计算, 那么它也可以被一台单向图灵机$\tilde{M}$以$O(T(n))$的时间计算. 
 \end{proposition}
+\begin{thesis}[Church-Turing Thesis]
+	任何物理上可实现的计算设备都可以被图灵机实现. 
+\end{thesis}
 \begin{theorem}[通用图灵机存在]
 	存在图灵机$\mathcal U$使得对于任意$x, \alpha \in \{0, 1\}^*$, $\mathcal U(x, \alpha) = M_{\alpha}(x)$, 其中$M_{\alpha}$为被$\alpha$表示的图灵机. 进一步地, 如果$M_{\alpha}$对于$x$在$T$步内停机, 则$\mathcal U(x, \alpha)$可以在$CT\log T$步内停机, 其中$C$是一个仅依赖于$M_{\alpha}$的字符集大小、纸袋条数、状态数的常数. 
 \end{theorem}
+\begin{proof}
+	构造 $\mathcal U$ 为一台五纸带图灵机, 五条纸带分别为
+	\begin{itemize}
+		\item Input, 被模拟图灵机 $M$ 的输入.
+		\item Description of $M$, 主要是转移函数 $\delta$.
+		\item Simulation of $M$, 记录纸带信息. 这里需要把 $M$ 规约成单纸带, 因而会产生平方的 overhead.
+		\item Current state of $M$, 这部分不能简单地存在 $\mathcal U$ 的状态里, 因为对于 $\mathcal U$ 来说这不是常数.
+		\item Output, $M$ 的输出.
+	\end{itemize}
+
+	注意每步模拟的过程中, 读取 $M$ 所在状态, 读取转移函数都是关于 $n$ 常数时间的.
+
+	可以设计一种类似势能分析的算法, 把多纸带规约单纸带的 overhead 降到 $O(n \log n)$, 从而使通用图灵机模拟的复杂度优化到 $O(T \log T)$.
+\end{proof}
+
+\newpage
+\section{不可判定语言}
+\begin{definition}[可识别语言, 可判定语言]
+	可识别语言就是能够被一台图灵机识别的语言. 可判定语言就是能够被一台 decider 识别的语言.
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+
+
+
 \begin{definition}[\DTIME 与 \P]
 	对于函数$T: \mathbb N \to \mathbb N$, 称语言$L \in \DTIME(T(n))$, 如果存在常数$c > 0$和一台运行时间为$c \cdot T(n)$的图灵机可以决定$L$. 
 
 	$\P = \bigcup_{c \ge 1}\DTIME(n^c)$. 
 \end{definition}
-\begin{thesis}[Church-Turing thesis]
-	任何物理上可实现的计算设备都可以被图灵机模拟. 
-\end{thesis}
 
-\begin{Proof}[时间复杂度$O(T^2)$的模拟]
-	
-\end{Proof}
-\begin{Proof}[时间复杂度$O(T  \log T)$的模拟]
-	
-\end{Proof}
 
 
 \newpage
