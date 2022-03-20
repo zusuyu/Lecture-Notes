@@ -118,7 +118,7 @@
 
 
 \title{\heiti\zihao{1} 计算理论导论\ 课程讲义}
-\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+\author{\kaishu\zihao{-3} 酥雨\\zusuyu@stu.pku.edu.cn}
 
 \CTEXoptions[today=old]
 \date{\today}
@@ -140,10 +140,10 @@
 \crefname{table}{表}{表}	
 \maketitle
 
-\section{Outline}
+\section*{Outline}
 	\begin{enumerate}	
 		\item DFA/NFA, Regular Language, Pumping Lemma
-		\item Context-free language, Pumping Lemma
+		\item Context-free Language, Pumping Lemma
 		\item Turing Machine
 		\item Undecidable Language
 		\item Time Complexity \P\ and \NP
@@ -458,7 +458,7 @@
 
 	输入字符串写在第一条纸带的开头, 之前有一个 $\triangleright$ 作为起始表示.
 
-	当图灵机运行到 $q_{\text{accept}}$ 或者 $q_{\text{reject}}$ 时, 会停机. 因此可以将其看成一个 $\Sigma^* \to \{0, 1\}$ 的函数.
+	当图灵机运行到 $q_{\text{accept}}$ 或者 $q_{\text{reject}}$ 时, 会停机. 因此可以将其看成一个 $\Sigma^* \to \{0, 1\}$ 的函数. 一般地, 对于图灵机 $M$ 和字符串 $x \in \Sigma^*$, 我们有 $M(x) \in \{0, 1\}$, 称 $M(x) = 1$ 如果对于输入 $x$ $M$ 会到达接受态, 称 $M(x) = 0$ 如果对于输入 $x$ $M$ 会到达拒绝态\obj{或者不停机}.
 
 	一个 \obj{configuration} 包含当前所在状态, 当前所有纸带上的信息, 和当前所有纸带头的位置. 称图灵机 $M$ 接受字符串 $w$, 如果存在一个 configuration 序列 $C_0, C_1, \cdots, C_t$ 满足 \num{i} $C_0$ 是起始 configuration, \num{ii} 每个 $C_i$ 都在一步内跳转到 $C_{i+1}$, \num{iii} $C_t$ 是接受 configuration.
 \end{definition}
@@ -527,29 +527,77 @@
 
 \newpage
 \section{不可判定语言}
-\begin{definition}[可识别语言, 可判定语言]
+\begin{definition}[可识别语言(Recognizable Language), 可判定语言(Decidable Language)]
 	可识别语言就是能够被一台图灵机识别的语言. 可判定语言就是能够被一台 decider 识别的语言.
 \end{definition}
+\begin{theorem}
+	存在不可识别语言.
+\end{theorem}
+\begin{proof}
+	只需要考虑“语言”与“可识别语言”的基数. 前者的基数是 $2^{\aleph_0} = \aleph_1$, 后者的基数不超过图灵机的基数(因为存在可识别语言到图灵机的单射), 而图灵机可以被有限长的字符串描述, 因此是可数的.
+\end{proof}
+\begin{definition}[可计算函数(Computable Function)]
+	可计算函数就是可以被一台图灵机计算的函数. 特别的, 考虑函数 $f: \{0, 1\}^* \to \{0, 1\}$, 则 $f$ 是可计算函数当且仅当 $L = \{x \in \{0, 1\}^*| f(x) = 1\}$ 是可判定语言.
+\end{definition}
+\begin{theorem}
+	存在不可计算函数/存在不可判定语言.
+\end{theorem}
+\begin{proof}
+	假设存在一个映射$\alpha \to M_{\alpha}$可以把任意字符串映到一台图灵机(以任意格式编码, 再把非法格式的串映到某台特定的图灵机即可). 考虑函数 $\text{UC}(\alpha) = 1 - M_{\alpha}(\alpha)$, 我们指出 $\text{UC}$ 是不可计算函数.
+
+	假设 $\text{UC}$ 可计算, 考虑计算 $\text{UC}$ 的图灵机 $M$. 考虑 $\text{UC}(\rep{M})$, 由于 $M$ 计算了 $\text{UC}$, 我们知道 $\text{UC}(\rep{M}) = M(\rep M)$, 但根据 $\text{UC}$ 的定义, 又有 $\text{UC}(\rep M) = 1 - M(\rep M)$, 产生了矛盾.
+\end{proof}
+\begin{example}[停机问题不可判定]
+	$\textsf{HALT} = \{\langle \rep M, \alpha \rangle | M \text{ halts on } \alpha\}$ 是不可判定语言.
+\end{example}
+\begin{proof}
+	假设存在 $M_{\textsf{HALT}}$ 可以判定 $\textsf{HALT}$.
+	
+	利用 $M_{\textsf{HALT}}$ 可以构造判定语言 $L = \{\alpha | \text{UC}(\alpha) = 1\}$ 的 decider: 计算 $M_{\textsf{HALT}}(\langle \alpha, \alpha \rangle)$, 如果得到 $0$ (说明 $M_{\alpha}$ 对 $\alpha$ 不停机) 则直接输出 $1$, 否则输出$M_{\alpha}(\alpha)$ 的结果. 这与 $\text{UC}$ 不可计算相矛盾. 因此 \textsf{HALT} 不可判定.
+\end{proof}
+\begin{example}[接受问题不可判定]
+	$\textsf{AC} = \{\langle \rep M, \alpha \rangle | M \text{ accepts } \alpha\}$ 是不可判定语言.	
+\end{example}
+\begin{proof}
+	利用 $M_{\textsf{AC}}$ 可以直接构造 $M_{\text{UC}}$: 只要把 $M_{\textsf{AC}}(\langle \alpha, \alpha \rangle)$ 的输出取反即可.
+\end{proof}
+\begin{definition}[映射规约, Mapping Reduction]
+	称语言 $A$ 可映射规约到(is mapping reducible to) 语言 $B$, 如果存在可计算函数 $f: \Sigma^* \to \Sigma^*$, 使得 $w \in A$ 当且仅当 $f(w) \in B$, 记作 $A \le_m B$.
+\end{definition}
+\begin{proposition} 如果 $A \le_m B$, 则
+	\begin{itemize}
+		\item 如果 $B$ 可判定, 则 $A$ 也可判定.
+		\item 如果 $A$ 不可判定, 则 $B$ 也不可判定.
+	\end{itemize}
+\end{proposition}
+\begin{example}
+	$\textsf{NAC} = \{\rep M | M \text{ accept nothing}\}$ 是不可判定语言.
+\end{example}
+\begin{proof}
+	考虑构造映射 $f: \overline{\textsf{AC}} \to \textsf{NAC}$ 满足 $w \in \overline{\textsf{AC}} \Leftrightarrow f(w) \in \textsf{NAC}$. 令 $f(\langle \rep M, \alpha \rangle) = \rep{M'}$ 其中 $M'$ 不管输入直接运行 $M(\alpha)$. $f$ 显然是可计算的, 故 $\overline{\textsf{AC}} \le_m \textsf{NAC}$, 而可判定语言关于补集的封闭性导致 $\overline{\textsf{AC}}$ 是不可判定语言, 从而 $\textsf{NAC}$ 是不可判定语言.
+\end{proof}
+\begin{example}
+	$\textsf{EQU} = \{\langle \rep{M_1}, \rep{M_2} \rangle | L(M_1) = L(M_2)\}$ 是不可判定语言.
+\end{example}
+\begin{proof}
+	考虑构造映射 $g: \textsf{NAC} \to \textsf{EQU}$. 取 $g(\rep{M}) = \langle \rep{M}, \rep{M'}\rangle$ 其中 $M'$ 是拒绝一切输入的图灵机. 于是 $\rep{M} \in \textsf{NAC} \Leftrightarrow \langle \rep{M}, \rep{M'}\rangle \in \textsf{EQU}$, $\textsf{NAC} \le_m \textsf{EQU}$, 从而 \textsf{EQU} 是不可判定语言.
+\end{proof}
+\begin{theorem}
+	语言 $A$ 可判定当且仅当 $A$ 与 $\overline{A}$ 均可识别.
+\end{theorem}
+\begin{proof}
+	$\Rightarrow$: 显然.
+
+	$\Leftarrow$: 记 $A$ 可被 $M_1$ 识别, $\overline A$ 可被 $M_2$ 识别, 考虑\obj{并行}运行 $M_1$ 和 $M_2$, 总有一个会给出结果. 
+\end{proof}
+\begin{corollary}
+	\textsf{HALT} 和 \textsf{AC} 都是不可判定的可识别语言. 这说明 $\overline{\textsf{HALT}}$ 和 $\overline{\textsf{AC}}$ 都是不可识别语言.
+\end{corollary}
 
 
-
-
-
-
-
-
-
-
-
-
-
+\newpage\vspace*{\fill}\begin{center}\textit{后面都是自己瞎写的阿拉丁.}\end{center}\vspace*{\fill}
 
 \newpage
-
-
-
-
-
 
 \begin{definition}[\DTIME 与 \P]
 	对于函数$T: \mathbb N \to \mathbb N$, 称语言$L \in \DTIME(T(n))$, 如果存在常数$c > 0$和一台运行时间为$c \cdot T(n)$的图灵机可以决定$L$. 

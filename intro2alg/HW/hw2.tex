@@ -1,0 +1,187 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+
+\title{\heiti\zihao{1} 算分第二次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{算法设计与分析}
+\chead{2022 Spring}
+\rhead{Algorithm Design and Analysis}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+
+定义一个规模为 $k$ 的问题为需要覆盖大小为 $2^k \times 2^k$, 有一个特殊方格的棋盘. 当 $k = 1$ 时, 解法是平凡的. 当 $k > 1$ 时:
+
+\begin{enumerate}
+	\item 将棋盘划分成四部分, 每部分是一个大小为 $2^{k-1} \times 2^{k-1}$ 的子棋盘. 在这四部分中, 恰有一部分包含特殊方格.
+	\item 在棋盘的正中央放置一个 L 型骨牌, 使得其覆盖\textbf{不包含特殊方格}的三个子棋盘各一个方格.
+	\item 把被骨牌覆盖的方格也视作特殊方格, 得到了 $4$ 个规模为 $k-1$ 的子问题(需要覆盖大小为 $2^{k-1} \times 2^{k-1}$, 有一个特殊方格的棋盘), 递归处理即可.
+\end{enumerate}
+
+该算法的时间复杂度为 $T(k) = 4T(k-1) + O(1)$, 展开易知 $T(k) = O(4^k).$
+
+\section{}
+\subsection{}
+
+假设矩阵中点上写的数是 $y$.
+
+\begin{itemize}
+	\item 若 $x = y$, 则查询到了 $x$ 所在的位置, 算法结束.
+	\item 若 $x > y$, 则任意在矩阵中点左上方的数 $z$ 都满足 $z < y < x$, 因此 $x$ 不可能出现在矩阵的左上方.
+	\item 若 $x < y$, 则任意在矩阵中点右下方的数 $z$ 都满足 $z > y > x$, 因此 $x$ 不可能出现在矩阵的右下方.
+\end{itemize}
+
+因此该算法不会错误地排除正确答案, 因而正确性得证.
+
+复杂度为 $T(n) = O(1) + 3T(n/2)$, 由主定理知 $T(n) = O(n^{\log_23})$.
+
+\subsection{}
+
+定义 $l_i = \max\{1 \le j \le n | A_{i,j} \le x\} \ (1 \le i \le n)$, 特别的, 定义 $\max \varnothing = 0$.
+
+\begin{itemize}
+	\item 由于$A_{i, j} < A_{i,j+1}, A_{i,j} < A_{i+1, j}$, 可知 $l_i \ge l_{i + 1}$, 因此求出所有 $\{l_i\}$ 的复杂度是 $O(n)$.
+	\item 如果矩阵中的第 $i$ 行存在 $x$, 则必然有 $A_{i, l_i} = x$, 故求出 $\{l_i\}$ 后便可以找到 $x$ 的出现位置.
+\end{itemize}
+
+因此可以实现复杂度为 $O(n)$ 的查找特定元素 $x$ 的算法.
+
+\section{}
+
+Toom-Cook 乘法的大致思路是将给定的大整数 $m$ 和 $n$ 拆分成 $k$ 部分, 对这些部分实现递归乘法计算, 再向上合并结果. 具体的， 算法分为五个步骤:
+
+\begin{enumerate}
+	\item 拆分: 选取基数 $B = 10^i$, 把两个整数 $m, n$ 拆分成 $k$ 段大小小于 $B$ 的数字, 其中 $i$ 可以取 $$\max\left\{\left\lfloor\frac{\log_{10}m}{k}\right\rfloor, \left\lfloor\frac{\log_{10}n}{k}\right\rfloor\right\} + 1$$
+	假设拆分得到 $m = \sum\limits_{i=0}^{k-1}m_iB^i, n = \sum\limits_{i=0}^{k-1}n_iB^i$, 其中 $0 \le m_i, n_i < B$, 记多项式 $p(x) = \sum\limits_{i=0}^{k-1}m_ix^i, q(x) = \sum\limits_{i=0}^{k-1}n_ix_i$, 则显然 $p(B) = m, q(B) = n$.
+
+	欲求 $m \times n$, 只需要求出 $r(x) = p(x)q(x)$ 后代入 $x = B$ 即可.
+
+	\item 求值: 由于 $r(x)$ 是一个不超过 $2k-2$ 次多项式, 只需要 $2k-1$ 个点的点值即可唯一确定. 因此考虑选取一列点 $x_1, x_2, \cdots, x_{2k-1}$, 分别求出 $p(x_i)$ 与 $q(x_i)$. $x_i$ 通常取较小的整数, 可以简化运算.
+
+	\item 点乘: 计算 $r(x_i) = p(x_i)q(x_i)$, 在这一步中, 需要进一步递归计算整数乘法.
+	\item 插值: 利用 $r$ 的 $2k-1$ 个点值, 插值还原出 $r$ 的各项系数. 通过特定的 $x_i$ 取值, 可以使插值系数变得简单.
+	\item 重代入: 在已得到的 $r(x)$ 中代入 $x = B$ 即可得到 $r(B) = mn$.
+\end{enumerate}
+
+该算法的复杂度为 $T(n) = O(c(k)n) + (2k-1)T(n/k)$, 由主定理知 $T(n) = O(c(k)n^{\log(2k-1) / \log(k)})$, 其中 $c(k)$ 是小常数加法与乘法所需要的常数时间.
+
+例如说, 当 $k = 2$ 时, 取插值点 $x = \{0, 1, \infty\}$ (其中 $\infty$ 指的是 $\lim\limits_{x \to \infty} p(x) / x^{\deg p}$ 即 $p(x)$ 的首项系数), 于是
+
+$$\begin{pmatrix}
+	p(0) \\ p(1) \\ p(\infty)
+\end{pmatrix} = 
+\begin{pmatrix}
+	1 & 0\\
+	1 & 1\\
+	0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+	m_0 \\ m_1
+\end{pmatrix}$$
+
+插值时, 需要利用系数矩阵的逆矩阵
+
+$$\begin{pmatrix}
+	r(0) \\ r(1) \\ r(\infty)
+\end{pmatrix} = 
+\begin{pmatrix}
+	1 & 0 & 0\\
+	1 & 1 & 1\\
+	0 & 0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+	r_0 \\ r_1 \\ r_2
+\end{pmatrix}
+\Rightarrow
+\begin{pmatrix}
+	r_0 \\ r_1 \\ r_2
+\end{pmatrix} = 
+\begin{pmatrix}
+	1 & 0 & 0\\
+	1 & 1 & 1\\
+	0 & 0 & 1
+\end{pmatrix}^{-1}
+\begin{pmatrix}
+	r(0) \\ r(1) \\ r(\infty)
+\end{pmatrix} = 
+\begin{pmatrix}
+	r(0) \\ r(1) - r(0) - r(\infty) \\ r(\infty)
+\end{pmatrix}
+$$
+
+\end{document}

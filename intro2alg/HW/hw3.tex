@@ -1,0 +1,159 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{amssymb}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+
+\title{\heiti\zihao{1} 算分第三次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{算法设计与分析}
+\chead{2022 Spring}
+\rhead{Algorithm Design and Analysis}
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section*{3.12}
+
+用 $P_{i, j} \ (i, j \in [1, n], j - i \ge 2)$ 表示由顶点 $i, i + 1, \cdots, j$ 围成的凸多边形, $F_{i, j}$ 表示对 $P_{i, j}$ 做题目中所述的划分得到的最小权值. 考虑边 $i, j$ 所在的三角形, 记剩下的一个顶点为 $k$, 则显然 $k \in [i + 1, j - 1]$. $\triangle ijk$ 将 $A_{i, j}$ 分割成了两部分, 每部分都是一个凸多边形(具体的, 分别是 $A_{i, k}$ 和 $A_{k, j}$), 从而问题可以递归为更小规模的子问题. 
+
+$F_{i, j}$ 的递推关系为
+\begin{equation}
+	F_{i, j} = \begin{cases}
+		\min\limits_{i < k < j} \{ d_{ij} + d_{ik} + d_{jk} + F_{i, k} + F_{k, j} \}, & j - i > 2\\
+		d_{i, i+1} + d_{i, i + 2} + d_{i + 1, i + 2}, & j - i = 2
+	\end{cases}
+\end{equation}
+
+原问题结果即为 $F_{1, n}$. 此算法的时间复杂度为 $O(n^3)$.
+
+\section*{3.15}
+
+(为了方便, 我们不妨认为该机器在第 $0$ 天与第 $n + 1$ 天均会进行检修.)
+
+用 $F_{i}$ 表示在第 $i$ 天检修的条件下, 前 $i$ 天加工任务的最大数量. 考虑第 $i$ 天检修的前一次发生在第 $j$ 天($0 \le j < i$), 可以得到递推方程
+\begin{equation}
+	F_i = \begin{cases}
+		\max\limits_{0 \le j < i} \left\{F_j + \sum\limits_{k=j+1}^{i-1}\min(x_k, s_{k - j})\right\}, & i \ge 1\\
+		0, & i = 0
+	\end{cases}
+\end{equation}
+
+原问题结果即为 $F_{n + 1}$. 朴素实现可以得到 $O(n^3)$ 的时间复杂度. 考虑记 $w_{i,j} = \sum\limits_{k=j+1}^{i-1}\min(x_k, s_{k - j})$, 显然有 $w_{j,i} = \begin{cases}
+	w_{j, i - 1} + \min(x_{i-1}, s_{i-j-1}), & i - j > 1\\
+	0, & i - j = 1
+\end{cases}$, 因为可以通过 $O(n^2)$ 的预处理得到. 算法的时间复杂度可被优化为 $O(n^2)$.
+
+\newpage
+\section{}
+\begin{center}
+	\begin{algorithmic}[1]
+		\Function{Knapsack}{$n, w, v, W$}
+			\State $f \gets$ an array of length $W + 1$, initialized $0$
+			\State $g \gets$ an array of length $W + 1$, initialized $0$
+			\For{$i = 1 \to n$}
+				\For{$j = w_i \to W$}
+					\If{$f_j < f_{j - w_i} + v_i$}
+						\State $f_j \gets f_{j - w_i} + v_i$
+						\State $g_j \gets i$
+					\EndIf
+				\EndFor
+			\EndFor
+			\State $S \gets \varnothing$
+			\State $i \gets W$
+			\While{$g_i \neq 0$}
+				\State append $i$ to $S$
+				\State $i \gets g_{i - w_i}$
+			\EndWhile
+			\State \Return $S$
+		\EndFunction
+	\end{algorithmic}
+\end{center}
+
+\section{}
+
+\subsection{description}
+	给定一个DNA模式序列$S$, 对于$\forall i \in [1, |S|]$, 求出有多少长度为$m$的DNA序列$T$使$\textrm{LCS}(S, T) = i$, 其中 $\textrm{LCS}(s_1, s_2)$ 表示串 $s_1, s_2$ 的最长公共子序列. 
+\subsection{solution}
+	考虑 LCS 的 DP, $f_{i,j} = \max(f_{i-1,j}, f_{i, j-1}, f_{i-1, j-1} + [S_i = T_i])$. 
+	
+	我们用$g_{i, f_{i, 1}, f_{i, 2}, \cdots, f_{i, |S|}}$来表示DP状态(即, 确定了 $T$ 的前 $i$ 位, 已确定部分与 $S$ 的每一段前缀的 LCS 长度分别是多少), 会发现这种记录状态的方式是可行的. 
+	
+	注意到$f_{i, *}$的相邻位置相差至多为$1$, 所以把$f_{i, *}$差分后, 可以用一个长为$|S|$的二进制串来表示. 
+	
+	预处理转移, 可以做到$O((|S| + m)2^{|S|})$的复杂度. 
+\subsection{为什么要选这道题}
+	\sout{\kaishu 从做过的题里随便找了一道.}
+
+	DP 的结果也可以作为另一个 DP 的状态表示?
+\end{document}
