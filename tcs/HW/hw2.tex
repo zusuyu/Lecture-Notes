@@ -1,0 +1,241 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+%\setCJKmainfont[ItalicFont=Noto Serif CJK SC Bold, BoldFont=Noto Serif CJK SC Black]{Noto Serif CJK SC}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+
+
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} 计算理论导论 \ 第二次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{计算理论导论}
+	\chead{2022 Spring}
+	\rhead{Introduction to Theory of Computation}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+\section{}
+\subsection*{(a)}
+\begin{equation*}
+	\begin{split}
+		S &\to 0T0 \mid 1T1\\
+		T &\to 0T \mid 1T \mid \varepsilon
+	\end{split}
+\end{equation*}
+\subsection*{(b)}
+\begin{equation*}
+	S \to 0S0 \mid 1S1 \mid 0 \mid 1 \mid \varepsilon
+\end{equation*}
+
+\section{}
+假设 pushdown automaton $M = (Q, \Sigma, \Gamma, \delta, q_0, F)$ 识别了 CFL $A$. 考虑构造新的 pushdown automaton $M' = (Q', \Sigma, \Gamma, \delta', q_0', F')$, 其中
+\begin{itemize}
+	\item $Q' = Q \cup \hat{Q}$ (i.e. $Q' = Q \cup \{\hat{q} | q \in Q\}$).
+	\item \begin{itemize}
+		\item $\forall (q', b) \in \delta(q, c, a), (q', b) \in \delta'(q, c, a)$.
+		\item $\forall q \in Q, (\hat{q}, \varepsilon) \in \delta'(q, \varepsilon, \varepsilon)$.
+		\item $\forall (q', b) \in \delta(q, c, a), (\hat{q'}, b) \in \delta'(\hat{q}, \varepsilon, a)$
+	\end{itemize}
+	\item $q_0' = q_0$.
+	\item $F' = \hat{F}$ (i.e. $F' = \{\hat{q} | q \in F\}$).
+\end{itemize}
+
+直观上来看, 该构造就是把 $M$ 的状态复制了两份, 其中一份用于匹配$A$的前缀, 另一份用于引导$A$的前缀转移到接受态. 接下来形式化地证明 $M'$ 识别了 $\text{PREFIX}(A)$.
+\begin{itemize}
+	\item 考虑任取 $w \in A$, 存在某个 $w$ 在 $M$ 上匹配得到的状态序列 $q_0q_1 \cdots q_n$. 对于 $w$ 的前缀 $v$, 考虑匹配到 $v$ 时转移到了 $M$ 中状态 $q_i$, 则 $M'$ 中状态序列 $q_0q_1 \cdots q_{i-1}q_i\hat{q_i}\hat{q_{i+1}}\cdots \hat{q_n}$ 可以匹配 $v$. 从而说明 $v \in L(M')$, 从而$\text{PREFIX}(A) \subseteq L(M')$.
+	\item 考虑$v \in L(M')$, 根据 $M'$ 的构造, 必然存在匹配 $v$ 的形如 $q_0q_1 \cdots q_{i-1}q_i\hat{q_i}\hat{q_{i+1}}\cdots \hat{q_n}$ 的状态序列, 其中 $q_i \in Q$. 对于 $k \ge i$, 存在转移 $(\hat{q_{k+1}}, b) \in \delta'(\hat{q_k}, \varepsilon, a)$ 说明存在 $c_k \in \Sigma$ 使得 $(q_{k+1}, b) \in \delta(q_k, c_k, a)$, 从而可以得到串 $w = vc_ic_{i+1}\cdots c_{n-1}$ 使得 $w$ 在 $M$ 中的匹配序列是 $q_0q_1 \cdots q_n$, 这说明 $w \in A$, 故 $v \in \text{PREFIX}(A)$, 从而$L(M') \subseteq \text{PREFIX}(A)$.
+\end{itemize}
+
+因此 $L(M') = \text{PREFIX}(A)$. 这说明了 CFL 在 PREFIX 运算下是封闭的.
+
+\section{}
+\subsection*{(a)}
+假设 $L = \{0^{2^n} | n \ge 0\}$ 是 CFL, 则存在 pumping length $p$. 考虑串 $0^{2^p} \in L$, 将其划分成五部分 $0^{2^p} = uvxyz$, 由于 $|vy| > 0, |vxy| \le p$, 这导致 $2^{p} < |uv^2xy^2z| \le 2^p + p < 2^{p+1}$, 使得 $uv^2xy^2z \notin L$, 产生矛盾. 故 $L$ 不是上下文无关语言.
+
+\subsection*{(b)}
+假设 $B = \{w\in\{0, 1\}^* | w \text{ is palindrome and contains an equal number of 0s and 1s}\}$ 是 CFL, 则存在 pumping length $p$. 考虑串 $0^p1^{10p}0^p \in B$, 将其划分成五部分 $0^p1^{10p}0^p = uvxyz$.
+\begin{itemize}
+	\item $uv^2xy^2z \in B$要求了$vy$ 中要包含相同数量的0和1, 由于 $|vxy| \le p$, $v, y$ 无法均包含两种字符, 而如果 $v$ 或者 $y$ 包含了两种字符, 这将导致 $uv^2xy^2z$ 的前半段或者后半段出现 0, 1 顺序的错乱而另外半段不会, 因此不满足回文性质.
+	\item 以上说明了 $v, y$ 只能包含相同数量的 $0$ 和 $1$, 设 $|v| = |y| = k$, 这说明 $uv^2xy^2z = 0^{p+k}1^{10p+k}0^p$ 或者 $0^p1^{10p+k}0^{p+k}$, 二者都不是回文.
+\end{itemize}
+
+综上, 在进行划分时一定会导出矛盾, 因而 $B$ 不是上下文无关语言.
+
+\section{}
+
+%当输入规模为 $n$ 时, 该 2DTM 的运行时间是 $T(n)$, 说明其只至多只会使用到所有满足 $|x| + |y| \le T(n)$ 的格子 $(x, y)$.
+
+考虑把格子映射到非负整数, 按照 $|x| + |y|$ 的顺序排列, 具体地, 映射 $f: \mathbb Z \times \mathbb Z \to \mathbb N$ 满足
+$$f(x, y) = \begin{cases}
+	0, & (x, y) = (0, 0)\\
+	2k(k-1) + 1 + y, & x > 0, y \ge 0\\
+	2k(k-1) + k + 1 - x, & x \le 0, y > 0\\
+	2k(k-1) + 2k + 1 - y, & x < 0, y \le 0\\
+	2k(k-1) + 3k + 1 + x, & x \ge 0, y < 0
+\end{cases} \ (\text{where } k = |x| + |y|)$$
+
+\begin{figure}[h]
+	\begin{center}
+	\begin{tabular}{ccccccc}
+		& & & 16 & & & \\
+		& & 17 & 7 & 15 & & \\
+		&18&8&2&6&14&\\
+		19&9&3&0&1&5&13\\
+		&20&10&4&12&24\\
+		&&21&11&23&&\\
+		&&&22&&&
+	\end{tabular}	
+	\end{center}
+	\caption{$f$示意图}
+\end{figure}
+
+考虑构造标准图灵机 $M$, 把原 2DTM 中写在 $(x, y)$ 位置上的符号写在 $M$ 纸带上的 $f(x, y)$ 位置. 可以验证在 $[-T(n), T(n)] \times [-T(n), T(n)]$ 范围内, 任两个相邻格子的 $f$ 值相差不超过 $4T(n)$, 从而可以实现运行时间为 $O(T(n))$ 的单步转移, 故实现了总运行时间为$O(T^2(n))$的模拟.
+
+\section{}
+
+$\Rightarrow$: 如果语言 $L$ 是 decidable 的, 则存在一台 decider $M$ 可以识别 $L$. 考虑构造 $L$ 的 enumerator $E$, 其按照字典序枚举所有字符串并调用 $M$ 判定该字符串是否属于 $L$, 由于这个判定可以在有限步内完成, 因而对于任意 $n \in \mathbb N$, $E$ 都可以在有限步内顺序输出 $L$ 中字典序前 $n$ 小的字符串, 故是合法的.
+
+$\Leftarrow$: 如果语言 $L$ 可以被 enumerator $E$ 按字典序枚举, 考虑构造图灵机 $M$, 其对于输入 $w$, 反复调用 $E$ 按照字典序输出 $L$ 中的串, 当输出串 $s$ 满足 $s = w$ 时则接受$w$, 当输出串满足 $s > w$ (字典序意义下)时则拒绝 $w$. 由于 $L$ 中字典序比 $w$ 小的串仅有有限个, 该算法对于任意 $w$ 输出都会在有限步内停机, 从而 $M$ 是一台 decider, 说明 $L$ 是 decidable language.
+
+\section{}
+
+考虑把 $A_{\text{TM}} = \{\langle \rep M, \alpha \rangle | M \text{ accepts } \alpha\}$ 规约到 $T = \{\rep{M} | M \text{ is a TM that accepts } {\alpha}^{\mathcal R} \text{ whenever it accepts }\alpha\}$.
+
+构造映射 $f: \Sigma^* \to \Sigma^*$ 满足 $f(\langle \rep M, \alpha \rangle) = \rep{M'}$, 其中 $M'$ 的工作流程是
+\begin{enumerate}
+	\item 输入串 $w$.
+	\item 判断串 $w$ 是不是 $01$.
+	\begin{itemize}
+		\item 如果是, 则直接接受.
+		\item 否则, 在输入 $\alpha$ 上运行 $M$, 如果 $M$ 接受 $\alpha$, 就接受， 如果 $M$ 拒绝 $\alpha$, 就拒绝. ($M$ 可能不停机.)
+	\end{itemize}
+\end{enumerate}
+
+$M'$ 能被上述自然语言描述, 所以映射 $f$ 是 computable 的.
+
+如果 $\langle \rep M, \alpha \rangle \in A_{\text{TM}}$, 则构造得到的 $M'$ 会接受所有输入 $w$, 因而有 $\rep{M'} \in T$.
+
+如果 $\langle \rep M, \alpha \rangle \notin A_{\text{TM}}$, 则 $M'$ 不会接受除了 $01$ 外的任何串, i.e. 不会接受串 $10$, 这导致了 $\rep{M'} \notin T$.
+
+综上所述, $\forall w \in \Sigma^*, w \in A_{\text{TM}} \Leftrightarrow f(w) \in T$, 而 $f$ 又是 computable 的, 所以 $A_{\text{TM}} \le_m T$.
+
+而我们在课堂上已经证明了 $A_{\text{TM}}$ 是 undecidable 的, 所以 $T$ 也是 undecidable 的.
+
+\section{}
+
+考虑把 $E_{\text{TM}} = \{\rep M | M \text{ accepts nothing} \}$ 规约到 $C_{\text{TM}} = \{\langle \rep{M_1}, \rep{M_2}\rangle | M_1, M_2 \text{ are two TMs such that } L(M_1) \subseteq L(M_2)\}$.
+
+首先构造拒绝一切输入的图灵机 $M_0$. 构造映射 $g: \Sigma^* \to \Sigma^*$ 满足 $g(\rep{M}) = \langle \rep{M}, \rep{M_0}\rangle$, 显然 $g$ 是 computable 的.
+
+注意到 $\rep{M} \in E_{\text{TM}} \Leftrightarrow L(M) = \varnothing \Leftrightarrow L(M) \subseteq L(M_0) \Leftrightarrow g(\rep{M}) = \langle \rep{M}, \rep{M_0}\rangle \in C_{\text{TM}}$.
+
+因此 $E_{\text{TM}} \le_m C_{\text{TM}}$. 我们在课堂上已经证明了 $E_{\text{TM}}$ 是 undecidable 的, 所以 $C_{\text{TM}}$ 也是 undecidable 的.
+
+\end{document}

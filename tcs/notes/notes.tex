@@ -574,13 +574,13 @@
 	$\textsf{NAC} = \{\rep M | M \text{ accept nothing}\}$ 是不可判定语言.
 \end{example}
 \begin{proof}
-	考虑构造映射 $f: \overline{\textsf{AC}} \to \textsf{NAC}$ 满足 $w \in \overline{\textsf{AC}} \Leftrightarrow f(w) \in \textsf{NAC}$. 令 $f(\langle \rep M, \alpha \rangle) = \rep{M'}$ 其中 $M'$ 不管输入直接运行 $M(\alpha)$. $f$ 显然是可计算的, 故 $\overline{\textsf{AC}} \le_m \textsf{NAC}$, 而可判定语言关于补集的封闭性导致 $\overline{\textsf{AC}}$ 是不可判定语言, 从而 $\textsf{NAC}$ 是不可判定语言.
+	考虑构造映射 $f$ 满足 $w \in \overline{\textsf{AC}} \Leftrightarrow f(w) \in \textsf{NAC}$. 令 $f(\langle \rep M, \alpha \rangle) = \rep{M'}$ 其中 $M'$ 不管输入直接运行 $M(\alpha)$. $f$ 显然是可计算的, 故 $\overline{\textsf{AC}} \le_m \textsf{NAC}$, 而可判定语言关于补集的封闭性导致 $\overline{\textsf{AC}}$ 是不可判定语言, 从而 $\textsf{NAC}$ 是不可判定语言.
 \end{proof}
 \begin{example}
 	$\textsf{EQU} = \{\langle \rep{M_1}, \rep{M_2} \rangle | L(M_1) = L(M_2)\}$ 是不可判定语言.
 \end{example}
 \begin{proof}
-	考虑构造映射 $g: \textsf{NAC} \to \textsf{EQU}$. 取 $g(\rep{M}) = \langle \rep{M}, \rep{M'}\rangle$ 其中 $M'$ 是拒绝一切输入的图灵机. 于是 $\rep{M} \in \textsf{NAC} \Leftrightarrow \langle \rep{M}, \rep{M'}\rangle \in \textsf{EQU}$, $\textsf{NAC} \le_m \textsf{EQU}$, 从而 \textsf{EQU} 是不可判定语言.
+	考虑构造映射 $g$. 取 $g(\rep{M}) = \langle \rep{M}, \rep{M'}\rangle$ 其中 $M'$ 是拒绝一切输入的图灵机. 于是 $\rep{M} \in \textsf{NAC} \Leftrightarrow \langle \rep{M}, \rep{M'}\rangle \in \textsf{EQU}$, $\textsf{NAC} \le_m \textsf{EQU}$, 从而 \textsf{EQU} 是不可判定语言.
 \end{proof}
 \begin{theorem}
 	语言 $A$ 可判定当且仅当 $A$ 与 $\overline{A}$ 均可识别.

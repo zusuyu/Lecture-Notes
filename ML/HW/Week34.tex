@@ -149,8 +149,8 @@ which provides the proof for the inequality on the right side.
 	\begin{split}
 		&\P{\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon} \\
 		=& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| > \varepsilon - \delta} \\
-		\ge& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2(\varepsilon - \delta) \text{ and } \left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| < \varepsilon - \delta} \\
-		\ge& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2(\varepsilon - \delta) }\P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. }\left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| < \varepsilon - \delta} \\
+		\ge& \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2\varepsilon - \delta \text{ and } \left|\frac1n\sum_{i=n+1}^{2n}\phi(z_i) - \mathbb E_z\phi(z)\right| < \varepsilon} \\
+		=& \P{\forall \delta > 0, \exists \phi_0 \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi_0(z_i) - \mathbb E_z\phi_0(z)\right| > 2\varepsilon - \delta }\P{\left|\frac1n\sum_{i=n+1}^{2n}\phi_0(z_i) - \mathbb E_z\phi_0(z)\right| < \varepsilon} \\
 	\end{split}
 \end{equation}
 
@@ -158,7 +158,7 @@ By Chernoff bound we obtain that $\P{\left|\frac1n\sum\limits_{i=n+1}^{2n}\phi(z
 
 \begin{equation}
 	\begin{split}
-		\cdots &\ge \frac12 \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2(\varepsilon - \delta) }\\
+		\cdots &\ge \frac12 \P{\forall \delta > 0, \exists \phi \in \Phi \text{ s.t. } \left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_z\phi(z)\right| > 2\varepsilon - \delta }\\
 		&= \frac12 \P{\sup_{\phi \in \Phi}\left|\mathbb E_z{\phi(z)} - \frac1n\sum_{i=1}^{n}\phi(z_i)\right| \ge 2\varepsilon} 
 	\end{split}
 \end{equation}

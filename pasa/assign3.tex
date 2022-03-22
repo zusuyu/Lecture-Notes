@@ -352,6 +352,31 @@ $$\begin{cases}
 结合上述引理, 可知 $\P{Z > 3} = \frac16$.
 
 \section{}
+\subsection{}
+因为 $X_1, X_2, X_3$ 是独立随机变量, 故 $f_{X_1, X_2, X_3}(x_1, x_2, x_3) = f_{X_1}(x_1)f_{X_2}(x_2)f_{X_3}(x_3) = (2\pi)^{-\frac32}\exp\left(-\frac{x_1^2 + x_2^2 + x_3^2}{2}\right)$.
+\subsection{}
+\begin{equation}
+	\begin{split}
+		f_{Z, X_2, X_3}(z, x_2, x_3) &= f_{X_1, X_2, X_3}(x_1, x_2, x_3)\left|\frac{\partial(z, x_2, x_3)}{\partial(x_1, x_2, x_3)}\right|^{-1}\\
+		&= f_{X_1, X_2, X_3}(x_1, x_2, x_3)\begin{vmatrix}
+			\frac{1}{\sqrt{1 + x_3^2}} & \frac{x_3}{\sqrt{1 + x_3^2}} & \dfrac{x_3}{\sqrt{x_3^2+1}}-\dfrac{x_3\left(x_1+x_2x_3\right)}{\left(x_3^2+1\right)^\frac{3}{2}}\\
+			0&1&0\\0&0&1
+		\end{vmatrix}^{-1}\\
+		&= (2\pi)^{-\frac32}\sqrt{1+x_3^2}\exp\left[-\frac12\left(\left(z\sqrt{1+x^3}-x_2x_3\right)^2+x_2^2+x_3^2\right)\right]
+	\end{split}
+\end{equation}
+\subsection{}
+\begin{equation}
+	\begin{split}
+		f_{Z, X_3}(z, x_3) &= \int_{-\infty}^{+\infty}f_{Z, X_2, X_3}(z, x_2, x_3)\text dx_2\\
+		&= \int_{-\infty}^{+\infty} (2\pi)^{-\frac32}\sqrt{1+x_3^2}\exp\left[-\frac12\left(\left(z\sqrt{1+x^3}-x_2x_3\right)^2+x_2^2+x_3^2\right)\right]\text dx_2\\
+		&= \int_{-\infty}^{+\infty} (2\pi)^{-\frac32}\sqrt{1+x_3^2}\exp\left[-\frac12\left(\left(x_2\sqrt{1+x^3}-zx_3\right)^2+z^2+x_3^2\right)\right]\text dx_2\\
+		&= \frac{1}{2\pi}\exp\left[-\frac12(z^2 + x_3^2)\right]\int_{-\infty}^{+\infty}\frac{\sqrt{1 + x_3^2}}{\sqrt{2\pi}}\exp\left[-\frac12\left(\sqrt{1+x_3^2}x_2 - zx_3\right)^2\right]\text dx_2\\
+		&= \frac{1}{2\pi}\exp\left[-\frac12(z^2 + x_3^2)\right]
+	\end{split}
+\end{equation}
+
+可以发现 $f_Z(z) = \int_{-\infty}^{+\infty}f_{Z, X_3}(z, x_3)\text dx_3 = \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{z^2}{2}\right)$ 故 $Z \sim \mathcal N(0, 1)$, 而 $f_{Z, X_3}(z, x_3) = f_Z(z)f_{X_3}(x_3)$ 说明 $Z, X_3$ 是独立随机变量, 因此 $Z, X_3 \sim \text{i.i.d. } \mathcal N(0, 1)$.
 
 \end{document}
 
