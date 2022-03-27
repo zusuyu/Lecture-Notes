@@ -193,7 +193,7 @@ $$\begin{cases}
 \end{equation}
 \subsection{}
 \begin{equation}
-	f_{Y|X}(y | x) = \frac{1}{\sqrt{2\pi}\sigma_2\sqrt{1 - \rho^2}}\exp\left[ -\frac{\left(y - (\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1))\right)^2}{2(1 - \rho^2)\sigma_2^2} \right] = \frac{1}{\sqrt{\pi}}\exp\left[ -\frac{\left(y + x - 7\right)^2}{2} \right]
+	f_{Y|X}(y | x) = \frac{1}{\sqrt{2\pi}\sigma_2\sqrt{1 - \rho^2}}\exp\left[ -\frac{\left(y - (\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1))\right)^2}{2(1 - \rho^2)\sigma_2^2} \right] = \frac{1}{\sqrt{2\pi}}\exp\left[ -\frac{\left(y + x - 7\right)^2}{2} \right]
 \end{equation}
 
 
@@ -219,19 +219,19 @@ $$\begin{cases}
 		&= \e^{-2}\frac{2^k}{k!}
 	\end{split}
 \end{equation}
-从而 $Y \sim \pi(2)$, 说明 $\arg\max\limits_k \P{Y = k} = 2$.
+从而 $Y \sim \pi(2)$. $\arg\max\limits_k \P{Y = k} = \{1, 2\}$.
 
 \section{}
 \subsection{}
 \begin{equation}
 	\P{X = x, Z = z} = \begin{cases}
-		\P{X = x}\P{y \le x}, & x = z\\
 		\P{X = x}\P{y = z}, & x < z\\
+		\P{X = x}\P{y \le x}, & x = z\\
 		0, & x > z
 	\end{cases}
 	= \begin{cases}
-		p(1-p)^{z}(1 - (1-p)^{z+1}), & x = z\\
 		p^2(1-p)^{x + z}, & x < z\\
+		p(1-p)^{z}(1 - (1-p)^{z+1}), & x = z\\
 		0, & x > z
 	\end{cases}
 \end{equation}
@@ -242,19 +242,20 @@ $$\begin{cases}
 		\P{Z = z} &= \P{Z \le z} - \P{Z \le z - 1} \\
 		&= \left[\P{X \le z}\right]^2 - \left[\P{X \le z - 1}\right]^2 \\
 		&= [1 - (1-p)^{z+1}]^2 - [1 - (1-p)^{z}]^2\\
-		&= p(1-p)^z(2 - (1-p)^z - (1-p)^{z+1})
+		&= p(1-p)^z(2 - (2 - p)(1 - p)^z)
 	\end{split}
 \end{equation}
 因此
 \begin{equation}
 	\P{X = x | Z = z} = \frac{\P{X = x, Z = z}}{\P{Z = z}} = \begin{cases}
-		\frac{1 - (1-p)^{z+1}}{2 - (1-p)^z - (1-p)^{z+1}}, & x = z\\
-		\frac{(1-p)^x}{2 - (1-p)^z - (1-p)^{z+1}}, & x < z \\
+		\frac{p(1-p)^x}{2 - (2-p)(1-p)^{z}}, & x < z \\
+		\frac{1 - (1-p)^{z+1}}{2 - (2-p)(1-p)^{z}}, & x = z\\
 		0, & x > z
 	\end{cases}
 \end{equation}
 
 \section{}
+\label{t7}
 考虑对 $n$ 归纳. 当 $n = 1$ 时, $f_{Y_1}(y) = \begin{cases}
 	\lambda\e^{-\lambda y}, & y > 0\\
 	0, & y \le 0
@@ -278,6 +279,7 @@ $$\begin{cases}
 
 \subsection{}
 
+\iffalse
 \begin{equation}
 	\begin{split}
 		F_{Z, W}(z, w) &= \P{X^2 \le z, X + Y \le w} \\
@@ -297,12 +299,31 @@ $$\begin{cases}
 		\end{cases}
 	\end{split}
 \end{equation}
-\subsection{}
+\fi
 \begin{equation}
 	\begin{split}
-		f_{Z | W}(z | w) = \frac{f_{Z, w}(z, w)}{f_W(w)} = \frac{f_{Z, w}(z, w)}{w\lambda^2\e^{-\lambda w}} = \begin{cases}
-			0, & \sqrt z > w\\
-			\frac{1}{2\sqrt z w}, & \sqrt z \le w
+		f_{Z, W}(z, w) &= f_{X, Y}(x, y)\left|\frac{\partial(x, y)}{\partial(z, w)}\right|\\
+		&= f_{X, Y}(x, y) \begin{vmatrix}
+			\frac{1}{2\sqrt z} & 1 \\ 0 & 1
+		\end{vmatrix}\\
+		&= \begin{cases}
+			\frac{\lambda^2\e^{-\lambda(x + y)}}{2\sqrt z}, & x \ge 0, y \ge 0\\
+			0, & \text{otherwise}
+		\end{cases}\\
+		&= \begin{cases}
+			\frac{\lambda^2\e^{-\lambda w}}{2\sqrt z}, & 0 \le \sqrt z \le w\\
+			0, & \text{otherwise}
+		\end{cases}
+	\end{split}
+\end{equation}
+
+\subsection{}
+根据 \cref{t7} 有 $f_W(w) = w\lambda^2\e^{-\lambda w}$, 故
+\begin{equation}
+	\begin{split}
+		f_{Z | W}(z | w) = \frac{f_{Z, W}(z, w)}{f_W(w)} = \frac{f_{Z, W}(z, w)}{w\lambda^2\e^{-\lambda w}} = \begin{cases}
+			\frac{1}{2\sqrt z w}, & 0 \le \sqrt z \le w\\
+			0, & \text{otherwise}
 		\end{cases}
 	\end{split}
 \end{equation}
