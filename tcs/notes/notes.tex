@@ -83,15 +83,15 @@
 
 \DeclareMathOperator{\card}{card}
 
-\newtheorem{theorem}{定理}
-\newtheorem{lemma}{引理}
-\newtheorem{definition}{定义}
-\newtheorem{proposition}{命题}
-\newtheorem{corollary}{推论}
-\newtheorem{example}{例}
-\newtheorem{claim}{声明}
-\newtheorem{remark}{注}
-\newtheorem{thesis}{论点}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{引理}[section]
+\newtheorem{definition}{定义}[section]
+\newtheorem{proposition}{命题}[section]
+\newtheorem{corollary}{推论}[section]
+\newtheorem{example}{例}[section]
+\newtheorem{claim}{声明}[section]
+\newtheorem{remark}{注}[section]
+\newtheorem{thesis}{论点}[section]
 \newtheorem{Proof}{证明}
 
 \def\obj#1{\textbf{\uline{#1}}}
@@ -108,7 +108,9 @@
 \def\NTIME{\textbf{NTIME}}
 \def\P{\textbf{P}}
 \def\NP{\textbf{NP}}
+\def\coNP{\textbf{coNP}}
 \def\EXP{\textbf{EXP}}
+\def\NEXP{\textbf{NEXP}}
 \def\SPACE{\textbf{SPACE}}
 \def\NSPACE{\textbf{NSPACE}}
 \def\PSPACE{\textbf{PSPACE}}
@@ -117,7 +119,7 @@
 \def\NL{\textbf{NL}}
 
 
-\title{\heiti\zihao{1} 计算理论导论\ 课程讲义}
+\title{\heiti\zihao{1} 计算理论导论\ 课程笔记}
 \author{\kaishu\zihao{-3} 酥雨\\zusuyu@stu.pku.edu.cn}
 
 \CTEXoptions[today=old]
@@ -126,9 +128,9 @@
 \begin{document}
 \fancypagestyle{plain}{
 	\fancyhf{}
-	\lhead{Introduction to the Theory of Computation}
-	\chead{2022 Spring}
-	\rhead{计算理论导论\ 课程笔记}
+	\lhead{计算理论导论\ 课程笔记}
+	\chead{\today}
+	\rhead{TCS notes}
 	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
 }
 \pagestyle{plain}
@@ -136,10 +138,12 @@
 \crefname{theorem}{定理}{定理}
 \crefname{lemma}{引理}{引理}
 \crefname{proposition}{命题}{命题}
+\crefname{remark}{注}{注}
 \crefname{figure}{图}{图}
 \crefname{table}{表}{表}	
 \maketitle
-
+\tableofcontents
+\iffalse
 \section*{Outline}
 	\begin{enumerate}	
 		\item DFA/NFA, Regular Language, Pumping Lemma
@@ -154,7 +158,7 @@
 		\item Interactive Proof
 		\item (optional) Crypt, Quant, Learning
 	\end{enumerate}
-
+\fi
 
 
 \newpage
@@ -349,6 +353,9 @@
 \begin{example}
 	$\{a^ib^jc^k | i = j \textrm{ or } j = k\}$ 是固有歧义的.
 \end{example}
+
+我们希望能给有限自动机做一些加强, 使其能够达到与 CFG 相同的表达能力. 最终决定了为其添加栈结构, 于是得到了如下定义的“下推自动机”:
+
 \begin{definition}[Pushdown Automaton, PDA]
 	下推自动机是一个六元组$(Q, \Sigma, \Gamma, \delta, q_0, F)$, 其中
 	\begin{itemize}
@@ -365,9 +372,11 @@
 	称字符串$w = w_1w_2\cdots w_m(w_i \in \Sigma_{\varepsilon})$可以被 PDA $M = (Q, \Sigma, \Gamma, \delta, q_0, F)$接受, 如果存在状态序列$r_0, r_1, \cdots, r_m \in Q$和字符串(栈)序列$s_0, s_1, \cdots, s_m \in \Gamma^*$, 满足
 	\begin{itemize}
 		\item $r_0 = q_0, s_0 = \varepsilon$,
-		\item For $i = 0, 1, \cdots, m-1$, $(r_{i+1}, b) \in \delta(r_i, w_{i+1}, a)$, where $s_i = at, s_{i+1}=bt$ for some $a, b \in \Gamma_{\varepsilon}$ and $t \in \Gamma^*$,
+		\item for $i = 0, 1, \cdots, m-1$, $(r_{i+1}, b) \in \delta(r_i, w_{i+1}, a)$, where $s_i = at, s_{i+1}=bt$ for some $a, b \in \Gamma_{\varepsilon}$ and $t \in \Gamma^*$,
 		\item $r_m \in F$.
 	\end{itemize}
+
+	类似的, 可以定义 $L(M)$ 表示 PDA $M$ 接受的所有字符串构成的集合, 即 $M$ 所识别的语言.
 \end{definition}
 
 \begin{theorem}[下推自动机与上下文无关文法的等价性]
@@ -387,7 +396,7 @@
 			\path[]
 			(1) edge node {$\varepsilon, \varepsilon \to S\$$ } (2)
 			(2) edge node {$\varepsilon, \$ \to \varepsilon$ } (3)
-			(2) edge [loop right] node {$\begin{cases}\varepsilon, A \to w, & \text{for rule } A \to w\\ a, a \to \varepsilon, & \text{for terminal }a\end{cases}$} (2);
+			(2) edge [loop right] node {$\begin{cases}\varepsilon, A \to w, & \text{for rule } A \to w \ (w \in (V \cup \Sigma)^*)\\ a, a \to \varepsilon, & \text{for terminal }a\end{cases}$} (2);
 			
 		\end{tikzpicture}
 	\end{center}
@@ -447,26 +456,39 @@
 \newpage
 \section{图灵机}
 
-\begin{definition}[(Deterministic Turing Machine, TM)]
-	(确定性)图灵机是一个七元组 $(Q, \Sigma, \Gamma, \delta, q_0, q_{\text{accept}}, q_{\text{reject}})$, 其中
+图灵机是有限自动机的进一步加强(也严格强于下推自动机), 在状态集的基础上额外添加了外部存储设备——“纸带”. 一条纸带是一列无限长的存储单元(称为“格子”), 其中每个格子上只能存储有限的信息, 在单步计算中也只能读取/写入一个格子, 读取/写入的格子位置(称为“纸带头”)在相邻两步计算间也至多移动一格. 
+
+通俗地来讲, 一台拥有 $k$ 条纸带的图灵机在一步计算中, 会首先查询其状态并分别在 $k$ 个纸带头位置读取 $k$ 个字符, 然后根据这些信息, 决定变换到什么状态, 将 $k$ 个纸带头处的字符改写成什么, 以及如何移动 $k$ 个纸带头(向左或右移动一格, 或者保持不动). 
+
+\begin{definition}[Deterministic Turing Machine, TM]
+	一台 $k$ 条纸带的 (确定性)图灵机是一个七元组 \\ $(Q, \Sigma, \Gamma, \delta, q_0, q_{\text{accept}}, q_{\text{reject}})$, 其中
 	\begin{itemize}
 		\item $Q$ 是状态集.
 		\item $\Sigma$ 是不包含空格符$\Box$的输入字符集, $\Gamma$ 是纸带字符集. $\Sigma \subseteq \Gamma$.
-		\item $\delta: Q \times \Gamma^k \to Q \times \Gamma^k \times \{L, S, R\}^k$ 是转移函数.
-		\item $q_0, q_{\text{accept}}, q_{\text{reject}}$ 分别是起始态, 接受态和拒接态.
+		\item $\delta: Q \times \Gamma^k \to Q \times \Gamma^k \times \{\text{L(eft), S(tay), R(ight)}\}^k$ 是转移函数.
+		\item $q_0, q_{\text{accept}}, q_{\text{reject}} \in Q$ 分别是起始态, 接受态和拒接态.
 	\end{itemize}
 
-	输入字符串写在第一条纸带的开头, 之前有一个 $\triangleright$ 作为起始表示.
+	初始时, 第一条纸带的第一个格子上标有 $\triangleright$ 字符, 表示输入串的开始, 随后紧接着是输入串 $w \in \Sigma^*$. 除了这 $|w| + 1$ 个格子外, 所有纸带的所有格子都被初始化为空格符 $\Box$.
 
-	当图灵机运行到 $q_{\text{accept}}$ 或者 $q_{\text{reject}}$ 时, 会停机. 因此可以将其看成一个 $\Sigma^* \to \{0, 1\}$ 的函数. 一般地, 对于图灵机 $M$ 和字符串 $x \in \Sigma^*$, 我们有 $M(x) \in \{0, 1\}$, 称 $M(x) = 1$ 如果对于输入 $x$ $M$ 会到达接受态, 称 $M(x) = 0$ 如果对于输入 $x$ $M$ 会到达拒绝态\obj{或者不停机}.
+	一旦图灵机运行到 $q_{\text{accept}}$ 或者 $q_{\text{reject}}$ 状态时, 它就会\obj{停机}. 因此可以把一台图灵机看成一个 $\Sigma^* \to \{0, 1\}$ 的函数. 一般地, 对于图灵机 $M$ 和字符串 $x \in \Sigma^*$, 我们有 $M(x) \in \{0, 1\}$, 其中 $M(x) = 1$ 当且仅当对于输入 $x$, $M$ 会运行到$q_{\text{accept}}$, $M(x) = 0$ 当且仅当对于输入 $x$, $M$ 会运行到 $q_{\text{reject}}$ \obj{或者不停机}.
 
-	一个 \obj{configuration} 包含当前所在状态, 当前所有纸带上的信息, 和当前所有纸带头的位置. 称图灵机 $M$ 接受字符串 $w$, 如果存在一个 configuration 序列 $C_0, C_1, \cdots, C_t$ 满足 \num{i} $C_0$ 是起始 configuration, \num{ii} 每个 $C_i$ 都在一步内跳转到 $C_{i+1}$, \num{iii} $C_t$ 是接受 configuration.
+	\iffalse
+	图灵机的一个 \obj{configuration} 包含其状态, 所有纸带上的字符, 以及所有纸带头的位置. 称图灵机 $M$ 接受字符串 $w$, 如果存在一个 configuration 序列 $C_0, C_1, \cdots, C_t$ 满足 \num{i} $C_0$ 是起始 configuration, i.e.  \num{ii} 每个 $C_i$ 都在一步内跳转到 $C_{i+1}$, \num{iii} $C_t$ 是接受 configuration.
+	\fi
+
+	对于图灵机 $M$, 记 $L(M) = \{x \in \{0, 1\}^* | M(x) = 1\}$ 为 $M$ 所\obj{识别}的语言.
 \end{definition}
+\begin{remark}
+	图灵机还存在另一种设定: 并没有 $q_{\text{accept}}, q_{\text{reject}}$ 两个特殊状态, 取而代之的是单一的停机状态 $q_{\text{halt}}$, 同时最后一条纸带被用作“输出纸带”. 图灵机运行到 $q_{\text{halt}}$ 时停机, 此时输出纸带上的内容就是该图灵机的输出. 
+
+	这种设定下的图灵机可以看作一个 $\Sigma^* \to \Sigma^*$ 的函数, 但不难验证其计算能力与原本设定下的是相同的. 之后为了省事可能会混淆使用两种设定, 不妨碍理解就好.
+\end{remark}
 \begin{definition}[图灵可识别与图灵可判定]
 	称一个语言是\obj{图灵可识别(Turing-recognizable)}的, 如果存在一台图灵机可以识别它(i.e. 接受其中的每一个字符串). 称一台图灵机是一个 \obj{decider}, 如果它对于任何输入都不会无限循环. 称一个语言是\obj{图灵可判定(Turing-decidable)}的, 如果存在一台 decider 可以识别它.
 \end{definition}
 \begin{definition}[函数的计算, 运行时间]
-	考虑函数 $f: \{0,  1\}^* \to \{0, 1\}^*$ 以及 $T: \mathbb{N} \to \mathbb{N}$, 令 $M$ 为一图灵机. 我们称 $M$ 计算了函数 $f$, 如果对于任意 $x \in \{0, 1\}^*$, 只要 $M$ 的输入被初始化为$x$, 它就能在输出“输出纸带”上写下 $f(x)$ 并停机. 称 $M$ 在 $T(n)$ 的时间内计算了 $f$, 如果它计算每个 $x$ 都可以在 $T(|x|)$ 步内停机.
+	考虑函数 $f: \{0,  1\}^* \to \{0, 1\}^*$ 以及 $T: \mathbb{N} \to \mathbb{N}$, 令 $M$ 为一图灵机. 我们称 $M$ 计算了函数 $f$, 如果对于任意 $x \in \{0, 1\}^*$, 只要 $M$ 被初始化为输入$x$, 它就能在输出纸带上写下 $f(x)$ 并停机. 称 $M$ 在 $T(n)$ 的时间内计算了 $f$, 如果它计算每个 $x$ 都可以在 $T(|x|)$ 步内停机.
 \end{definition}
 \begin{definition}[Time-constructible functions]
 	称一个函数 $T: \mathbb N \to \mathbb N$ 是 time-constructible的, 如果 $T(n) \ge n$ 且存在运行时间为 $T(n)$ 的计算函数 $x \to \rep{T(|x|)}$ 的图灵机 $M$, 其中 $\rep{x}$ 表示 $x$ 的 binary representation.
@@ -486,65 +508,68 @@
 
 图灵机由字符集大小, 纸带数量等的不同, 产生了许多不同的变种. 它们在计算能力上会有所不同吗?
 
-\begin{proposition}[大字符集规约到小字符集]
+\begin{proposition}[小字符集模拟大字符集]
 	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time-constructible function $T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被图灵机$M$以$T(n)$时间计算, 那么它也可以被一台字符集为$\{0, 1, \Box, \triangleright\}$的图灵机$\tilde{M}$以$O(T(n)\log |\Gamma|)$的时间计算. 
 \end{proposition}
 \begin{proof}
 	任意 $\Gamma$ 中的字符都可以用 $\log |\Gamma|$ 个比特表示. 每步转移时先用 $\log |\Gamma|$ 步读出纸带上一个字符的 encoding 并存入状态, 再根据转移函数进行移动, 最后用 $\log |\Gamma|$ 步写下新字符的 encoding 表示.
 \end{proof}
-\begin{proposition}[多纸带规约到单纸袋]
+\begin{proposition}[单纸带模拟多纸带]
 	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time-constructible function $T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被有$k$条纸带的图灵机$M$以$T(n)$时间计算, 那么它也可以被一台单纸带图灵机$\tilde{M}$以$O(kT^2(n))$的时间计算. 单纸带指的是只有一条可读可写的纸带, 它同时扮演了输入、工作和输出纸带的角色. 
 \end{proposition}
 \begin{proof}
-	把单条纸带上的位置按照模 $k$ 余数分配给 $k$ 条纸带, 对每种字符 $a$ 新建字符 $\hat a$ 表示所在纸带的纸带头指向这个字符. 注意到运行时间 $T(n)$ 的图灵机, 对于长度为 $n$ 的输入, 最多只会用到前 $T(n)$ 个位置, 所以每步转移时花费 $O(T(n))$ 的代价搜索每个纸带头的位置, 运行时间为 $O(kT^2(n))$.
+	把单条纸带上的位置按照模 $k$ 余数分配给 $k$ 条纸带, 对每种字符 $a$ 新建字符 $\hat a$ 表示所在纸带的纸带头指向这个字符. 注意到运行时间为 $T(n)$ 的图灵机, 对于长度为 $n$ 的输入, 最多只会用到前 $T(n)$ 个位置, 所以每步转移时花费 $O(kT(n))$ 的代价搜索每个纸带头的位置即可\footnote{可以考虑在已使用部分的“最远处”打上标记并维护, 这样每次搜索的代价就不超过当前写入过的格子数量}, 运行时间为 $O(kT^2(n))$.
 \end{proof}
 \begin{remark}[健忘的图灵机, oblivious Turing Machine]
-	头部移动与输入长度有关, 而与输入的具体内容无关, 即对于任意$x \in \{0, 1\}^*$以及$i \in \mathbb N$, $M(x)$执行到第$i$步时读写头的位置是只关于$|x|$和$i$的函数. 可以证明图灵机可以平方规约到健忘的图灵机. 
+	纸带头的移动只与输入长度有关, 而与输入的具体内容无关, 即对于任意$x \in \{0, 1\}^*$以及$i \in \mathbb N$, $M$在输入 $x$ 并执行到第$i$步时, 所有纸带头的位置是关于$|x|$和$i$的函数. 可以证明健忘的图灵机可以以平方的overhead模拟一台标准图灵机. 
 	\label{oblivious}
 \end{remark}
-\begin{proposition}[双向图灵机规约到单向图灵机]
+\begin{proposition}[单向图灵机模拟双向图灵机]
 	对于任意$f: \{0, 1\}^* \to \{0, 1\}$以及time-constructible function $T: \mathbb{N} \to \mathbb{N}$, 如果$f$可以被双向图灵机(纸带的两个方向都有无限长)$M$以$T(n)$时间计算, 那么它也可以被一台单向图灵机$\tilde{M}$以$O(T(n))$的时间计算. 
 \end{proposition}
 \begin{thesis}[Church-Turing Thesis]
 	任何物理上可实现的计算设备都可以被图灵机实现. 
 \end{thesis}
 \begin{theorem}[通用图灵机存在]
-	存在图灵机$\mathcal U$使得对于任意$x, \alpha \in \{0, 1\}^*$, $\mathcal U(x, \alpha) = M_{\alpha}(x)$, 其中$M_{\alpha}$为被$\alpha$表示的图灵机. 进一步地, 如果$M_{\alpha}$对于$x$在$T$步内停机, 则$\mathcal U(x, \alpha)$可以在$CT\log T$步内停机, 其中$C$是一个仅依赖于$M_{\alpha}$的字符集大小、纸袋条数、状态数的常数. 
+	存在图灵机$\mathcal U$使得对于任意$x, \alpha \in \{0, 1\}^*$, $\mathcal U(\langle x, \alpha \rangle ) = M_{\alpha}(x)$, 其中$M_{\alpha}$为被$\alpha$表示的图灵机. 进一步地, 如果$M_{\alpha}$对于$x$在$T$步内停机, 则$\mathcal U(\langle x, \alpha \rangle )$可以在$CT\log T$步内停机, 其中$C$是一个仅依赖于$M_{\alpha}$的字符集大小、纸袋条数、状态数的常数. 
 \end{theorem}
 \begin{proof}
 	构造 $\mathcal U$ 为一台五纸带图灵机, 五条纸带分别为
 	\begin{itemize}
 		\item Input, 被模拟图灵机 $M$ 的输入.
-		\item Description of $M$, 主要是转移函数 $\delta$.
-		\item Simulation of $M$, 记录纸带信息. 这里需要把 $M$ 规约成单纸带, 因而会产生平方的 overhead.
-		\item Current state of $M$, 这部分不能简单地存在 $\mathcal U$ 的状态里, 因为对于 $\mathcal U$ 来说这不是常数.
+		\item Description of $M$, 主要为了记录转移函数 $\delta$ 以便查询.
+		\item Simulation of $M$, 记录纸带信息. 这里需要用单纸带来模拟 $M$, 因而会产生平方的 overhead.
+		\item Current state of $M$, 这部分不能简单地存在 $\mathcal U$ 的状态里, 因为对于 $\mathcal U$ 来说, $M$ 的状态集大小并不是常数.
 		\item Output, $M$ 的输出.
 	\end{itemize}
 
 	注意每步模拟的过程中, 读取 $M$ 所在状态, 读取转移函数都是关于 $n$ 常数时间的.
 
-	可以设计一种类似势能分析的算法, 把多纸带规约单纸带的 overhead 降到 $O(n \log n)$, 从而使通用图灵机模拟的复杂度优化到 $O(T \log T)$.
+	可以设计一种类似势能分析的算法, 把单纸带模拟多纸带的 overhead 降到 $O(n \log n)$, 从而使通用图灵机模拟的复杂度优化到 $O(T \log T)$.
 \end{proof}
 
 \newpage
 \section{不可判定语言}
-\begin{definition}[可识别语言(Recognizable Language), 可判定语言(Decidable Language)]
+\begin{definition}[可识别/判定语言, recognizable/decidable Language]
 	可识别语言就是能够被一台图灵机识别的语言. 可判定语言就是能够被一台 decider 识别的语言.
 \end{definition}
 \begin{theorem}
 	存在不可识别语言.
+	\label{unrecognize_exists}
 \end{theorem}
 \begin{proof}
-	只需要考虑“语言”与“可识别语言”的基数. 前者的基数是 $2^{\aleph_0} = \aleph_1$, 后者的基数不超过图灵机的基数(因为存在可识别语言到图灵机的单射), 而图灵机可以被有限长的字符串描述, 因此是可数的.
+	只需要考虑“语言”与“可识别语言”的基数. 前者的基数是 $2^{\aleph_0}$, 后者的基数不超过图灵机的基数(因为存在可识别语言到图灵机的单射), 而图灵机可以被有限长的字符串描述, 因此是可数的.
 \end{proof}
 \begin{definition}[可计算函数(Computable Function)]
 	可计算函数就是可以被一台图灵机计算的函数. 特别的, 考虑函数 $f: \{0, 1\}^* \to \{0, 1\}$, 则 $f$ 是可计算函数当且仅当 $L = \{x \in \{0, 1\}^*| f(x) = 1\}$ 是可判定语言.
 \end{definition}
 \begin{theorem}
-	存在不可计算函数/存在不可判定语言.
+	存在不可计算函数/存在不可判定语言. 
+	
+	(证明中的构造是重要的. 这个结论本身相比\cref{unrecognize_exists} 是平凡的.)
 \end{theorem}
 \begin{proof}
-	假设存在一个映射$\alpha \to M_{\alpha}$可以把任意字符串映到一台图灵机(以任意格式编码, 再把非法格式的串映到某台特定的图灵机即可). 考虑函数 $\text{UC}(\alpha) = 1 - M_{\alpha}(\alpha)$, 我们指出 $\text{UC}$ 是不可计算函数.
+	我们认为存在一个映射$\alpha \to M_{\alpha}$可以把任意字符串映到一台图灵机(以某种既定格式编码, 再把非法格式的串映到某台特定的图灵机即可). 考虑函数 $\text{UC}(\alpha) = 1 - M_{\alpha}(\alpha)$, 我们指出 $\text{UC}$ 是不可计算函数.
 
 	假设 $\text{UC}$ 可计算, 考虑计算 $\text{UC}$ 的图灵机 $M$. 考虑 $\text{UC}(\rep{M})$, 由于 $M$ 计算了 $\text{UC}$, 我们知道 $\text{UC}(\rep{M}) = M(\rep M)$, 但根据 $\text{UC}$ 的定义, 又有 $\text{UC}(\rep M) = 1 - M(\rep M)$, 产生了矛盾.
 \end{proof}
@@ -587,9 +612,7 @@
 	语言 $A$ 可判定当且仅当 $A$ 与 $\overline{A}$ 均可识别.
 \end{theorem}
 \begin{proof}
-	$\Rightarrow$: 显然.
-
-	$\Leftarrow$: 记 $A$ 可被 $M_1$ 识别, $\overline A$ 可被 $M_2$ 识别, 考虑\obj{并行}运行 $M_1$ 和 $M_2$, 总有一个会给出结果. 
+	$\Rightarrow$: 显然. $\Leftarrow$: 记 $A$ 可被 $M_1$ 识别, $\overline A$ 可被 $M_2$ 识别, 考虑\obj{并行}运行 $M_1$ 和 $M_2$, 总有一个会给出结果. 
 \end{proof}
 \begin{corollary}
 	\textsf{HALT} 和 \textsf{AC} 都是不可判定的可识别语言. 这说明 $\overline{\textsf{HALT}}$ 和 $\overline{\textsf{AC}}$ 都是不可识别语言.
@@ -598,9 +621,9 @@
 \newpage
 \section{时间复杂性, \P 与 \NP}
 \begin{definition}[\DTIME 与 \P]
-	对于函数$T: \mathbb N \to \mathbb N$, 称语言$L \in \DTIME(T(n))$, 如果存在常数$c > 0$和一台运行时间为$c \cdot T(n)$的图灵机可以决定$L$. 
+	对于函数$T: \mathbb N \to \mathbb N$, 称语言$L \in \DTIME(T(n))$, 如果存在常数$c > 0$和一台运行时间为$c \cdot T(n)$的 decider 可以识别$L$. 
 
-	$\P = \bigcup_{c \ge 1}\DTIME(n^c)$. 
+	$\P = \bigcup_{c \ge 0}\DTIME(n^c)$. 
 \end{definition}
 \begin{proposition}
 	$\P$ 在多项式次集合操作下是封闭的.
@@ -627,12 +650,12 @@
 	产生了矛盾. 因此$\DTIME(f(n)) \subsetneq \DTIME(g(n))$. 
 \end{proof}
 \begin{definition}[\NP]
-	称语言$L \subseteq \{0, 1\}^*$属于\NP, 如果存在一个多项式$p: \mathbb N \to \mathbb N$和一个多项式时间图灵机$M$(称其为$L$的\obj{verifier})使得对于任意的$x \in \{0, 1\}^*$, 都有
+	称语言$L \subseteq \{0, 1\}^*$属于\NP, 如果存在一个多项式$p: \mathbb N \to \mathbb N$和一个多项式时间图灵机$M$(称为$L$的\obj{verifier})使得对于任意的$x \in \{0, 1\}^*$, 都有
 	$$x \in L \Leftrightarrow \exists u \in \{0, 1\}^{p(|x|)}, M(x, u) = 1$$
 	如果$x \in L$与$u \in \{0, 1\}^{p(|x|)}$满足$M(x, u) = 1$, 则称$u$是$x$的一个\obj{certificate}. 
 \end{definition}
 \begin{proposition}
-	定义$\EXP = \bigcup_{c > 1} \DTIME(2^{n^c})$, 则$\P \subseteq \NP \subseteq \EXP$. 
+	定义$\EXP = \bigcup_{c \ge 0} \DTIME(2^{n^c})$, 则$\P \subseteq \NP \subseteq \EXP$. 
 \end{proposition}
 \begin{remark}
 	根据 Time Hierarchy Theorem 我们知道 $\P \subsetneq \EXP$, 因此 $\P \subsetneq \NP$ 与 $\NP \subsetneq \EXP$ 至少一者为真.
@@ -643,7 +666,7 @@
 	对于$T: \mathbb N \to \mathbb N$和语言$L \subseteq \{0, 1\}^*$, 称$L \in \NTIME(T(n))$, 如果存在常数$c > 0$和一个运行时间为$c \cdot T(n)$的非确定图灵机$M$, 满足对于任意的$x \in \{0, 1\}^*$, $x \in L \Leftrightarrow M(x) = 1$. 
 \end{definition}
 \begin{theorem}
-	$\NP = \bigcup_{c \ge 1} \NTIME(n^c)$. 
+	$\NP = \bigcup_{c \ge 0} \NTIME(n^c)$. 
 \end{theorem}
 \begin{proof}
 	非确定图灵机的选择序列可以看作$x$的一个 certificate, 反之亦然. 
@@ -665,23 +688,23 @@
 \begin{theorem}[Cook-Levin Theorem]
 	$\textsf{SAT}, \textsf{3SAT} \in $ \NP-complete. 
 
-	其中 $\textsf{SAT} = \{\varphi \in \text{CNF} | \varphi \text{ is satisfiable}\}, \textsf{3SAT} = \{\varphi \in 3\text{CNF} | \varphi \text{ is satisfiable}\}$. CNF(Conjunctive Normal Form, 合取范式)是一种形如 $\bigwedge_i\left(\bigvee_j v_{i_j}\right)$ 的特殊的 boolean formula.
+	其中 $\textsf{SAT} = \{\varphi \in \text{CNF} | \varphi \text{ is satisfiable}\}, \textsf{3SAT} = \{\varphi \in 3\text{CNF} | \varphi \text{ is satisfiable}\}$. CNF(Conjunctive Normal Form, 合取范式)是一种形如 $\bigwedge_i\left(\bigvee_j v_{i_j}\right)$ 的特殊的 boolean formula, 其中每个 $v_{i_j}$ 都是某个变量或者其否定. 3CNF 是每个 $\bigvee_j v_{i_j}$ (称为\obj{从句(clause)})中都只含有不超过 $3$ 项的 CNF.
 \end{theorem}
 \begin{proof}
 	$\textsf{SAT}, \textsf{3SAT} \in \NP$ 是平凡的. 先考虑证明 $\textsf{SAT} \in \NP$-hard, 即 $\forall L \in \NP, L \le_p \textsf{SAT}$. 回顾两者定义
 	\begin{center}		
 		\begin{tabular}{cccc}
-			$\varphi_x \in \textsf{SAT}$ & $\Leftrightarrow$ & $\exists$ assignment $u$ & s.t. $\varphi_x(u) = \text{True}$\\
 			$x \in L$ & $\Leftrightarrow$ & $\exists$ certificate $u$ & s.t. $M(x, u) = 1$\\
+			$\varphi_x \in \textsf{SAT}$ & $\Leftrightarrow$ & $\exists$ assignment $u$ & s.t. $\varphi_x(u) = \text{True}$\\
 		\end{tabular}
 	\end{center}
 	因此考虑根据 $M, x$ 来构造\obj{多项式规模的} $\varphi_x$, 满足 $M(x, u) = 1 \Leftrightarrow \varphi_x(u) = \text{True}$. 
 	
-	不妨假设 $M$ 是 \num{i} 双纸带且第一条纸带只读 \num{ii} oblivious 的(参见\cref{oblivious}), 那么在$M$运行到第 $i$ 步时, 其两个纸带头所指向的符号, 当前状态所组成的三元组 $z_i \in \Gamma \times \Gamma \times Q$ (称之为 $M$ 运行到第 $i$ 步时的 \obj{snapshot})将由后三者唯一决定: $z_{i-1}, z_{\text{prev}(i)}$ 和 $(x \circ u)_{\text{inputpos}(i)}$, 其中 $\text{prev}(i)$ 表示上一次与第$i$步访问到工作纸带相同位置的时刻, $\text{inputpos}(i)$ 表示第 $i$ 步时访问到输入纸带的位置.
+	不妨假设 $M$ 是 \num{i} 双纸带且第一条纸带只读 \num{ii} oblivious 的(参见\cref{oblivious}), 那么在$M$运行到第 $i$ 步时, 其两个纸带头所指向的字符, 当前状态所组成的三元组 $z_i \in \Gamma \times \Gamma \times Q$ (称为 $M$ 运行到第 $i$ 步时的 \obj{snapshot})将由后三者唯一决定: $z_{i-1}, z_{\text{prev}(i)}$ 和 $(x \circ u)_{\text{inputpos}(i)}$, 其中 $\text{prev}(i)$ 表示上一次工作纸带纸带头位置与第$i$步相同的时刻, $\text{inputpos}(i)$ 表示第 $i$ 步时输入纸带的纸带头位置.
 
 	根据 $M$ 的转移函数 $\delta$, 可以构造出 $F: \{0, 1\}^{2c+1} \to \{0, 1\}^c$ 满足 $z_i = F(z_{i-1}, z_{\text{prev}(i)}, (x \circ u)_{\text{inputpos}(i)})$, 其中 $c$ 是表示一个 snapshot 所需的比特数. 
 
-	可以构造一个有 $n + p(n) + cT(n)$ 个变量的 CNF $\varphi_x$, 这些变量分别记为 $y$ 以及 $z_1, \cdots, z_{T(n)}$, 它是下述这些条件的 AND:
+	可以构造一个有 $n + p(n) + cT(n)$ 个变量的 CNF $\varphi_x$, 其中 $p, T$ 是 $M$ 的参数(分别是verifier 长度与运行时间关于 $n$ 的函数). 把这些变量分别记为 $y$ 以及 $z_1, \cdots, z_{T(n)}$, 它是下述这些条件的 AND:
 	\begin{enumerate}
 		\item $y$ 的前 $n$ 位和 $x$ 相同.
 		\item $z_1$ 表示初始状态 $(\triangleright, \Box, q_{\text{start}})$.
@@ -696,13 +719,164 @@
 	说明任意 CNF 都可以多项式时间规约到 3CNF. 所以 $\textsf{SAT} \le_p \textsf{3SAT}$.
 \end{proof}
 
+\begin{example}[独立集]
+	$\textsf{INDSET} = \{\langle G, k \rangle | G \text{ has an independent set of size } k\} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	显然 $\textsf{INDSET} \in \NP$. 考虑通过 $\textsf{3SAT} \le_p \textsf{INDSET}$ 来证明 $\textsf{INDSET} \in \NP$-hard.
 
-\newpage\vspace*{\fill}\begin{center}\textit{后面都是自己瞎写的阿拉丁.}\end{center}\vspace*{\fill}
+	对于一个有 $m$ 个 clause 的 3CNF $\varphi$, 对每个有 $l$ 项的 clause 建不超过 $2^l$ 个点, 表示能使这个 clause 为 True 的部分变量赋值(互不相同). 在所有会产生冲突的点对间连边, 得到一张不超过 $7m$ 个点的图. 不难验证这张图存在大小为 $m$ 的独立集当且仅当 $\varphi$ 可满足.
+\end{proof}
+\begin{example}[点覆盖]
+	$\textsf{Vertex-Cover} = \{\langle G, k \rangle | G \text{ has a subset of } k \text{ vertices that covers all edges}\} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	独立集很容易规约到点覆盖, 懂的都懂.
+\end{proof}
+\begin{example}[01整数规划]
+	给出一列有理系数线性不等式, 判断是否存在一组 $\{0, 1\}$ 赋值满足所有不等式. 把可满足的不等式组的集合记作 $\textsf{01IPROG}$. $\textsf{01IPROG} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	考虑证明 $\textsf{SAT} \le_p \textsf{01IPROG}$. 只需要对每个 clause 构造一个不等式即可.
+	$$u_1 \vee \cdots \vee u_n \vee \overline{u_{n+1}} \vee \cdots \vee \overline{u_{n+m}} \Rightarrow \sum_{i=1}^{n}u_i + m - \sum_{i=1}^{m}u_{n+i} \ge 1$$
+\end{proof}
+\begin{remark}
+	如果把变量取值限制从 $\{0, 1\}$ 改为全体有理数, 问题就变成了线性规划, 从而 $\in \P$.
+\end{remark}
+\begin{example}
+	$\textsf{DSAT} = \{\varphi \in \text{DNF} | \varphi \text{ is satisfiable}\} \in \P$. 只要线性地检查一下有没有某个 clause 都满足就行了.
+\end{example}
+\begin{example}[有向图哈密顿路径]
+	$\textsf{dHAMPATH} = \{\rep{G} | G \text{ is directed and has a Hamiltonian path}\} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	考虑证明 $\textsf{SAT} \le_p \textsf{dHAMPATH}$. 对于一个有 $n$ 个变量和 $m$ 个 clause 的 CNF $\varphi$:
+	\begin{itemize}
+		\item 对每个变量建 $2m + 1$ 个点, 第 $i$ 个变量对应的点记作 $a_{i, 1}, \cdots, a_{i, 2m+1}$. 对每个 clause 建一个点, 第 $i$ 个 clause 对应的点记作 $b_i$. 再建立额外源汇 $v_{\text{start}}, v_{\text{end}}$, 总共是 $(2m+1)n + m + 2$ 个点.
+		\item 对于每个 $i \in [1, n]$, $a_{i, 1}, \cdots, a_{i, 2m+1}$ 首尾相接连成一个 $2m+1$ 大小的\obj{双向}环.
+		\item $v_{\text{start}}$ 向 $\{a_{1, 1}, a_{1, 2m+1}\}$ 连边, $\{a_{i, 1}, a_{i, 2m+1}\}$ 向 $\{a_{i+1, 1}, a_{i+1, 2m+1}\}$ 连边, $\{a_{n, 1}, a_{n, 2m+1}\}$ 向 $v_{\text{end}}$ 连边, 均为单向.
+		\item 如果 $u_i$ 出现在了第 $j$ 个从句中, 连边$a_{i, j} \to b_j \to a_{i, j+1}$. 如果 $\overline{u_i}$ 出现在了第 $j$ 个从句中, 连边$a_{i, j+1} \to b_j \to a_{i, j}$.
+	\end{itemize}
 
+	对于每个双向环, 它可以也应该被顺时针或者逆时针地单向遍历, 即要么首先访问 $a_{i, 1}$ 然后从小到大走到 $a_{i, 2m+1}$, 要么首先访问 $a_{i, 2m+1}$ 然后从大到小走到 $a_{i, 1}$. 顺/逆时针的遍历方向对应着相应变量的 $0/1$ 取值, 当取值符合期望时, 遍历该变量对应的环时可以顺带覆盖掉一些 $b_j$.
+
+	可以证明 $\varphi \in \textsf{SAT}$ 当且仅当上述构造出的图存在 $v_{\text{start}}$ 到 $v_{\text{end}}$ 的哈密顿路径.
+\end{proof}
+\begin{example}[有向图哈密顿回路]
+	$\textsf{dHAMCYCLE} = \{\rep{G} | G \text{ is directed and has a Hamiltonian cycle}\} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	考虑证明 $\textsf{dHAMPATH} \le_p \textsf{dHAMCYCLE}$. 对于图 $G$, 添加额外源汇 $s, t$, $s$ 向所有点连边, 所有点向$t$连边, $t$ 向 $s$ 连边, 得到图 $G'$. $G$ 存在哈密顿路径当且仅当$G'$存在哈密顿回路.
+\end{proof}
+\begin{example}[无向图哈密顿路径]
+	$\textsf{uHAMPATH} = \{\rep{G} | G \text{ is undirected and has a Hamiltonian path}\} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	考虑证明 $\textsf{dHAMPATH} \le_p \textsf{uHAMPATH}$. 
+
+	对于有向图 $G$, 添加额外源汇$s, t$(要连边)后把每个点拆成三个点: 入点, 中间点, 出点, 适当连边得到无向图 $G'$. $G$存在哈密顿路径 $\Rightarrow G'$ 存在哈密顿路径是显然的, 而如果 $G'$ 存在哈密顿路径, 则任意一个入点/出点都会与其中间点相邻, 因为否则会导致中间点不得不成为路径的起止点, 而显然 $s$ 的入点与 $t$ 的出点是必须作为起止点的(度数是 $1$). 于是$G'$的哈密顿路径不会破坏 $G$ 的有向图结构, 从而可以构造出 $G$ 的哈密顿路径.	
+\end{proof}
+\begin{example}[无向图哈密顿回路]
+	$\textsf{uHAMCYCLE} = \{\rep{G} | G \text{ is undirected and has a Hamiltonian cycle}\} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	考虑证明 $\textsf{dHAMCYCLE} \le_p \textsf{uHAMCYCLE}$.
+
+	对于有向图 $G$, 直接把每个点拆成三个点: 入点, 中间点, 出点, 适当连边得到无向图 $G'$. $G$存在哈密顿回路 $\Rightarrow G'$ 存在哈密顿回路是显然的, 而如果 $G'$ 存在哈密顿回路, 则这条回路必然是“入-中间-出-入-中间-出”循环的, 因此也可以构造出 $G$ 的哈密顿回路.
+\end{proof}
+\begin{example}[旅行商问题]
+	$\textsf{TSP} = \{\langle G, d_{ij}, k \rangle | G \text{ has a Hamiltonian cycle with distance measured by } d_{ij} \text{ at most }k\} \in \NP$-complete.
+\end{example}
+\begin{proof}
+	考虑证明 $\textsf{dHAMCYCLE} \le_p \textsf{TSP}$. 根据 $G$ 到底有没有这条边把边权设为 $0$ 或者 $1$, $k$取 $0$ 就行.
+\end{proof}
+
+\begin{definition}[\coNP]
+	$\coNP = \{L | \overline{L} \in \NP\}$.
+\end{definition}
+\begin{example}
+	$\overline{\textsf{SAT}} \in \coNP$, 但在证明 $\overline{\textsf{SAT}} \in \NP$ 时遇到了困难: 难以高效地验证 $\varphi$ 对所有的 assignment 都为 False.
+\end{example}
+\begin{definition}[\coNP 的另一种定义]
+	称语言$L \subseteq \{0, 1\}^*$属于\coNP, 如果存在一个多项式$p: \mathbb N \to \mathbb N$和一个多项式时间图灵机$M$使得对于任意的$x \in \{0, 1\}^*$, 都有
+	$$x \in L \Leftrightarrow \forall u \in \{0, 1\}^{p(|x|)}, M(x, u) = 0$$
+\end{definition}
+\begin{definition}[\coNP-hard, \coNP-complete]
+	称 $L' \in \coNP$-hard, 如果任意 $L \in \coNP, L \le_p L'.$
+	
+	\coNP-complete = $\coNP \cap \coNP$-hard.
+\end{definition}
+\begin{example}
+	$\overline{\textsf{SAT}} \in \coNP$-complete. 这是因为$\forall L \in \coNP$, 我们有 $\overline L \in \NP$. 由 Cook-Levin Thm. 知 $\overline L \le_p \textsf{SAT}$, 于是便有 $L \le_p \overline{\textsf{SAT}}$. ($A \le_p B \Leftrightarrow \overline A \le_p \overline B$.)
+\end{example}
+\begin{proposition}
+	如果 $\P = \NP$, 则 $\NP = \coNP = \P$. 反过来说, 只要证明了 $\NP \neq \coNP$, 就能说明 $\P \neq \NP$.
+\end{proposition}
+\begin{definition}[\NEXP]
+	$\NEXP = \bigcup_{c \ge 0}\NTIME(2^{n^c})$.
+\end{definition}
+\begin{theorem}
+	如果 $\EXP \neq \NEXP$, 则 $\P \neq \NP$.
+\end{theorem}
+\begin{proof}
+	考虑证明逆否命题: 如果 $\P = \NP$, 则 $\EXP = \NEXP$. 使用一种叫做\obj{填充(padding)}的技术: 考虑 $L \in \NTIME(2^{n^c})$, 构造 $L_{\text{pad}} = \{\langle x, 1^{2^{|x|^c}}\rangle | x \in L\}$, 则可验证 $L_{\text{pad}} \in \NP$(因为问题几乎没变, 而输入规模变大了). 而如果 $L_{\text{pad}} \in \P$, 则也可以验证 $L \in \EXP$\footnote{形式化的验证需要具体给出图灵机的构造}. $\EXP \subseteq \NEXP$ 是显然的, 故证明了 $\EXP = \NEXP$.
+\end{proof}
+
+迄今为止, 我们研究的所有问题都是 Decision Problems, 即输出信息量为一比特的问题. 如果考虑把设定延伸到 Search Problems, 例如对给定的 CNF $\varphi$ 求出一组 satisfying assignment, 这种问题会不会与 Decision Problems 有所不同呢?
+
+\begin{theorem}
+	假如 $\P = \NP$, 则对于任意$L \in \NP$和它的verifier $M$, 都存在多项式时间图灵机 $B$, 能够对输入$x \in L$输出$x$的一个certificate.
+\end{theorem}
+\begin{proof}
+	首先证明 $L = \textsf{SAT}$ 时是正确的. 只需要依次对每个变量做$0/1$代入, 并调用 $M$ 判断一下当前已进行的代入下是否仍存在解就行了.
+
+	对于任意的$L \in \NP$, 由 Cook-Levin Thm. 我们知道 $L \le_p \textsf{SAT}$. 事实上这种规约有一个更好的性质: 不仅 $x \in L \Leftrightarrow f(x) \in \textsf{SAT}$, 而且可以把 $f(x)$ 的一个 satisfying assignment 映射到 $x$ 的一个 certificate. 这样的规约被称为\obj{Levin 规约(Levin reduction)}.
+\end{proof}
+\begin{theorem}[Ladners Theorem, “\NP-intermediate”]
+	假设 $\P \neq \NP$, 则存在既非 \P 亦非 \NP-complete 的 \NP 语言.
+\end{theorem}
+\begin{proof}
+	摆烂了不证了.
+\end{proof}
 \begin{theorem}[Nondeterministic Time Hierarchy Theorem]
 	$f, g$是满足$f(n + 1) = o(g(n))$的time constructible的函数, 则
 	$$\NTIME(f(n)) \subsetneq \NTIME(g(n))$$
 \end{theorem}
+\begin{proof}
+	摆烂了不证了.
+	\iffalse
+	设函数 $h: \mathbb N \to \mathbb N$ 满足 $h(1) = 2, h(i + 1) = 2^{g(h(i))}$. 考虑如下非确定性图灵机 $D$:
+	\begin{itemize}
+		\item 对于输入 $x$, 如果 $x \notin 1^*$, 直接拒绝. 否则, 设 $x = 1^n$, 求出 $i$ 满足 $h(i) < n \le h(i + 1)$.
+		\item 如果 $n \neq h(i + 1)$, 则用非确定性通用图灵机模拟 $M_i$($i$ 作为 binary representation 表示的非确定性图灵机) 在输入 $1^{n+1}$ 上运行 $f(n)$ 步, 并输出相同的结果.
+		\item 如果 $n = h(i + 1)$, 则用非确定性图灵机模拟 $M_i$ 在输入 $1^{h(i) + 1}$ 上运行 $f(h(i) + 1)$步, 输出相反的结果.
+	\end{itemize}
+
+	“输出相反的结果”需要指数的时间, 因为我们暂且认为 $\NP \neq \coNP$. 但好在输入规模是 $h(i) + 1$
+	\fi
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\iffalse
+
+\newpage\vspace*{\fill}\begin{center}\textit{后面都是自己瞎写的阿拉丁.}\end{center}\vspace*{\fill}
+
+
 \begin{theorem}[Ladner's Theorem]
 	如果$\P \neq \NP$, 则存在语言$L \in \NP \setminus \P$, 即非 \NP-complete 的 \NP 语言. 
 \end{theorem}
@@ -793,5 +967,6 @@
 
 	这样构造出的 QBF $\psi$ 的长度是$O(m^2) = O(S^2(n))$的. 
 \end{proof}
+\fi
 
 \end{document}
