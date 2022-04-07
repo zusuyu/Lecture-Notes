@@ -1,0 +1,312 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Cov#1{\text{Cov}\left({#1}\right)}
+
+
+\title{\heiti\zihao{2} 概率统计(A)课程作业: 离散变量的数字特征}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{概率统计(A)}
+	\chead{2022 Spring}
+	\rhead{离散变量的数字特征}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+\section{}
+\subsection*{(1)} $$
+	\begin{cases}
+		1 = \sum_{n \ge 0}\P{X = n} = \sum_{n \ge 0}A\cdot \frac{B^n}{n!} = A\e^B \\
+		a = \E{X} = \sum_{n \ge 1}n\P{X = n} = \sum_{n \ge 1}A\cdot \frac{B^n}{(n-1)!} = AB \sum_{n \ge 0}\frac{B^n}{n!} = AB\e^B
+	\end{cases} \Rightarrow
+	\begin{cases}
+		A = \e^{-a}\\
+		B = a
+	\end{cases}
+	$$
+	\subsection*{(2)}
+	 令 $\frac{a}{1+a} = p$. \begin{equation*}
+		\begin{split}
+			\E{X} &= \sum_{n \ge 0}n\P{X = n} = \frac{1}{1+a}\sum_{n \ge 0}np^n = \frac{1}{1+a}\cdot\frac{p}{(1-p)^2} = a\\
+			\E{X^2} &= \sum_{n \ge 0}n^2\P{X = n} = \frac{1}{1+a}\sum_{n \ge 0}n^2p^n = \frac{1}{1+a}\cdot\frac{p(1+p)}{(1-p)^3} = a(1+2a)\\
+			\Var{X} &= \E{X^2} - \E{X}^2 = a + a^2
+		\end{split}
+	\end{equation*}
+\section{}
+\begin{equation*}
+	\begin{split}
+		\E{\min\{X, Y\}} &= \sum_{n \ge 0}n\P{\min\{X, Y\} = n}\\
+		&\le \sum_{n \ge 0}n(\P{X = n}\P{Y \ge n} + \P{Y = n}\P{X \ge n})\\
+		&\le \sum_{n \ge 0}n(\P{X = n} + \P{Y = n})\\
+		&= \E{X} + \E{Y}\\
+		&= \E{X + Y}
+	\end{split}
+\end{equation*}
+
+由于 $X, Y > 0$, 故后者收敛能推出前者也收敛.
+\begin{equation*}
+	\begin{split}
+		\E{\min\{X, Y\}} &= \sum_{n \ge 0}n\P{\min\{X, Y\} = n}\\
+		&= \sum_{n \ge 1}\P{\min\{X, Y\} \ge n}\\
+		&= \sum_{n \ge 1}\P{X \ge n}\P{Y \ge n}
+	\end{split}
+\end{equation*}
+\section{}\subsection*{(1)}
+\begin{equation*}
+	\int_{-\infty}^{+\infty}|x|f_X(x)\text dx = 2\int_{0}^{+\infty}\frac{x}{\pi(x^2+1)}\text dx = +\infty
+\end{equation*}
+广义积分 $\int_{-\infty}^{+\infty}xf_X(x)\text dx$ 不绝对收敛, 因此 $\E{X}$ 不存在.
+\subsection*{(2)} \begin{equation*}
+\begin{split}
+	\int_{-\infty}^{+\infty}|\arctan (x)|f_X(x)\text dx &= 2\int_{0}^{+\infty}\frac{\arctan(x)}{\pi(x^2+1)}\text dx\\
+	&= \frac{2}{\pi}\int_{0}^{+\infty}\arctan(x) \text d \arctan(x)\\
+	&= \frac{\arctan^2(x)}{\pi}\bigg|_{0}^{+\infty}\\
+	&= \frac{\pi}{4}
+\end{split}
+\end{equation*}
+广义积分 $\int_{-\infty}^{+\infty}\arctan(x)f_X(x)\text dx$ 绝对收敛, 因此 $\E{\arctan X}$ 存在. 容易观察到积分函数是奇函数, 因此有 $\E{\arctan X} = 0$.
+\section{}
+\subsection*{(1)}
+\begin{equation*}
+	\E{\e^{aX}} = \int_{-\infty}^{+\infty}\e^{ax}\cdot\frac{1}{\sqrt{2\pi}}\e^{-\frac{x^2}{2}}\text dx = \e^{\frac{a^2}{2}}\int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}}\e^{-\frac{(x-a)^2}{2}}\text dx = \e^{\frac{a^2}{2}}
+\end{equation*}
+\subsection*{(2)}
+\begin{equation*}
+	\E{|X|} = 2\int_{0}^{+\infty}x\cdot\frac{1}{\sqrt{2\pi}}\e^{-\frac{x^2}{x}}\text dx = \frac{\sqrt2}{\sqrt{\pi}}\int_{0}^{+\infty}\e^{-\frac{x^2}{2}}\text d\left(\frac{x^2}2\right) = -\frac{\sqrt2}{\sqrt{\pi}}\e^{-u}\bigg|_0^{+\infty} = \frac{\sqrt2}{\sqrt{\pi}}
+\end{equation*}
+\section{}
+\subsection*{(1)}
+\begin{equation*}
+	\E{X_N} = \sum_{k=1}^{N}\P{X_N \ge k} = \sum_{k=1}^{N}\left(\frac {N-k+1}N\right)^n = \frac{1}{N^n}\sum_{k=1}^{N}k^n
+\end{equation*}
+\subsection*{(2)}
+\begin{equation*}
+	\lim_{N \to \infty}\E{X_N / N} = \lim_{N \to \infty}\frac1N\sum_{k=1}^{N}\left(\frac kN\right)^n = \int_{0}^{1}x^n\text dx = \frac{1}{n+1}
+\end{equation*}
+\section{}
+记 $X$ 表示需要支付的金额, $x$ 表示乙猜测的号码.
+\subsection*{(1)}
+\begin{equation*}
+	\E{X} = \frac{1}{15}\left[(x - 1)^2 + 2(x - 2)^2 + 3(x-3)^2 + 4(x - 4)^2 + 5(x - 5)^2\right] = x^2 - \frac{22}{3}x + 15
+\end{equation*}
+当 $x$ 取 $\frac{11}{3}$ 时上式取到最小值 $\frac{14}{9}$.
+\subsection*{(2)}
+\begin{equation*}
+	\E{X} = \frac{1}{15}\left[|x - 1| + 2|x-2| + 3|x-3| + 4|x-4| + 5|x-5|\right]
+\end{equation*}
+当 $x$ 取 $4$ 时上式取到最小值 $1$.
+\section{}
+\subsection*{(0)}
+主要需要验证非负性与归一性.
+
+当 $\max\{|x|, |y|\} \ge \pi$ 时, $g(x)g(y) = 0$, 故 $f_{X, Y}(x, y) = \phi(x)\phi(y) > 0$. 当 $|x|, |y| < \pi$ 时, $\phi(x)\phi(y) > \frac{\e^{-\pi^2}}{2\pi} > \frac{\e^{-\pi^2}}{2\pi}g(x)g(y)$, 从而也有$f_{X, Y}(x, y) = \phi(x)\phi(y) > 0$. 
+
+易知 $\iint f_{X, Y}(x, y)\text dx \text dy = 1$, 而 $\int_x g(x)\text dx = 0$, 因此 $\iint g(x)g(y)\text dx \text dy = 0$, 故归一性满足.
+
+\subsection*{(1)}
+\begin{equation*}
+	f_X(x) = \int_{-\infty}^{+\infty}f_{X, Y}(x, y)\text dy = \phi(x)\int_{-\infty}^{+\infty}\phi(y)\text dy + \frac{\e^{-\pi^2}}{2\pi}g(x)\int_{-\infty}^{+\infty}g(y)\text dy = \phi(x)
+\end{equation*}
+故 $X$ 的边缘分布是正态分布. $Y$ 显然是对称的, 故也是正态分布.
+
+\subsection*{(2)}
+\begin{equation*}
+	\begin{split}	
+	\rho_{X, Y} &= \frac{\Cov{X, Y}}{\sqrt{\Var{X}\Var{Y}}} = \E{(X - \E{X})(Y - \E{Y})} = \E{XY}\\
+	&= \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty} xy \left(\phi(x)\phi(y) + \frac{\e^{-\pi^2}}{2}g(x)g(y)\right)\text dx \text dy\\
+	&= \left[\int_{-\infty}^{+\infty}x\phi(x)\text dx\right]\left[\int_{-\infty}^{+\infty}y\phi(y)\text dy\right] + \frac{\e^{-\pi^2}}{2}\left[\int_{-\infty}^{+\infty}x g(x)\text dx\right]\left[\int_{-\infty}^{+\infty}y g(y)\text dy\right]\\ &=0
+	\end{split}
+\end{equation*}
+但 $f_{X, Y}(x, y) = f_X(x)f_Y(y)$ 不恒成立, 因此 $X, Y$ 不线性相关但不独立.
+
+\section{}
+\subsection*{(1)}
+\begin{equation*}
+	\rho_{X_1, X_1 - X_2} = \frac{\Cov{X_1, X_1 - X_2}}{\sqrt{\Var{X_1}\Var{X_1 - X_2}}} = \frac{\Var{X_1} - \Cov{X_1, X_2}}{\sqrt{\Var{X_1} (\Var{X_1} + \Var{X_2} - \Cov{X_1, X_2}) }} = \frac{1 - \rho}{\sqrt{2 - \rho}}
+\end{equation*}
+\subsection*{(2)}
+记 $Z = X_1 - X_2$. 考虑 $Z$ 的密度函数.
+\begin{equation*}
+	\begin{split}
+		f_Z(z) &= \int_{-\infty}^{+\infty}f_{X_1, X_2}(x, x - z)\text dx\\
+		&= \int_{-\infty}^{+\infty}\frac{1}{2\pi\sqrt{1-\rho^2}}\exp\left[-\frac{1}{2(1-\rho^2)}\left(x^2 - 2\rho x(x-z) + (x-z)^2\right)\right] \text dx\\
+		&= \frac{1}{2\pi\sqrt{1-\rho^2}}\int_{-\infty}^{+\infty}\exp\left[-\frac{1}{2(1-\rho^2)}\left(2(1-\rho)\left(x - \frac z2\right)^2 + \frac{z^2(1+p)}{2}\right)\right] \text dx\\
+		&= \frac{1}{2\pi\sqrt{1-\rho^2}}\exp\left(-\frac{z^2}{4(1-\rho)}\right)\int_{-\infty}^{+\infty}\exp\left(-\frac{\left(x - \frac z2\right)^2}{1+\rho}\right)\text dx\\
+		&= \frac{1}{2\sqrt{\pi(1 - \rho)}}\exp\left(-\frac{z^2}{4(1-\rho)}\right)
+	\end{split}
+\end{equation*}
+于是
+\begin{equation*}
+	\begin{split}
+		\E{|Z|} &= 2\int_{0}^{+\infty} zf_Z(z)\text dz\\
+		&= \frac{1}{\sqrt{\pi(1 - \rho)}}\int_{0}^{+\infty} z\exp\left(-\frac{z^2}{4(1-\rho)}\right)\text dz\\
+		&= \frac{2\sqrt{1-\rho}}{\sqrt{\pi}}\int_0^{+\infty}\exp\left(-\frac{z^2}{4(1-\rho)}\right)\text d\frac{z^2}{4(1-\rho)}\\
+		&= \frac{2\sqrt{1-\rho}}{\sqrt \pi}
+	\end{split}
+\end{equation*}
+
+\subsection*{(3)}
+考虑 $\E{\max\{X_1, X_2\}} = \E{X_2} + \E{\max\{0, X_1 - X_2\}}$, 显然 $\E{X_2} = 0$, 而\begin{equation*}
+	\E{\max\{0, X_1 - X_2\}} = \int_{0}^{+\infty}zf_Z(z)\text dz = \frac{\sqrt{1 - \rho}}{\sqrt{\pi}}
+\end{equation*}
+
+因此 $\E{\max\{X_1, X_2\}} = \frac{\sqrt{1 - \rho}}{\sqrt{\pi}}$.
+\section{}
+用 $X_i, Y_i \ (1 \le i \le n)$ 分别表示第 $i$ 次摸球时是否摸到了白球/黑球, 则显然有 $X = \sum_{i=1}^{n}X_i, Y = \sum_{i=1}^{n}Y_i$.
+
+由于 $\forall i, \E{X_i} = p, \E{Y_i} = q$, 故 $\E{X} = np, \E{Y} = nq$.
+
+简单分析可知 $\E{X_iY_j} = \begin{cases}0,&i=j\\pq,&i\neq j\end{cases}, \E{X_iX_j} = \begin{cases}p,&i=j\\p^2,&i\neq j\end{cases}, \E{Y_iY_j} = \begin{cases}q,&i=j\\q^2,&i\neq j\end{cases}$.
+\subsection*{(1)}
+\begin{equation*}
+	\begin{split}
+		\Cov{X, Y} &= \E{XY} - \E{X}\E{Y}\\
+		&= \sum_{i=1}^{n}\sum_{j=1}^{n}\E{X_iY_j} - \E{X}\E{Y}\\
+		&= n(n-1)pq - n^2pq\\
+		&= -npq
+	\end{split}
+\end{equation*}
+\subsection*{(2)}
+\begin{equation*}
+	\begin{split}
+		\Var{X} &= \E{X^2} - \E{X}^2 = \sum_{i=1}^{n}\sum_{j=1}^n\E{X_iX_j} - \E{X}^2\\
+		&= np + (n^2 - n)p^2 - (np)^2 = np(1-p)\\
+		\Var{Y} &= nq(1-q)\\
+		\rho_{X, Y} &= \frac{\Cov{X, Y}}{\sqrt{\Var{X}\Var{Y}}} = \frac{-npq}{\sqrt{n^2p(1-p)q(1q)}} = -\sqrt{\frac{pq}{(1-p)(1-q)}}
+	\end{split}
+\end{equation*}
+\section{}
+\subsection*{(1)}
+$\E{X} = \E{X_1 + X_2 + \cdots + X_n}$ 即为从 $N$ 个球中抽出总计 $n$ 个, 其数码和的期望. 因此有 \begin{equation*}
+	\begin{split}
+	\E{X} &= \sum_{k} k\binom{a}{k}\binom{b}{n-k} \bigg/ \binom{N}{n} \\&=\sum_{k} a\binom{a-1}{k-1}\binom{b}{n-k} \bigg/ \binom{N}{n} \\&= a\binom{N-1}{n-1}\bigg/\binom{N}{n}\\&= \frac{an}{N}
+\end{split}
+\end{equation*}
+\subsection*{(2)(3)}
+不难验证 $\E{X_i} = \frac aN$ (因为\textbf{(1)}的结论对所有 $n$ 均成立)以及 $\E{X_i X_j} = \begin{cases}
+	\frac aN, & i = j\\
+	\frac{a(a-1)}{N(N-1)}, & i \neq j
+\end{cases}$.
+\begin{equation*}
+	\begin{split}
+		\Var{X} &= \E{X^2} - \E{X}^2 = \sum_{i=1}^{n}\sum_{j=1}^{n}\E{X_iX_j} - \E{X}^2\\
+		&= n\frac aN + (n^2-n)\frac{a(a-1)}{N(N-1)} - \frac{n^2a^2}{N^2}\\
+		&= \frac{na(N-n)(N-a)}{N^2(N-1)}\\
+		\Cov{X_i, X_j} &= \E{X_iX_j} - \E{X_i}\E{X_j} = \begin{cases}
+			\frac{a(N-a)}{N^2}, & i = j\\
+			\frac{-a(N-a)}{N^2(N-1)}, & i \neq j
+		\end{cases}
+	\end{split}
+\end{equation*}
+
+特别的, 当 $n = N$ 时, 有 $\Var{X} = 0$.
+\end{document}
+
