@@ -1,0 +1,177 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+
+\title{\heiti\zihao{2} Machine Learning Homework: Week 5 \& 6}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\rhead{Homework: Week 5 \& 6}
+	\chead{2022 Spring}
+	\lhead{Machine Learning}
+	\cfoot{Page \thepage \ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+
+Prove the following propositions about the algorithm of AdaBoost.
+\subsection*{Statement}
+\begin{enumerate}
+	\item $\alpha_t = \arg\min\limits_{\alpha}Z_t = \arg\min\limits_{\alpha} \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i))$.
+	\item $\prod\limits_{t=1}^{T}Z_t = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_i\sum\limits_{t=1}^{T}\alpha_t h_t(x_i)\right) = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)$.
+	\item $\sum\limits_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] = \frac12$.
+\end{enumerate}
+\subsection*{Solution}
+\begin{enumerate}
+	\item Recall that $\varepsilon_t = \sum\limits_{i=1}^{n}D_t(i)\mathbb I[y_i \neq h_t(x_i)]$, by applying \obj{AM–GM inequality} we have
+	$$Z_t = \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i)) = \varepsilon_t \exp(\alpha) + (1 - \varepsilon)\exp(-\alpha) \ge 2\sqrt{\varepsilon_t(1 - \varepsilon_t)}$$
+	where the equality holds if and only if $$\varepsilon_t \e^{\alpha} = (1 - \varepsilon_t)\e^{-\alpha} \Leftrightarrow \alpha = \frac12 \ln\frac{1 - \varepsilon_t}{\varepsilon_t} = \frac12 \ln\frac{1 + \gamma_t}{1 - \gamma_t} = \alpha_t$$
+	where $\gamma_t = 1 - 2\varepsilon$ in the assignment of $\alpha_t$. This suggests that $\alpha_t = \arg\min\limits_{\alpha} Z_t$ as desired.
+
+	\item Notice that $D_{t+1}(i) = \frac{D_t(i)\exp(-\alpha_t y_i h_t(x_i))}{Z_t}$, by iteratively substitute the term of $D_t(i)$ in the expression of $Z_T$ ($Z_T = \sum_{i=1}^{n}D_T(i)\exp(-\alpha_T y_i h_T(x_i))$), we can eventually obtain the following equality. \begin{equation*}
+		\begin{split}
+			\prod_{t=1}^{T}Z_t &= \prod_{t=1}^{T-1}Z_t \sum_{i=1}^{n}D_T(i)\exp(-\alpha_T y_i h_T(x_i))\\
+			&= \prod_{t=1}^{T-2}Z_t \sum_{i=1}^{n}D_{T-1}(i)\exp(-\alpha_T y_i h_T(x_i) -\alpha_{T-1} y_i h_{T-1}(x_i))\\
+			&= \cdots\\
+			&= \sum\limits_{i=1}^{n}D_0(i)\exp\left(-y_i\sum\limits_{t=1}^{T}\alpha_t h_t(x_i)\right)\\
+			&= \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)
+		\end{split}
+	\end{equation*}
+	
+	\item \begin{equation*}
+		\begin{split}
+			\sum_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] &= \sum_{i=1}^{n}\frac{D_{t}(i)\exp(-\alpha_t y_i h_t(x_i))}{Z_t}\mathbb I[y_i \neq h_t(x_i)]\\
+			&= \frac{\sum\limits_{i=1}^{n}D_{t}(i)\exp(\alpha_t)\mathbb I[y_i \neq h_t(x_i)]}{\sum\limits_{i=1}^{n}D_{t}(i)\exp(\alpha_t)\mathbb I[y_i \neq h_t(x_i)] + \sum\limits_{i=1}^{n}D_{t}(i)\exp(-\alpha_t)\mathbb I[y_i = h_t(x_i)]}\\
+			&= \frac{\varepsilon_t \e^{\alpha_t}}{\varepsilon_t \e^{\alpha_t} + (1 - \varepsilon_t)\e^{-\alpha_t}}
+		\end{split}
+	\end{equation*}
+
+	Since $\alpha_t$ is chosen so that $\varepsilon_t \e^{\alpha_t} = (1 - \varepsilon_t)\e^{-\alpha_t}$, we can prove that $\sum\limits_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] = \frac12$.
+\end{enumerate}
+
+\section{}
+\subsection*{Statement}
+	Suppose $(x, y)$ is a data point from the sample space, $\mathbf h(x) = (h_1(x), \cdots, h_T(x))\in \mathbb R^T$ is a classifier. Denote $\alpha = (\alpha_1, \cdots, \alpha_T)^{\text T}$ with $\sum_{t=1}^{T}\alpha_t = 1$ and $\alpha_i > 0$ as the normal vector of hyperplane $\mathcal P = \{\xi \in \mathbb R^T | \alpha^{\text T}\xi = 0\}$, and $f(x) = \sum_{t=1}^{T}\alpha_th_t(x)$ a linear combinator of classifiers. Show that $f(x)$ gives the \obj{Chebyshev distance ($L_{\infty}$ distance)} from $\mathbf h(x)$ to the hyperplane $\mathcal P$.
+
+\subsection*{Solution}
+	The problem is obviously equivalent to the following programming problem.
+	\begin{equation*}
+		\begin{split}
+			\text{minimize}_{\beta \in \mathbb R^T} \quad & \max\limits_{t=1}^{T} |\beta_t|\\
+			\text{s.t.} \quad & \sum_{t=1}^{T}\alpha_t(\beta_t - h_t(x)) = 0
+		\end{split}
+	\end{equation*}
+
+	\begin{itemize}
+		\item The solution is not greater than $\sum_{t=1}^{T}\alpha_th_t(x)$, since when $\beta_t = \sum_{i=1}^{T}\alpha_ih_i(x)$ for all $t$, the result is $\sum_{t=1}^{T}\alpha_th_t(x)$.
+		\item The solution is not smaller than $\sum_{t=1}^{T}\alpha_th_t(x)$, otherwise $\sum_{t=1}^{T}\alpha_t\beta_t \le \sum_{t=1}^{T}\alpha_t|\beta_t| < \sum_{t=1}^{T}\alpha_t\left(\sum_{t'=1}^{T}\alpha_{t'}h_{t'}(x)\right) = \sum_{t=1}^{T}\alpha_th_t(x)$ rises a contradiction with the programming condition.
+	\end{itemize}
+\end{document}
+
+

@@ -13,7 +13,7 @@
 \usepackage{multirow}
 \usepackage[cache=false]{minted}
 \hypersetup{
-	colorlinks=true,
+	colorlinks=True,
 	linkcolor=blue
 }
 
@@ -32,7 +32,7 @@
 \usepackage{fancyhdr}
 \usepackage{fancyvrb}
 
-\fvset{showspaces=true}
+\fvset{showspaces=True}
 \SaveVerb{verbspace}! !
 \newcommand{\aspace}{\UseVerb{verbspace}}%
 \usepackage{cleveref}
@@ -819,7 +819,7 @@
 	如果 $\EXP \neq \NEXP$, 则 $\P \neq \NP$.
 \end{theorem}
 \begin{proof}
-	考虑证明逆否命题: 如果 $\P = \NP$, 则 $\EXP = \NEXP$. 使用一种叫做\obj{填充(padding)}的技术: 考虑 $L \in \NTIME(2^{n^c})$, 构造 $L_{\text{pad}} = \{\langle x, 1^{2^{|x|^c}}\rangle | x \in L\}$, 则可验证 $L_{\text{pad}} \in \NP$(因为问题几乎没变, 而输入规模变大了). 而如果 $L_{\text{pad}} \in \P$, 则也可以验证 $L \in \EXP$\footnote{形式化的验证需要具体给出图灵机的构造}. $\EXP \subseteq \NEXP$ 是显然的, 故证明了 $\EXP = \NEXP$.
+	考虑证明逆否命题: 如果 $\P = \NP$, 则 $\EXP = \NEXP$. 使用一种叫做\obj{填充(padding)}的技术: 考虑 $L \in \NTIME(2^{n^c})$, 构造 $L_{\text{pad}} = \{\langle x, 1^{2^{|x|^c}}\rangle | x \in L\}$, 则可验证 $L_{\text{pad}} \in \NP$(因为问题几乎没变, 而输入规模变大了). 而如果 $L_{\text{pad}} \in \P$, 则也可以验证 $L \in \EXP$. $\EXP \subseteq \NEXP$ 是显然的, 故证明了 $\EXP = \NEXP$.
 \end{proof}
 
 迄今为止, 我们研究的所有问题都是 Decision Problems, 即输出信息量为一比特的问题. 如果考虑把设定延伸到 Search Problems, 例如对给定的 CNF $\varphi$ 求出一组 satisfying assignment, 这种问题会不会与 Decision Problems 有所不同呢?
@@ -836,7 +836,36 @@
 	假设 $\P \neq \NP$, 则存在既非 \P 亦非 \NP-complete 的 \NP 语言.
 \end{theorem}
 \begin{proof}
-	摆烂了不证了.
+	对于函数 $H: \mathbb N \to \mathbb N$, 定义语言 $\textsf{SAT}_H = \left\{ \psi01^{n^{H(n)}} | \psi \in \textsf{SAT}, |\psi| = n \right\}$.
+
+	用如下奇怪的方式构造 $H$, $H(n)$ 的值为: 最小的 $i$, 满足对于任意长度不超过 $\log n$ 的输入 $x$, $M_i$(以 $i$ 作为 binary representation 得到的图灵机) 都可以在 $i|x|^i$ 步内输出 $\textsf{SAT}_H(x)$, 然后把这个 $i$ 对 $\log \log n$ 取 $\min$.
+
+	\textit{
+		可以通过给出一个计算 $H$ 的具体算法来说明 $H$ 是良定的: 想要计算 $H(n)$, 我们需要 \num{1} 在不超过 $\log \log n$ 台图灵机上运行 $2^{\log n} = n$ 个输入 $x$ 至多 $\log \log n (\log n)^{\log \log n}$ 步, 以得到所有 $M_i$ 的输出, \num{2} 对每个 $i \le \log n$ 计算 $H(i)$, 以及检查所有长度不超过 $\log n$ 的输入 $x$ 是否 $\in \textsf{SAT}$, 以得到所有 $\textsf{SAT}_H(x)$ 的正确值. 因此有 $T(n) \le \log n T(\log n) + O(n^2)$, 得到了一个时间复杂度为 $T(n) = O(n^2)$ 的算法.
+	}
+
+	从定义不难看出 $H(n)$ 是关于 $n$ 单调的, 即要么 $H(n) = O(1)$, 要么 $\lim\limits_{n \to \infty} H(n) = \infty$. 我们证明如下引理.
+	\begin{lemma}
+		$\textsf{SAT}_H \in \P$ 当且仅当 $H(n) = O(1)$.
+	\end{lemma}
+	\begin{proof}
+		$\Rightarrow$: 假设存在一台图灵机 $M$ 可以在 $cn^c$ 步内对任意长度为 $n$ 的输入 $x$ 计算 $\textsf{SAT}_H(x)$. 由于 $M$ 可以被无限多个串表示, 故总存在 $i > c$ 使 $M_i = M$, 此时根据定义, 对于任意的 $n > 2^{2^i} \ (\log \log n > i)$ 都有 $H(n) \le i$, 因此 $H(n) = O(1)$.
+
+		$\Leftarrow$: $H(n) = O(1)$ 说明 $H$ 的取值数量有限, 从而总会存在某个 $i$ 使 $H(n) = i$ 对无限多个 $n$ 成立. 这就说明了 $M_i$ 可以在 $in^i$ 时间内计算 $\textsf{SAT}_H$ (否则如果 $M_i$ 在输入 $x \in \{0, 1\}^*$ 上寄了, 那么对于任意 $n > 2^{|x|}$ 都应该有 $H(n) \neq i$)注意到这里的 $i$ 是常数, 从而说明了 $\textsf{SAT}_H \in \P$.
+	\end{proof}
+
+	根据以上引理, 我们利用归谬证明如果 $\P \neq \NP$, 则 $\textsf{SAT}_H$ 既不属于 $\P$, 也不属于 $\NP$-complete.
+
+	\begin{itemize}
+		\item 假如 $\textsf{SAT}_H \in \P$, 那么根据引理 $H(n) = O(1)$, 这说明 $\textsf{SAT}_H$ 只是 $\textsf{SAT}$ “填充”了多项式个数个 $1$ 得到的, 从而 $\textsf{SAT} \le_p \textsf{SAT}_H$, 导致了 $\textsf{SAT} \in \P$, 与 $\P \neq \NP$ 矛盾.
+		\item 假如 $\textsf{SAT}_H \in \NP$-complete, 则存在一种运行时间为 $O(n^i)$ 的从 $\textsf{SAT}$ 到 $\textsf{SAT}_H$ 的规约 $f$. 注意到由上一条归谬我们已经知道了 $\lim\limits_{n \to \infty}H(n) = \infty$, 故存在 $N$ 使 $H(n) > 3i$ 对 $\forall n > N$ 成立. 考虑构造一种多项式时间算法来实现 $\textsf{SAT}$ 的判定: 
+		
+		\begin{itemize}
+			\item 对于输入 $\varphi$, 若 $|\varphi| < N$则暴力判定, 否则 $O(|\varphi|^i)$ 地计算 $f(\varphi)$ 并检查其是否形如 $\psi01^{|\psi|^{H(\psi)}}$, 若不形如则直接返回 False, 否则有 $\varphi \in \textsf{SAT} \Leftrightarrow f(\varphi) \in \textsf{SAT}_H \Leftrightarrow \psi \in \textsf{SAT}$, 可以递归判定 $\psi$.
+		\end{itemize}
+		
+		考虑限制一下 $|\psi|$. 注意到 $|\psi01^{|\psi|^{H(\psi)}}| = |\psi| + 1 + |\psi|^{H(\psi)} \le |\varphi| + |\varphi|^i$, 随意缩放一下有 $|\psi|^{3i} < |\psi|^{H(\psi)} \le |\varphi|^{i+1}$, 从而 $|\psi| \le \sqrt{|\varphi|}$. 那么算法的时间复杂度就是 $T(n) \le O(n^i) + T(\sqrt n) \Rightarrow T(n) = O(n^i)$. 这也导致 $\textsf{SAT} \in \P$, 与 $\P \neq \NP$ 矛盾.
+	\end{itemize}
 \end{proof}
 \begin{theorem}[Nondeterministic Time Hierarchy Theorem]
 	$f, g$是满足$f(n + 1) = o(g(n))$的time constructible的函数, 则
@@ -856,8 +885,95 @@
 	\fi
 \end{proof}
 
+\newpage
+\section{空间复杂性}
+\begin{definition}[运行空间, \SPACE 与 \NSPACE]
+	对于$S: \mathbb N \to \mathbb N$和$L \subseteq \{0, 1\}^*$, 称$L \in \SPACE(S(n))$, 如果存在常数$c$以及可以决定$L$的图灵机$M$, 满足在对任意长度为$n$的输入的计算中, $M$只会访问到至多$c \cdot S(n)$个work tapes上(不包含input)的位置, 称$M$的运行空间为$O(S(n))$. 
 
+	类似地可以定义$\NSPACE$, 这里要求在任何一种决策下用到的位置数量都不超过$c \cdot S(n)$. 
+\end{definition}
+\begin{definition}[Space constructible functions]
+	称一个函数$S: \mathbb N \to \mathbb N$是space-constructible的, 如果 $S(n) \ge \log n$ 且存在运行空间为 $S(n)$ 的计算函数 $x \to \rep{S(x)}$ 的图灵机.
+\end{definition}
+\begin{remark}
+	相比于 time constructible functions, 我们不要求 space constructible functions 满足 $S(n) \ge n$, 但为了能够“记住在输入纸带上的位置”, 我们一般会要求 $S(n) \ge \log n$. 
+\end{remark}
+\begin{theorem}
+	对于任何 space-constructible 的函数$S: \mathbb N \to \mathbb N$, 有
+	$$\DTIME(S(n)) \subseteq \SPACE(S(n)) \subseteq \NSPACE(S(n)) \subseteq \DTIME(2^{O(S(n))})$$
+	\label{time_and_space}
+\end{theorem}
+\begin{proof}
+	前两个$\subseteq$都是平凡的, 只考虑证明最后一个. 
 
+	我们称一台(确定或非确定)图灵机$M$的一个\obj{configuration}包含 \num{i} work tape上的所有非空字符; \num{ii} 所有纸带的head位置; \num{iii} $M$所处的状态, 则对于确定的输入$x \in \{0, 1\}^*$, 一个configuration的后继configuration是 \num{a} 对于图灵机来说, 唯一确定的; \num{b} 对于非确定图灵机来说, 至多唯二确定的. 把configuration之间的转移看成一张有向图, 记作$G_{M, x}$. 不失一般性假设$M$只有一种configuration $C_{\text{accept}}$满足“输出$1$后停机”(可以让图灵机在停机前擦除所有中间记录), 这样$M(x) = 1$就等价于$G_{M, x}$中存在一条$C_{\text{start}}$到$C_{\text{accept}}$的路径. 
+
+	陈述两个事实：
+	\begin{itemize}
+		\item 给定$M, x$, $G_{M, x}$中的每个节点用$O(S(n))$个比特来表示, 也即, $G_{M, x}$只有$2^{O(S(n))}$个节点. 
+		\item 对于任意两个configuration $C, C'$, 存在$O(S(n))$大小的CNF $\varphi_{M, x}$满足$\varphi_{M, x}(C, C') = 1$当且仅当$G_{M, x}$中$C$有边连向$C'$. 
+	\end{itemize}
+
+	因此用$2^{O(S(n))}$的时间把整张$G_{M, x}$建出来, 再 BFS 一下即可验证$C_{\text{start}}$到$C_{\text{accept}}$是否连通. 
+\end{proof}
+\begin{definition}[\PSPACE, \NPSPACE, \L \ 与 \NL]
+	\begin{align*}
+		\PSPACE &= \bigcup_{c \ge 1}\SPACE(n^c)\\
+		\NPSPACE &= \bigcup_{c \ge 1}\NSPACE(n^c)\\
+		\L &= \SPACE(\log n)\\
+		\NL &= \NSPACE(\log n)
+	\end{align*}
+\end{definition}
+\begin{corollary}
+	$\NP \subseteq \PSPACE$, 因为都可以暴力枚举答案, 用多项式空间存下来然后验证. 
+\end{corollary}
+\begin{corollary}
+	在\cref{time_and_space} 中分别代入$S(n) = \log n, S(n) = n^c$, 可以得到
+	$$\L \subseteq \NL \subseteq \P \subseteq \NP \subseteq \PSPACE \subseteq \NSPACE \subseteq \EXP$$
+\end{corollary}
+\begin{example}
+	$$\textsf{PATH} = \{ \langle G, s, t\rangle : G \textrm{ is a direct graph in which there is a path from }s \textrm{ to } t\}$$
+	即判断图中两点之间是否存在一条路径. 显然$\textsf{PATH} \in \NL$, 但其是否属于$\L$仍是一个open problem. 而事实上, $\textsf{PATH} \in \L$ 等价于 $\L = \NL$, 即 \textsf{PATH} 是 \NL-complete.
+\end{example}
+\begin{theorem}[Space Hierarchy Theorem]
+	$f, g$是满足$f(n) = o(g(n))$的 space constructible 的函数, 则
+	$$\SPACE(f(n)) \subsetneq \SPACE(g(n))$$
+\end{theorem}
+\begin{proof}
+	技术细节在于通用图灵机$\mathcal U$模拟图灵机$M$只需要常数倍的空间, 所以相比于 Time Hierarchy Theorem 没有了对数项. 其余部分跟 Time Hierarchy Theorem 的证明类似, 就不再赘述了. 	
+\end{proof}
+\begin{definition}[\PSPACE-hard, \PSPACE-complete]
+	称$L'$是\PSPACE-hard, 如果对于任意$L \in \PSPACE$, $L \le_p L'$. \PSPACE-complete $=$ \PSPACE\ $\cap$ \PSPACE-hard.  
+\end{definition}
+\begin{example}
+	$$\textsf{SPACE TMSAT} = \{ \langle M, w, 1^n \rangle : \textrm{DTM } M \textrm{ accepts } w \textrm{ in space } n \}$$
+	这是一个 \PSPACE-complete 语言. 
+\end{example}
+\begin{definition}[Quantified Boolean formula, QBF]
+	一个 QBF 是形如 $Q_1x_1Q_2x_2 \cdots Q_nx_n \varphi(x_1, x_2, \cdots, x_n)$ 的公式, 其中$Q_i \in \{\forall, \exists\}$, $x_i$的取值是$\{0, 1\}$, $\varphi$是一个 plain(unquantified) boolean formula . 
+
+	上述定义专注于讨论\obj{前束范式}的 QBF , 因为非前束范式都可以转化成等价的前束范式. 一个 QBF 有真值 True 或 False . 
+
+	用 \textsf{TQBF} 表示所有为真的 QBF 的集合. 
+\end{definition}
+\begin{theorem}
+	\textsf{TQBF} $\in$ \PSPACE-complete.
+\end{theorem}
+\begin{proof}
+	先证明 $\textsf{TQBF} \in \PSPACE$. 这个是简单的, 因为判定可以通过 DFS 实现, 而 DFS 只需要$O(n + m)$的空间, 其中$n$是变量数, $m$是 QBF 的长度. 
+
+	再证明任意$L \in \PSPACE$都满足$L \le_p \textsf{TQBF}$. 假设$M$是在$S(n)$空间内计算$L$的图灵机, 对于输入$x \in \{0, 1\}^*$, 考虑 configuration graph $G_{M, x}$, 我们陈述过图中每个点可以用 $m = O(S(n))$ 个比特来表示, 以及存在一个 CNF $\varphi_{M, x}$ 满足$\varphi_{M, x}(C, C') = \textrm{True}$ 当且仅当$G_{M, x}$ 中有 $C \to C'$ 的边. 
+
+	考虑根据 $\varphi_{M, x}$ 来构造我们想要的 QBF $\psi$ . 用 $\psi_i$ 表示一个 QBF , $\psi_i(C, C') = \textrm{True}$当且仅当$G_{M, x}$中存在一条长度不超过$2^i$从$C$到$C'$的路径, 那么显然$\psi = \psi_m(C_{\text{start}}, C_{\text{accept}}), \psi_0(C, C') = \varphi_{M, x}(C, C') \vee (C = C')$. $\psi_i$可以递归定义：对于$i \ge 1$, $\psi_i(C, C') = \exists C'' \psi_{i-1}(C, C'') \wedge \psi_{i-1}(C'', C')$. 
+
+	一个技术细节是需要改进递归定义的具体方式以保证$\psi$的长度是多项式级别的. 可以用一种看上去有点奇怪, 但与前述定义等价的形式：
+	$$\psi_i(C, C') = \exists C''\forall D_1 \forall D_2 ((D_1, D_2) = (C, C'') \wedge (D_1, D_2) = (C'', C')) \Rightarrow \psi_{i-1}(D_1, D_2)$$
+
+	这样构造出的 QBF $\psi$ 的长度是$O(m^2) = O(S^2(n))$的, 从而 $\le_p$ 成立.
+\end{proof}
+\begin{remark}
+	上述证明只利用了 configuration graph 的性质, 而这个性质是无关 determinism 的. 因此我们可以类似证明 $\textsf{TQBF} \in \NSPACE$-complete, 从而说明 $\PSPACE = \NSPACE$.
+\end{remark}
 
 
 
@@ -877,96 +993,8 @@
 \newpage\vspace*{\fill}\begin{center}\textit{后面都是自己瞎写的阿拉丁.}\end{center}\vspace*{\fill}
 
 
-\begin{theorem}[Ladner's Theorem]
-	如果$\P \neq \NP$, 则存在语言$L \in \NP \setminus \P$, 即非 \NP-complete 的 \NP 语言. 
-\end{theorem}
 
-\newpage
-\section{空间复杂性}
-\begin{definition}[运行空间, \SPACE 与 \NSPACE]
-	对于$S: \mathbb N \to \mathbb N$和$L \subseteq \{0, 1\}^*$, 称$L \in \SPACE(S(n))$, 如果存在常数$c$以及可以决定$L$的图灵机$M$, 满足在对任意长度为$n$的输入的计算中, $M$只会访问到至多$c \cdot S(n)$个work tapes上(不包含input)的位置, 称$M$的运行空间为$O(S(n))$. 
 
-	类似地可以定义$\NSPACE$, 这里要求在任何一种决策下用到的位置数量都不超过$c \cdot S(n)$. 
-\end{definition}
-\begin{definition}[Space constructible functions]
-	称$S: \mathbb N \to \mathbb N$是space constructible的, 如果存在图灵机可以对于输入$x$, 在$O(S(|x|))$的空间内计算$S(|x|)$. 
-\end{definition}
-\begin{remark}
-	相比于 time constructible functions, 我们不要求 space constructible functions 满足 $S(n) \ge n$, 但为了能够“记住在输入纸带上的位置”, 我们一般会要求 $S(n) \ge \log n$. 
-\end{remark}
-\begin{theorem}
-	对于任何 space constructible 的函数$S: \mathbb N \to \mathbb N$, 有
-	$$\DTIME(S(n)) \subseteq \SPACE(S(n)) \subseteq \NSPACE(S(n)) \subseteq \DTIME(2^{O(S(n))})$$
-	\label{time_and_space}
-\end{theorem}
-\begin{proof}
-	前两个$\subseteq$都是平凡的, 只考虑证明最后一个. 
-
-	我们称一台(确定或非确定)图灵机$M$的一个\obj{configuration}包含\num{i}work tape上的所有非空字符;\num{ii}所有纸带的head位置;\num{iii}$M$所处的状态, 则对于确定的输入$x \in \{0, 1\}^*$, 一个configuration的后继configuration是\num{a}对于图灵机来说, 唯一确定的;\num{b}对于非确定图灵机来说, 至多唯二确定的. 把configuration之间的转移看成一张有向图, 记作$G_{M, x}$. 不失一般性假设$M$只有一种configuration $C_{\text{accept}}$满足“输出$1$后停机”(可以让图灵机在停机前擦除所有中间记录), 这样$M(x) = 1$就等价于$G_{M, x}$中存在一条$C_{\text{start}}$到$C_{\text{accept}}$的路径. 
-
-	陈述两个事实：
-	\begin{itemize}
-		\item 给定$M, x$, $G_{M, x}$中的每个节点用$O(S(n))$个bit来表示, 也即, $G_{M, x}$只有$2^{O(S(n))}$个节点. 
-		\item 对于任意两个configuration $C, C'$, 存在$O(S(n))$大小的CNF $\varphi_{M, x}$满足$\varphi_{M, x}(C, C') = 1$当且仅当$G_{M, x}$中$C$有边连向$C'$. 
-	\end{itemize}
-
-	因此用$2^{O(S(n))}$的时间把整张$G_{M, x}$建出来, 再 BFS 一下即可验证$C_{\text{start}}$到$C_{\text{accept}}$是否连通. 
-\end{proof}
-\begin{definition}[\PSPACE, \NPSPACE, \L \ and \NL]
-	\begin{align*}
-		\PSPACE &= \bigcup_{c \ge 1}\SPACE(n^c)\\
-		\NPSPACE &= \bigcup_{c \ge 1}\NSPACE(n^c)\\
-		\L &= \SPACE(\log n)\\
-		\NL &= \NSPACE(\log n)
-	\end{align*}
-\end{definition}
-\begin{corollary}
-	$\NP \subseteq \PSPACE$, 因为都可以暴力枚举答案, 用多项式空间存下来然后验证. 
-\end{corollary}
-\begin{corollary}
-	在 \cref{time_and_space} 中分别代入$S(n) = \log n, S(n) = n^c$, 可以得到
-	$$\L \subseteq \P\qquad \PSPACE \subseteq \EXP$$
-\end{corollary}
-\begin{example}
-	$$\textsf{PATH} = \{ \langle G, s, t\rangle : G \textrm{ is a direct graph in which there is a path from }s \textrm{ to } t\}$$
-	即判断图中两点之间是否存在一条路径. 显然$\textsf{PATH} \in \NL$, 但其是否属于$\L$仍是一个open problem. 
-\end{example}
-\begin{theorem}[Space Hierarchy Theorem]
-	$f, g$是满足$f(n) = o(g(n))$的 space constructible 的函数, 则
-	$$\SPACE(f(n)) \subsetneq \SPACE(g(n))$$
-\end{theorem}
-\begin{proof}
-	技术细节在于通用图灵机$\mathcal U$模拟图灵机$M$只需要常数倍的空间, 所以相比于 Time Hierarchy Theorem 没有了对数项. 其余部分跟 Time Hierarchy Theorem 的证明类似, 就不再赘述了. 	
-\end{proof}
-\begin{definition}[\PSPACE-hard, \PSPACE-complete]
-	称$L'$是\PSPACE-hard, 如果对于任意$L \in \PSPACE$, $L \le_p L'$. \PSPACE-complete $=$ \PSPACE\ $\cap$ \PSPACE-hard.  
-\end{definition}
-\begin{example}
-	$$\textsf{SPACE TMSAT} = \{ \langle M, w, 1^n \rangle : \textrm{DTM } M \textrm{ accepts } w \textrm{ in space } n \}$$
-	这是一个 \PSPACE-complete 语言. 
-\end{example}
-\begin{definition}[Quantified Boolean formula, QBF]
-	一个 QBF 是形如 $Q_1x_1Q_2x_2 \cdots Q_nx_n \varphi(x_1, x_2, \cdots, x_n)$ 的公式, 其中$Q_i \in \{\forall, \exists\}$, $x_i$的取值是$\{0, 1\}$, $\varphi$是一个 plain(unquantified) boolean formula . 
-
-	上述定义专注于讨论\obj{前束范式}的 QBF , 因为非前束范式都可以转化成等价的前束范式. 一个 QBF 有真值 true 或 false . 
-
-	用 \textsf{TQBF} 表示所有为真的 QBF 的集合. 
-\end{definition}
-\begin{theorem}
-	\textsf{TQBF} is \PSPACE-complete.
-\end{theorem}
-\begin{proof}
-	先证明 $\textsf{TQBF} \in \PSPACE$. 这个是简单的, 因为判定可以通过 dfs 实现, 而 dfs 只需要$O(n + m)$的空间, 其中$n$是变量数, $m$是 QBF 的长度. 
-
-	再证明任意$L \in \PSPACE$都满足$L \le_p \textsf{TQBF}$. 假设$M$是在$S(n)$空间内计算$L$的图灵机, 考虑输入$x \in \{0, 1\}^*$. 考虑 configuration graph $G_{M, x}$, 我们陈述过图中每个点可以用$m = O(S(n))$个bit来表示, 以及存在一个 CNF $\varphi_{M, x}$ 满足$\varphi_{M, x}(C, C') = \textrm{true}$ 当且仅当$G_{M, x}$ 中有 $C \to C'$ 的边. 
-
-	考虑根据 $\varphi_{M, x}$ 来构造我们想要的 QBF $\psi$ . 用 $\psi_i$ 表示一个 QBF , $\psi_i(C, C') = \textrm{true}$当且仅当$G_{M, x}$中存在一条长度不超过$2^i$从$C$到$C'$的路径, 那么显然$\psi = \psi_m(C_{\text{start}}, C_{\text{accept}}), \psi_0(C, C') = \varphi_{M, x}(C, C') \vee (C = C')$. $\psi_i$可以递归定义：对于$i \ge 1$, $\psi_i(C, C') = \exists C'' \psi_{i-1}(C, C'') \wedge \psi_{i-1}(C'', C')$. 
-
-	一个技术细节是需要改进递归定义的具体方式以保证$\psi$的长度是多项式级别的. 可以用一种看上去有点奇怪, 但与前述定义等价的形式：
-	$$\psi_i(C, C') = \exists C''\forall D_1 \forall D_2 ((D_1, D_2) = (C, C'') \wedge (D_1, D_2) = (C'', C')) \Rightarrow \psi_{i-1}(D_1, D_2)$$
-
-	这样构造出的 QBF $\psi$ 的长度是$O(m^2) = O(S^2(n))$的. 
-\end{proof}
 \fi
 
 \end{document}
