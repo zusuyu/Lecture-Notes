@@ -119,9 +119,9 @@
 \maketitle
 
 \section{}
+\subsection*{Statement}
 
 Prove the following propositions about the algorithm of AdaBoost.
-\subsection*{Statement}
 \begin{enumerate}
 	\item $\alpha_t = \arg\min\limits_{\alpha}Z_t = \arg\min\limits_{\alpha} \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i))$.
 	\item $\prod\limits_{t=1}^{T}Z_t = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_i\sum\limits_{t=1}^{T}\alpha_t h_t(x_i)\right) = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)$.
@@ -157,7 +157,7 @@ Prove the following propositions about the algorithm of AdaBoost.
 
 \section{}
 \subsection*{Statement}
-	Suppose $(x, y)$ is a data point from the sample space, $\mathbf h(x) = (h_1(x), \cdots, h_T(x))\in \mathbb R^T$ is a classifier. Denote $\alpha = (\alpha_1, \cdots, \alpha_T)^{\text T}$ with $\sum_{t=1}^{T}\alpha_t = 1$ and $\alpha_i > 0$ as the normal vector of hyperplane $\mathcal P = \{\xi \in \mathbb R^T | \alpha^{\text T}\xi = 0\}$, and $f(x) = \sum_{t=1}^{T}\alpha_th_t(x)$ a linear combinator of classifiers. Show that $f(x)$ gives the \obj{Chebyshev distance ($L_{\infty}$ distance)} from $\mathbf h(x)$ to the hyperplane $\mathcal P$.
+	Suppose $(x, y)$ is a data point from the sample space, $\mathbf h(x) = (h_1(x), \cdots, h_T(x))\in \mathbb R^T$ is a classifier. Denote $\alpha = (\alpha_1, \cdots, \alpha_T)^{\text T}$ with $\sum_{t=1}^{T}\alpha_t = 1$ and $\alpha_i > 0$ as the normal vector of hyperplane $\mathcal P = \{\xi \in \mathbb R^T | \alpha^{\text T}\xi = 0\}$, and $f(x) = \sum_{t=1}^{T}\alpha_th_t(x)$ a linear combinator of classifiers. Show that $|f(x)|$ gives the \obj{Chebyshev distance ($L_{\infty}$ distance)} from $\mathbf h(x)$ to the hyperplane $\mathcal P$.
 
 \subsection*{Solution}
 	The problem is obviously equivalent to the following programming problem.
@@ -169,8 +169,8 @@ Prove the following propositions about the algorithm of AdaBoost.
 	\end{equation*}
 
 	\begin{itemize}
-		\item The solution is not greater than $\sum_{t=1}^{T}\alpha_th_t(x)$, since when $\beta_t = \sum_{i=1}^{T}\alpha_ih_i(x)$ for all $t$, the result is $\sum_{t=1}^{T}\alpha_th_t(x)$.
-		\item The solution is not smaller than $\sum_{t=1}^{T}\alpha_th_t(x)$, otherwise $\sum_{t=1}^{T}\alpha_t\beta_t \le \sum_{t=1}^{T}\alpha_t|\beta_t| < \sum_{t=1}^{T}\alpha_t\left(\sum_{t'=1}^{T}\alpha_{t'}h_{t'}(x)\right) = \sum_{t=1}^{T}\alpha_th_t(x)$ rises a contradiction with the programming condition.
+		\item The solution is not greater than $\left|\sum_{t=1}^{T}\alpha_th_t(x)\right|$, since when $\beta_t = \sum_{i=1}^{T}\alpha_ih_i(x)$ for all $t$, the result is $\left|\sum_{t=1}^{T}\alpha_th_t(x)\right|$.
+		\item The solution is not smaller than $\left|\sum_{t=1}^{T}\alpha_th_t(x)\right|$, otherwise $\sum_{t=1}^{T}\alpha_t\beta_t \le \sum_{t=1}^{T}\alpha_t|\beta_t| < \sum_{t=1}^{T}\alpha_t\left|\sum_{t'=1}^{T}\alpha_{t'}h_{t'}(x)\right| = \left|\sum_{t=1}^{T}\alpha_th_t(x)\right|$ rises a contradiction with the programming condition.
 	\end{itemize}
 \end{document}
 

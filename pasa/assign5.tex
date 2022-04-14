@@ -1,0 +1,194 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{bbm}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Cov#1{\text{Cov}\left({#1}\right)}
+
+
+\title{\heiti\zihao{2} 概率统计(A)课程作业: 大数定律与中心极限定理}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{概率统计(A)}
+	\chead{2022 Spring}
+	\rhead{大数定律与中心极限定理}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+注意到 $\E{S_n} = \sum_{i=1}^{n}\E{X_i} = n, \Var{S_n} = \sum_{i=1}^{n}\Var{X_i} = n$, 根据 Chebyshev 不等式, 有
+$$\P{S_n > 2n} \le \P{|S_n - \E{S_n}| > n} \le \frac{\Var{S_n}}{n^2} = \frac1n$$
+
+\section{}
+\subsection*{1)}
+注意到 $\E{\mathbbm 1_{\{X_i \le x\}}} = \P{X_i \le x} = F(x)$ 良定, 故根据辛钦大数定律, 有$$\lim_{n \to \infty}\P{\left|F_n(x) - F(x)\right| \le \varepsilon} = \lim_{n \to \infty}\P{\left|\frac{\sum_{i=1}^{n}X_i}{n} - F(x)\right| \le \varepsilon} = 1$$
+对任意 $\varepsilon > 0$ 成立, 从而说明 $F_n(x) \overset{P}{\to} F(x)$.
+\subsection*{2)}
+注意到 $\E{f(X_i)} = \int_0^{1}f(x)\text dx$, 由 $f \in \mathbb C[0, 1]$ 可知良定, 故根据辛钦大数定律, 有$$\lim_{n \to \infty} \P{\left| \frac{\sum_{i=1}^{n}f(X_i)}{n} - \int_0^{1}f(x)\text dx \right| \le \varepsilon} = 1$$
+对任意 $\varepsilon > 0$ 成立, 从而说明 $\frac1n\sum_{i=1}^{n}f(X_i) \overset{P}{\to} \int_0^1f(x)\text dx$.
+
+\section{}
+\subsection*{1)}
+\begin{equation*}
+	\begin{split}
+		\psi_{X_n}(t) &= \E{\e^{iX_nt}} = \sum_{k=0}^{n}\e^{ikt}\binom{n}{k}\left(\frac{\lambda}{n}\right)^k\left(1-\frac{\lambda}{n}\right)^{n-k}\\
+		&= \left(1-\frac{\lambda}{n}\right)^n \sum_{k=0}^{n}\binom{n}{k}\left(\e^{it}\cdot \frac{\lambda/n}{1 - \lambda/n}\right)^k\\
+		&= \left(1-\frac{\lambda}{n}\right)^n\left(\e^{it}\cdot \frac{\lambda/n}{1 - \lambda/n} + 1\right)^n\\
+		&= \left(1 + (\e^{it} - 1)\frac{\lambda}{n}\right)^n
+	\end{split}
+\end{equation*}
+\subsection*{2)}
+注意到 $Y \sim \pi(\lambda)$ 的特征函数为 $$\psi_Y(t) = \e^{\lambda(\e^{it}-1)}$$ 由连续性定理, 只需要证明 $\lim\limits_{n \to \infty}\psi_{X_n}(t) = \psi_Y(t)$ 即可.
+\begin{equation*}
+	\begin{split}
+		\lim\limits_{n \to \infty}\psi_{X_n}(t) &= \lim\limits_{n \to \infty} \left(1 + (\e^{it} - 1)\frac{\lambda}{n}\right)^n\\
+		&= \lim\limits_{n\to\infty} \left(1 + (\e^{it} - 1)\frac{\lambda}{n}\right)^{\frac{n}{\lambda(\e^{it}-1)} \cdot \lambda(\e^{it}-1)}\\
+		&= \e^{\lambda(\e^{it}-1)}\\
+		&= \psi_Y(t)
+	\end{split}
+\end{equation*}
+
+\section{}
+\subsection*{1)}
+记 $X_i$ 表示对第 $i$ 个顾客的服务时间, 则根据题意, $X_i \sim \text{i.i.d. Exp}(3)$, $\E{X_i} = \frac13, \Var{X_i} = \frac19$.
+
+由中心极限定理我们知道 $\sum\limits_{i=1}^{30}X_i \approx Z_{30} \sim \mathcal N(30\E{X_i}, 30\Var{X_i}) = \mathcal N(10, \frac{10}{3})$, 从而
+\begin{equation*}
+	\begin{split}
+		\P{9 \le \sum_{i=1}^{n}X_i \le 11} &\approx \Phi\left(\frac{11 - 10}{\sqrt{30}\cdot \frac13}\right) - \Phi\left(\frac{9 - 10}{\sqrt{30}\cdot \frac13}\right)\\
+		&= \Phi\left(\sqrt{\frac{3}{10}}\right) - \Phi\left(-\sqrt{\frac{3}{10}}\right)\\
+		&\approx 0.416118
+	\end{split}
+\end{equation*}
+\subsection*{2)}
+\begin{equation*}
+	\begin{split}
+		\sum\limits_{i=1}^{n}X_i &\approx Z_n \sim \mathcal N\left(\frac n3, \frac n9\right) \\
+		\P{\sum\limits_{i=1}^{n}X_i \le 12} & \approx \Phi\left(\frac{12 - \frac n3}{\frac{\sqrt n}{3}}\right) \ge 95\% \\
+		\frac{12 - \frac n3}{\frac{\sqrt n}{3}} &\ge 1.64 \\
+		n &\le 27
+	\end{split}
+\end{equation*}
+
+燕园美发有不低于 95\% 的把握在 12 小时内服务完至多 27 个顾客.
+\section{}
+记 $X_i$ 表示第 $i$ 个学生是否访问选课网, 则根据题意, $X_i \sim \text{i.i.d. } \mathcal B(1, 0.6)$, $\E{X_i} = 0.6, \Var{X_i} = 0.24$.
+
+由中心极限定理我们知道 $\sum\limits_{i=1}^{15000}X_i \approx Z \sim \mathcal N(15000\E{X_i}, 15000\Var{X_i}) = \mathcal N(9000, 3600)$, 从而
+\begin{equation*}
+	\begin{split}
+		\P{\sum\limits_{i=1}^{15000}X_i \le k} \approx \Phi\left(\frac{k-9000}{60}\right) \ge 99.9\%
+	\end{split}
+\end{equation*}
+
+使以上不等式成立的 $k$ 的最小值是 9186, 即系统至少需要承受 9186 个学生同时访问, 才能保证有至少 99.9\% 的把握在选课开始时不崩溃.
+\end{document}
+
