@@ -121,6 +121,10 @@
 
 \def\PH{\textbf{PH}}
 
+\def\SIZE{\textbf{SIZE}}
+\def\PPOLY{$\textbf{P}_{\textbf{/poly}}$}
+\def\NC{\textbf{NC}}
+\def\AC{\textbf{AC}}
 
 \title{\heiti\zihao{1} 计算理论导论\ 课程笔记}
 \author{\kaishu\zihao{-3} 酥雨\\zusuyu@stu.pku.edu.cn}
@@ -138,6 +142,7 @@
 }
 \pagestyle{plain}
 
+\crefname{definition}{定义}{定义}
 \crefname{theorem}{定理}{定理}
 \crefname{lemma}{引理}{引理}
 \crefname{proposition}{命题}{命题}
@@ -830,10 +835,11 @@
 	考虑证明逆否命题: 如果 $\P = \NP$, 则 $\EXP = \NEXP$. 使用一种叫做\obj{填充(padding)}的技术: 考虑 $L \in \NTIME(2^{n^c})$, 构造 $L_{\text{pad}} = \{\langle x, 1^{2^{|x|^c}}\rangle | x \in L\}$, 则可验证 $L_{\text{pad}} \in \NP$(因为问题几乎没变, 而输入规模变大了). 而如果 $L_{\text{pad}} \in \P$, 则也可以验证 $L \in \EXP$. $\EXP \subseteq \NEXP$ 是显然的, 故证明了 $\EXP = \NEXP$.
 \end{proof}
 
-迄今为止, 我们研究的所有问题都是 Decision Problems, 即输出信息量为一比特的问题. 如果考虑把设定延伸到 Search Problems, 例如对给定的 CNF $\varphi$ 求出一组 satisfying assignment, 这种问题会不会与 Decision Problems 有所不同呢?
+迄今为止, 我们研究的所有问题都是 decision problems, 即输出信息量为一比特的问题. 如果考虑把设定延伸到 search problems, 例如对给定的 CNF $\varphi$ 求出一组 satisfying assignment, 这种问题会不会与 decision problems 有所不同呢?
 
 \begin{theorem}
 	假如 $\P = \NP$, 则对于任意$L \in \NP$和它的verifier $M$, 都存在多项式时间图灵机 $B$, 能够对输入$x \in L$输出$x$的一个certificate.
+	\label{decision_vs_search}
 \end{theorem}
 \begin{proof}
 	首先证明 $L = \textsf{SAT}$ 时是正确的. 只需要依次对每个变量做$0/1$代入, 并调用 $M$ 判断一下当前已进行的代入下是否仍存在解就行了.
@@ -1027,6 +1033,8 @@
 	称语言 $L$ 可\obj{对数空间规约}到语言 $L'$(记作 $L \le_l L'$), 如果存在一个隐对数空间可计算函数 $f$ 使得对于任意 $x \in \{0, 1\}^*, x \in L \Leftrightarrow f(x) \in L'$.
 
 	称语言 $L \in \NL$-complete, 如果 $L \in \NL$ 且 $L' \le_l L$ 对于任意 $L' \in \NL$ 成立.
+	
+	\label{def_logspace}
 \end{definition}
 \begin{lemma}
 	\begin{itemize}
@@ -1047,7 +1055,13 @@
 	考虑任意 $L \in \NL$, 记 $M$ 是在 $O(\log n)$ 空间内判定 $L$ 的图灵机. 构造隐对数空间可计算函数 $f$ 满足对于输入 $x \in \{0, 1\}^*, f(x) = \langle G_{M, x}, C_{\text{start}}, C_{\text{accept}} \rangle$. 由于 $G_{M, x}$ 的节点数量是 $2^{O(\log |x|)}$, 故 $|f(x)|$ 是关于 $|x|$ 多项式的. 显然 $G_{M, x}$ 的\obj{邻接矩阵} 的每一位都是对数空间可计算的, 因此整个 $f$ 是隐对数空间可计算的, 又有 $x \in L \Leftrightarrow f(x) \in \textsf{PATH}$, 从而说明 $L \le_l \textsf{PATH}$.
 \end{proof}
 \begin{remark}
-	结合 $\textsf{PATH} \in \NL$-complete 以及 $\overline{\textsf{PATH}} \in \NL$, 两者说明了 $\NL \subseteq \coNL$, 而通过类似定义 $\coNL$-complete, 则也能得到 $\coNL \subseteq \NL$, 因此 $\NL = \coNL$. 这样的结论也可以一般化, 即对于任意 space constructible 的函数 $S : \mathbb N \to \mathbb N$ 满足 $S(n) \ge \log n$, 都有 $\NSPACE(S(n)) = \textbf{coNSPACE}(S(n))$.
+	结合 $\textsf{PATH} \in \NL$-complete 以及 $\overline{\textsf{PATH}} \in \NL$, 两者说明了 $\NL = \coNL$. 这是因为:
+	\begin{itemize}
+		\item $\forall L \in \NL, L \le_l \textsf{PATH} \Rightarrow \overline{L} \le_l \overline{\textsf{PATH}} \Rightarrow \overline{L} \in \NL \Rightarrow L \in \coNL$, 说明 $\NL \subseteq \coNL$.
+		\item $\forall L \in \coNL, \overline{L} \in \NL \Rightarrow \overline{L} \le_l \textsf{PATH} \Rightarrow L \le_l \overline{\textsf{PATH}} \Rightarrow L \in \NL$, 说明 $\coNL \subseteq \NL$.
+	\end{itemize}
+	
+	这样的结论也可以一般化, 即对于任意 space constructible 的函数 $S : \mathbb N \to \mathbb N$ 满足 $S(n) \ge \log n$, 都有 $\NSPACE(S(n)) = \textbf{coNSPACE}(S(n))$.
 \end{remark}
 
 
@@ -1108,12 +1122,182 @@
 \end{proposition}
 
 \begin{example}
-	记 $\Sigma_i\textsf{SAT}$ 为包含所有形如 $\exists u_1 \forall u_2 \cdots Q_iu_i, \phi(u_1, \cdots, u_i)$ 的真值为 True 的 QBF, 可以证明 $\Sigma_i\textsf{SAT} \in \Sigma_i^p$-complete.($i = 1$ 时就是 Cook Levin Theorem, $i > 1$ 时也可采用类似方法证明.)
+	记 $\Sigma_i\textsf{SAT}$ 为包含所有形如 $\exists u_1 \forall u_2 \cdots Q_iu_i, \phi(u_1, \cdots, u_i)$ 的真值为 True 的 QBF的语言, 可以证明 $\Sigma_i\textsf{SAT} \in \Sigma_i^p$-complete.($i = 1$ 时就是 Cook Levin Theorem, $i > 1$ 时也可采用类似方法证明.)
 \end{example}
 
 \begin{corollary}
 	显然 $\PH \subseteq \PSPACE$. 如果 $\PH$ 不坍缩, 则 $\PH$ 是 \PSPACE 的真子集. 因为如果 $\PH = \PSPACE$, 那么 \textsf{TQBF} 是 $\PH$-complete, 导致 \PH 坍缩.
 \end{corollary}
 
+\section{布尔线路}
+\begin{definition}[布尔线路]
+	对于任意 $n \in \mathbb N$, 一个 $n$ 源单汇布尔线路是一张有 $n$ 个源点和 $1$ 个汇点的DAG, 其中每个非源节点标有逻辑运算符 $\{\wedge, \vee, \lnot\}$ 中的一者, 且如果标有 $\wedge$ 或者 $\vee$, 则该节点在图中的入度为 $2$, 如果标有 $\lnot$, 则该节点在图中的入度为 $1$. 记布尔线路 $C$ 的规模 $|C|$ 为 DAG 中的节点数.
+
+	对于 $n$ 源单汇的布尔线路 $C$ 和 $x \in \{0, 1\}^n$, 可以自然地定义 $C(x) \in \{0, 1\}$ 表示 $C$ 对输入 $x$ 得到的输出. 
+\end{definition}
+\begin{definition}[线路族, \SIZE]
+	对于函数 $T : \mathbb N \to \mathbb N$, 一个 $T(n)$ 规模线路族是一个布尔线路序列 $\{C_n\}_{n \in \mathbb N}$, 其中 $C_n$ 是 $n$ 源单汇布尔线路, 且 $|C_n| \le T(n)$.
+
+	称语言 $L \in \SIZE(T(n))$, 如果存在一个 $T(n)$ 规模线路族 $\{C_n\}_{n \in \mathbb N}$, 满足对任意 $n \in \mathbb N$, 任意 $x \in \{0, 1\}^n, x \in L \Leftrightarrow C_n(x) = 1$.
+\end{definition}
+\begin{definition}[\PPOLY]
+	\PPOLY 是所有多项式规模线路族可判定的语言类, 即 \PPOLY $ = \bigcup_{c \ge 0} \SIZE(n^c)$.
+\end{definition}
+\begin{theorem}
+	\P $\subseteq$ \PPOLY.
+	\label{P_subset_PPOLY}
+\end{theorem}
+\begin{proof}
+	类似于 Cook Levin Theorem 的证明.
+
+	由\cref{oblivious}, 对于任意 $L \in \P$, 都存在一台健忘的图灵机 $M$ 在多项式时间 $T(n)$ 内判定 $L$. 利用 $M$ 的健忘性来构造多项式规模线路族 $\{C_n\}_{n \in \mathbb N}$: 考虑 $M$ 运行时的 snapshot $z_1, z_2, \cdots, z_{T(n)}$, 每个 $z_i$ 都可以用常数个比特表达, 且确定 $z_i$ 也只需要用到之前的常数个 $z_j$, 因此构造布尔线路 $C_n$ 依次计算每个 $z_i$, 再把 $C_n$ 的输出设置为“$z_{T(n)}$ 是否到达 $M$ 的接受态”即可.
+\end{proof}
+
+\subsection{线路可满足性}
+\begin{definition}[\textsf{CKT-SAT}]
+	语言 \textsf{CKT-SAT} 包含了所有可满足的布尔线路(的二进制表示). 即, 对于 $n$ 源布尔线路 $C$, $\rep{C} \in \textsf{CKT-SAT}$ 当且仅当存在 $u \in \{0, 1\}^n$ 使得 $C(u) = 1$.
+\end{definition}
+\begin{lemma}
+	\textsf{CKT-SAT} $\in$ \NP-hard.
+\end{lemma}
+\begin{proof}
+	把\cref{P_subset_PPOLY} 的证明抄过来就行了, 无非是在论证过程之前加了一个 $\exists u$ 的量词.
+\end{proof}
+\begin{lemma}
+	\textsf{CKT-SAT} $\le_p$ \textsf{3SAT}.
+\end{lemma}
+\begin{proof}
+	给定布尔线路 $C$, 需要构造一个多项式规模的 3CNF $\varphi$, 使得 $C$ 与 $\varphi$ 可满足性相同.
+
+	对 $C$ 的每个节点 $u$ 构造变量 $z_u$. 对于非源节点 $i$, 需要限制 $z_i$ 的取值是正确的, 当 $C$ 中 $z_i = z_j \wedge z_k$ 时, 可以在 $\varphi$ 中加入以下从句: $$(\lnot z_i \vee z_j \vee z_k) \wedge (\lnot z_i \vee z_j \vee \lnot z_k) \wedge (\lnot z_i \vee \lnot z_j \vee z_k) \wedge (z_i \vee \lnot z_j \vee \lnot z_k)$$
+	$z_i = z_j \vee z_k, z_i = \lnot z_j$ 时也可类似构造. 此外, 在 $\varphi$ 中加入 $C$ 的汇点对应的变量 $v_{sink}$ 作为一个从句.
+
+	如此构造出的 $\varphi$ 与 $C$ 可满足性相同, 且规模是多项式的, 因此得到了 \textsf{CKT-SAT} $\le_p$ \textsf{3SAT}.
+\end{proof}
+
+\subsection{线路一致生成}
+\cref{P_subset_PPOLY} 中的包含事实上是真包含, 因为 \PPOLY 甚至包含不可判定语言. 比如说, \PPOLY 包含所有一进制语言, 即便这样的语言可能是不可判定的.
+
+具体的, 对于任意语言 $L \subseteq \{1^n | n \in \mathbb N\}$, 线路族 $\{C_n\}_{n \in \mathbb N}$ 只需要对满足 $1^n \in L$ 的 $n$, 构造 $C_n$ 使其检查输入的 $n$ 位是否全是 $1$ 并输出检查结果, 而对 $1^n \notin L$ 的 $n$, 构造 $C_n$ 为直接输出 $0$.
+
+另一方面, 考虑一进制语言 $\textsf{UHALT} = \{1^n | n = \rep{M, x} \text{ such that } M \text{ halts on input } x\}$, 不难验证 $\textsf{HALT} \le_m \textsf{UHALT}$, 因而 \textsf{UHALT} 是不可判定的.
+
+这使得 \PPOLY 语言类处于一种很奇怪的境地, 其根源在于线路族 $\{C_n\}$ 是\obj{不一致(nonuniform)}的. 一种直观想法是, 我们希望限制线路族 $\{C_n\}_{n \in \mathbb N}$ 是“可高效构造的”, 从中引申出了一致生成(uniformly generate)的概念.
+
+\begin{definition}[\P-一致线路族]
+	一个线路族 $\{C_n\}_{n \in \mathbb N}$ 被称为 \P-一致的, 如果存在对输入 $1^n$ 输出 $\rep{C_n}$ 的多项式时间图灵机.
+\end{definition}
+\begin{theorem}
+	语言 $L$ 可以被 \P-一致线路族判定, 当且仅当 $L \in \P$.
+	\label{P-uniform}
+\end{theorem}
+\begin{proof}
+	$\Rightarrow: $ 根据定义, 可以先多项式时间地算出 $C_n$, 再根据 $C_n$ 多项式时间地算出结果.
+	
+	$\Leftarrow: $ 照搬\cref{P_subset_PPOLY} 的证明, 可以发现其中构造的线路族就是 \P-一致的.
+\end{proof}
+\begin{definition}[对数空间一致线路族]
+	一个线路族 $\{C_n\}_{n \in \mathbb N}$ 被称为对数空间一致(logspace-uniform)的, 如果存在将 $1^n$ 映到 $\rep{C_n}$ 的隐对数空间可计算函数(参见\cref{def_logspace}).
+\end{definition}
+\begin{theorem}
+	语言 $L$ 可以被对数空间一致线路族判定, 当且仅当 $L \in \P$.
+\end{theorem}
+\begin{proof}
+	$\Rightarrow$: $\L \subseteq \P$, 照抄\cref{P-uniform} 的 $\Rightarrow$ 证明即可.
+
+	$\Leftarrow$: 照抄\cref{P-uniform} 的 $\Leftarrow$ 证明, 这个线路族的构造方式是对数空间可计算的.
+\end{proof}
+
+\subsection{线路规模}
+\begin{theorem}
+	存在一个输入为 $n$ 比特的布尔函数, 其只能被规模为 $\Omega\left(\frac{2^n}{n}\right)$ 的布尔线路所计算.
+\end{theorem}
+\begin{proof}
+	考虑计数. 输入 $n$ 比特的布尔函数一共有 $2^{2^n}$ 个, 而规模为 $T$ 的布尔线路只有不超过 $\left(3T^2\right)^T$个. 一个布尔线路只能计算一个布尔函数, 所以 $(3T^2)^T \ge 2^{2^n} \Rightarrow T = \Omega(\frac{2^n}{n})$.
+\end{proof}
+\begin{theorem}
+	任意一个输入为 $n$ 比特的布尔函数, 都可以被规模为 $O\left(\frac{2^n}{n}\right)$ 的布尔线路所计算.
+\end{theorem}
+\begin{proof}
+	列举一下三种不同量级的构造方式.
+	\begin{itemize}
+		\item $O(n2^n)$: $f: \{0, 1\}^n \to \{0, 1\}$ 只有不超过 $2^n$ 种满足 $f(x) = 1$ 的取值 $x$, 因此把这些 $x$ 列举一遍写成一个 DNF 的形式即可.
+		\item $O(2^n)$: 考虑 $f(x_1, x_2, \cdots, x_n) = (x_1 \wedge f(1, x_2, \cdots, x_n)) \vee (\lnot x_1 \wedge f(0, x_2, \cdots, x_n))$, 其中 $f(1, x_2, \cdots, x_n), f(0, x_2, \cdots, x_n)$ 是另外两个输入 $n - 1$ 比特的布尔函数, 可以递归构造, 从而线路规模为 $S(n) = O(1) + 2S(n - 1) = O(2^n)$.
+		\item $O\left(\frac{2^n}{n}\right)$: 是一种\obj{四毛子算法(Method of Four Russians)}的简单应用. 考虑输入 $k$ 比特的布尔函数只有 $2^{2^k}$ 个, 可以使用前述方法将这些函数对应的线路全部预构造出来. 修改前述递归构造方法, 在递归到 $n = k$ 时停止, 转而直接利用预构造得到的结果. 这种构造方法的电路规模为 $O(2^{n - k} + 2^{2^k + k})$, 取 $k = \log n - \varepsilon$ 即可得到 $O\left(\frac{2^n}{n}\right)$.
+	\end{itemize}
+\end{proof}
+\begin{theorem}[Nonuniform Size Hierarchy Theorem]
+	对于任意函数 $T, T': \mathbb N \to \mathbb N$ 满足 $n < 20T(n)\log^2 T(n) < T'(n) < \frac{2^n}{n}$, 有 $$\SIZE(T(n)) \subsetneq \SIZE(T'(n))$$
+\end{theorem}
+\begin{proof}
+	考虑计数. 任意输入 $l$ 比特的布尔函数都可以被规模为 $10l2^l$ 的布尔线路所计算, 而也存在这样的布尔函数无法被规模为 $\frac{2^l}{10l}$ 的布尔线路所计算, 记之为 $f_l$. 令 $l = \log T(n) + \log \log T(n)$, 考虑语言 $L \subseteq \{0, 1\}^*$, $x \in L \Leftrightarrow f_l(x_1, \cdots, x_l) = 1$ 即对 $x$ 的前 $l$ 位计算布尔函数 $f_l$, 其结果作为 $x$ 是否属于 $L$ 的判定标准. 此时有
+	\begin{equation*}
+		\begin{split}	
+			L &\in \SIZE(10l2^l) = \SIZE(10T(n)\log T(n)(\log T(n) + \log\log T(n))) \subseteq \SIZE(20T(n)\log^2 T(n)) \subseteq \SIZE(T'(n))\\
+			L &\notin \SIZE\left(\frac{2^l}{10l}\right) = \SIZE\left(\frac{T(n)\log T(n)}{10(\log T(n) + \log \log T(n))}\right) \supseteq \SIZE(T(n))
+		\end{split}
+	\end{equation*}
+	从而 $\SIZE(T(n)) \subsetneq \SIZE(T'(n))$.
+\end{proof}
+
+
+\subsection{接受建议的图灵机}
+\begin{definition}[接受建议的图灵机]
+	考虑一个这样的语言类, 其包含所有这样的语言 $L$: 存在一列字符串(建议) $\{\alpha_n\}_{n \in \mathbb N}$ 满足 $|\alpha(n)| = a(n)$, 以及运行时间为 $T(n)$ 的图灵机 $M$, 满足 $x \in L \Leftrightarrow M(x, \alpha_{|x|}) = 1$. 把这样的语言类记作 $\DTIME(T(n)) / a(n)$.
+\end{definition}
+\begin{theorem}
+	\PPOLY = $\bigcup_{c, d \ge 0}\DTIME(n^c) / n^d$.
+\end{theorem}
+\begin{proof}
+	$\subseteq$: 把线路族 $\{C_n\}_{n \in \mathbb N}$ 编码为建议 $\{\alpha_n\}_{n \in \mathbb N}$ 即可.
+
+	$\supseteq$: 类似\cref{P_subset_PPOLY} 中的构造, 可以得到多项式规模线路族 $\{D_n\}_{n \in \mathbb N}$ 满足对于任意 $x \in \{0, 1\}^n, \alpha \in \{0, 1\}^{a(n)}$ 都有 $D_{n + a(n)}(x, \alpha) = M(x, \alpha)$. 将 $\alpha_n$ 硬编码进 $D_n$ 即可得到 $\{C_n(x) = D_{n + a(n)}(x, \alpha(n))\}_{n \in \mathbb N}$.
+\end{proof}
+
+\subsection{Karp-Lipton Theorem}
+有一个问题是, $\textsf{SAT} \in $ \PPOLY 吗? 或者等价的, $\NP \subseteq $ \PPOLY 吗?
+
+Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩, 答案就是“否”.
+\begin{theorem}[Karp-Lipton Theorem]
+	如果 $\NP \subseteq $ \PPOLY, 那么 $\PH = \Sigma_2^p$.
+\end{theorem}
+\begin{proof}
+	考虑证明 $\NP \subseteq$ \PPOLY $\Rightarrow$ $\Pi_2\textsf{SAT} \in \Sigma_2^p \Rightarrow \Pi_2^p \subseteq \Sigma_2^p \Rightarrow \PH = \Sigma_2^p$. 其中 $$\Pi_2\textsf{SAT} = \{\psi = \forall u\exists v \phi(u, v) | \psi \text{ is satisfiable}\}$$可以验证 $\Pi_2\textsf{SAT} \in \Pi_2$-complete.
+
+	考虑语言 $L = \{\langle \phi, u \rangle | \exists v, \phi(u, v) = 1\}$, 不难看出 $L \le_p \textsf{SAT}$, 从而 $L \in \NP$. 由于 $\NP \subseteq $ \PPOLY, 故存在多项式规模线路族 $\{C_n\}_{n \in \mathbb N}$ 可以判定语言 $L$, 即, 对于任意 $\langle \phi, u \rangle, \langle \phi, u \rangle \in L$ 当且仅当 $C_{n}(\phi, u) = 1$.
+
+	根据之前\cref{decision_vs_search} 的讨论, 可以把 search problems 多项式时间规约到 decision problems, 考虑其布尔线路版本, 也即存在另一个多项式规模线路族 $\{C_n'\}_{n \in \mathbb N}$, 使得对于任意 $\langle \phi, u \rangle, \exists v, \phi(u, v) = 1$ 当且仅当 $\phi(u, C_{n}'(\phi, u)) = 1$, 即 $C_{n}'(\phi, u)$ 输出了满足条件的 $v$.
+
+	注意到 $C_n'$ 的构造是与具体的 $\phi, u, v$ 无关的, 因此其对应量词可交换. 同时注意到在给出 $\phi, u$ 以及 $\{C_n'\}_{n \in \mathbb N}$ 时, 可以构造一台多项式时间图灵机 $M$ 来计算 $\phi(u, C_{n}'(\phi, u))$ 的结果.
+	\begin{equation*}
+		\begin{split}
+			& \psi = \forall u \exists v \phi(u, v) \in \Pi_2\textsf{SAT}\\
+			\Leftrightarrow & \forall u, \langle \phi, u \rangle \in L\\
+			\Leftrightarrow & \forall u, \exists C_n, C_n(\phi, u) = 1\\
+			\Leftrightarrow & \forall u, \exists C_n', \phi(u, C_{n}'(\phi, u)) = 1\\
+			\Leftrightarrow & \exists C_n', \forall u, \phi(u, C_{n}'(\phi, u)) = 1\\
+			\Leftrightarrow & \exists C_n', \forall u, M(\psi, u, C_n') = 1\\
+		\end{split}
+	\end{equation*}
+	从而说明 $\Pi_2\textsf{SAT} \in \Sigma_2^p$. 接下来的 $\Pi_2\textsf{SAT} \in \Sigma_2^p \Rightarrow \Pi_2^p \subseteq \Sigma_2^p \Rightarrow \PH = \Sigma_2^p$ 都比较简单, 故不再赘述.
+\end{proof}
+
+这说明了什么? 考虑逆否命题, 这说明了如果 $\PH$ 没有坍缩到 $\Sigma_2^p$, 则 $\NP$ 语言, 或者更具体地, \textsf{SAT}, 不能被多项式规模线路族判定.
+
+不过这个结论并没有对 $\P \neq \NP$ 的研究做出任何进展性贡献, 因为 $\PH \neq \Sigma_2^p$ 已经是比 $\P \neq \NP$ 更强的结论了.
+
+\subsection{线路深度}
+线路深度与并行计算有很大的关系, 因此有很大的研究必要.
+\begin{definition}[\NC, \AC]
+	称语言 $L \in \NC^c$, 如果 $L$ 可以被线路族 $\{C_n\}_{n \in \mathbb N}$ 计算, 其中 $C_n$ 的规模为 $\text{poly}(n)$, 深度为 $O(\log^cn)$. 记 $\NC = \bigcup_{c \ge 0} \NC^c$.
+
+	称语言 $L \in \AC^c$, 如果 $L$ 可以被线路族 $\{C_n\}_{n \in \mathbb N}$ 计算, 其中 $C_n$ 的规模为 $\text{poly}(n)$, 深度为 $O(\log^cn)$, 同时 $C_n$ 中对 AND, OR 门的输入数量不作限制. 记 $\AC = \bigcup_{c \ge 0} \AC^c$.
+\end{definition}
+\begin{proposition}
+	$\NC^i \subseteq \AC^i \subseteq \NC^{i + 1}$, 对任意 $i \ge 0$ 成立.
+\end{proposition}
+\begin{theorem}
+	$\NC^0 \subsetneq \AC^0 \subsetneq \NC^1$.
+\end{theorem}
 
 \end{document}
