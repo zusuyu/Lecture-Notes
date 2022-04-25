@@ -1,0 +1,166 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+
+\title{\heiti\zihao{2} Machine Learning Homework: Week 7 \& 8}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\rhead{Homework: Week 7 \& 8}
+	\chead{2022 Spring}
+	\lhead{Machine Learning}
+	\cfoot{Page \thepage \ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{Lemma}{Lemma}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+\subsection*{Statement}
+Prove the following lemma.
+\begin{lemma}
+	For any $\delta > 0$,$$\mathbb P_{S \sim D^n} \left(\mathbb E_{h \sim \mathcal P} [ \e^{n(err_D(h) - err_S(h))^2} ] \ge 3/\delta\right) \le \delta$$
+	\label{PAC-Bayesian-lem-2}
+\end{lemma}
+\subsection*{Solution}
+	First we prove that for some fixed $h \sim \mathcal P$, $$\mathbb E_{S \sim D^n}[\e^{n(err_D(h) - err_S(h))^2}] \le 3$$
+
+	Denote $|err_D(h) - err_S(h)|$ by $\Delta(h)$, by applying Chernoff bound, $$\mathbb P_{S \sim D^n}(\Delta(h) \ge \varepsilon) \le 2\exp(-2n\varepsilon^2)$$
+
+	Thus\begin{equation*}
+		\begin{split}			
+			\mathbb E_{S \sim D^n} \left[\e^{n\Delta(h)^2}\right] &= \int_0^{+\infty}\mathbb P_{S \sim D^n}\left(\e^{n\Delta(h)^2} \ge t\right) \text dt\\
+			&= \int_1^{+\infty}\mathbb P_{S \sim D^n}\left(\Delta(h) \ge \sqrt{\frac{\ln t}{n}}\right) \text dt + 1\\
+			&\le \int_1^{+\infty}2\e^{-2\ln t}\text dt + 1\\
+			&= 3
+		\end{split}
+	\end{equation*}
+
+	Then by applying Markov Inequality we get\begin{equation*}
+		\begin{split}
+			\mathbb P_{S \sim D^n} \left(\mathbb E_{h \sim \mathcal P} [ \e^{n\Delta(h)^2} ] \ge 3/\delta\right) &\le \frac{\mathbb E_{S \sim D^n} \left(\mathbb E_{h \sim \mathcal P} [ \e^{n\Delta(h)^2} ]\right)}{3/\delta} = \frac{ \mathbb E_{h \sim \mathcal P}\left(\mathbb E_{S \sim D^n} [ \e^{n\Delta(h)^2} ]\right)}{3/\delta} \le \frac{ \mathbb E_{h \sim \mathcal P}\left(3\right)}{3/\delta} = \delta
+		\end{split}
+	\end{equation*}
+\section{}
+\subsection*{Statement}
+Determine $D_{KL}(\mathcal Q \| \mathcal P)$ for $\mathcal P = \mathcal N(\mathbf 0, I_d)$ and $\mathcal Q = \mathcal N(\mu\mathbf w, I_d)$, where $\mathbf w \in \mathbb R^d$ satisfies $\|\mathbf w\|^2 = 1$, $\mu$ stands for the scale factor.
+\subsection*{Solution}
+\begin{equation*}
+	\begin{split}
+		D_{KL}(\mathcal Q \| \mathcal P)
+		&= \int_{\mathbb R^d}\frac{1}{(2\pi)^{d/2}}\exp\left[-\frac12\|\mathbf x - \mu\mathbf w\|^2\right]\frac12\left(\|\mathbf x\|^2 - \|\mathbf x - \mu\mathbf w\|^2\right)\text d\mathbf x\\
+		&= \int_{\lambda}\int_{\mathbf y \in \mathbb R^{d-1}, \mathbf y \perp \mathbf w}\frac{1}{(2\pi)^{d/2}}\exp\left[-\frac12\|\lambda\mathbf w + \mathbf y - \mu\mathbf w\|^2\right]\frac12\left(\|\lambda\mathbf w + \mathbf y\|^2 - \|\lambda\mathbf w + \mathbf y - \mu\mathbf w\|^2\right)\text d\lambda\text d\mathbf y\\
+		&= \int_{\lambda}\int_{\mathbf y \in \mathbb R^{d-1}, \mathbf y \perp \mathbf w}\frac{1}{(2\pi)^{d/2}}\exp\left[-\frac12(\lambda - \mu)^2 - \frac12 \|\mathbf y\|^2\right]\frac12\left(\lambda^2 + \|\mathbf y\|^2 - (\lambda - \mu)^2 - \|\mathbf y\|^2\right)\text d\lambda\text d\mathbf y\\
+		&= \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}}\exp\left[-\frac12(\lambda - \mu)^2\right]\frac12(2\lambda\mu - \mu^2)\text d\lambda\left[\int_{\mathbf y \in \mathbb R^{d-1}, \mathbf y \perp \mathbf w}\frac{1}{(2\pi)^{(d-1)/2}}\exp\left(-\frac12 \|\mathbf y\|^2\right)\text d\mathbf y\right]\\
+		&= \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}}\exp\left[-\frac12(\lambda - \mu)^2\right](\lambda\mu - \mu^2)\text d\lambda + \frac{\mu^2}{2}\\
+		&=\int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}}\exp\left[-\frac12(\lambda - \mu)^2\right]\mu\text d\frac{(\lambda - \mu)^2}{2} + \frac{\mu^2}{2}\\
+		&= \frac{\mu^2}{2}
+	\end{split}
+\end{equation*}
+
+\end{document}
+
+

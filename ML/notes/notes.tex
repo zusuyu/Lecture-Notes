@@ -1,0 +1,399 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=True,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+
+\fvset{showspaces=True}
+\SaveVerb{verbspace}! !
+\newcommand{\aspace}{\UseVerb{verbspace}}%
+\usepackage{cleveref}
+
+\usepackage{pgf}
+\usepackage{totpages}
+\usepackage{tikz}  
+\usetikzlibrary{arrows,automata}
+
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{引理}[section]
+\newtheorem{definition}{定义}[section]
+\newtheorem{proposition}{命题}[section]
+\newtheorem{corollary}{推论}[section]
+\newtheorem{example}{例}[section]
+\newtheorem{claim}{声明}[section]
+\newtheorem{remark}{注}[section]
+\newtheorem{thesis}{论点}[section]
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\rep#1{\llcorner{#1}\lrcorner}
+\def\e{\mathrm{e}}
+
+
+
+
+\title{\heiti\zihao{1} 机器学习\ 课程笔记}
+\author{\kaishu\zihao{-3} 酥雨\\zusuyu@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{机器学习\ 课程笔记}
+	\chead{\today}
+	\rhead{ML notes}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{proposition}{命题}{命题}
+\crefname{remark}{注}{注}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Inequalities}
+\begin{theorem}[Markov Inequality]
+	如果非负随机变量 $X$ 期望存在, 则对于任意 $k > 0$,  $$\P{X \ge k} \le \frac{\E{X}}{k}$$
+	进一步地, 如果 $r$ 阶矩 $\E{X^r}$ 存在, 则对于任意 $k > 0$, $$\P{X \ge k} \le \min_{j \le r}\frac{\E{X^j}}{j}$$
+\end{theorem}
+\begin{theorem}[Chebyshev Inequality]
+	如果随机变量 $X$ 方差存在, 则对于任意 $\varepsilon > 0$, $$\P{|X - \E{X}| \ge \varepsilon} \le \frac{\Var{X}}{\varepsilon^2}$$
+\end{theorem}
+\begin{definition}[矩生成函数, Moment Generating Function, MGF]
+	如果随机变量$X$的任意 $n \in \mathbb N$ 阶矩存在, 则定义其矩生成函数为 $$\psi_X(t) = \E{\e^{tX}} = \sum_{i \ge 0}t^i\frac{\E{X^i}}{i!}$$
+\end{definition}
+\begin{theorem}[Chernoff Inequality]
+	$$\P{X \ge k} \le \inf_{t > 0}\e^{-tk}\psi_X(t)$$
+\end{theorem}
+\begin{theorem}
+	$X_1, X_2, \cdots, X_n \sim \text{ i.i.d. } \mathcal B(1, p)$, 对于任意 $\varepsilon > 0$, $$\P{\frac1n\sum_{i=1}^nX_i - p \ge \varepsilon} \le \e^{-nD_B(p + \varepsilon \| p)}$$
+	其中 $D_B(p \| q)$ 是两个 Bernoulli distribution $P = (p, 1 - p), Q = (q, 1 - q)$ 之间的相对熵.
+	\label{chernoff-bound-1}
+\end{theorem}
+\begin{proof}
+	\begin{equation*}
+		\begin{split}
+			\P{\frac1n \sum_{i=1}^{n}X_i - p \ge \varepsilon} &=\P{\sum_{i=1}^{n}X_i \ge n(p + \varepsilon)}\\
+			&\le \inf_{t > 0}\e^{-tn(p + \varepsilon)}\E{\e^{t\sum_{i=1}^nX_i}}\\
+			&= \inf_{t > 0}\e^{-tn(p + \varepsilon)}\prod_{i=1}^{n}\E{\e^{tX_i}}\\
+			&= \inf_{t > 0}\e^{-tn(p + \varepsilon)}(p\e^t + 1 - p)^n\\
+			&= \inf_{t > 0}\left(\frac{p\e^t + 1 - p}{\e^{t(p + \varepsilon)}}\right)^n\\
+		\end{split}
+	\end{equation*}
+	通过“简单”求导, 取 $t = \ln\frac{(1 - p)(p + \varepsilon)}{p(1 - p - \varepsilon)}$ 时上式右边取最小值, 从而有
+	\begin{equation*}
+		\begin{split}
+			\P{\frac1n \sum_{i=1}^{n}X_i - p \ge \varepsilon} &\le \left(\frac{\frac{(1-p)(p+\varepsilon)}{1-p-\varepsilon}+1-p}{\left(\frac{(1-p)(p+\varepsilon)}{p(1-p-\varepsilon)}\right)^{p+\varepsilon}}\right)^n = \left(\frac{\frac{1-p}{1-p-\varepsilon}}{\left(\frac{(1-p)(p+\varepsilon)}{p(1-p-\varepsilon)}\right)^{p+\varepsilon}}\right)^n \\&= \left(\left(\frac{p}{p+\varepsilon}\right)^{p+\varepsilon}\left(\frac{1-p}{1-p-\varepsilon}\right)^{1-p-\varepsilon}\right)^n = \e^{-nD_B(p+\varepsilon \| p)}
+		\end{split}
+	\end{equation*}
+\end{proof}
+
+\begin{theorem}
+	$X_1, X_2, \cdots, X_n \in [0, 1]$ 是 $n$ 个期望相同的独立随机变量, $\E{X_i} = p$, 对于任意 $\varepsilon > 0$, $$\P{\frac1n\sum_{i=1}^nX_i - p \ge \varepsilon} \le \e^{-nD_B(p + \varepsilon \| p)}$$
+	\label{chernoff-bound-2}
+\end{theorem}
+\begin{proof}
+	注意到指数函数是下凸的, 根据 Jensen Inequality, 有 $$\E{\e^{tX}} \le \E{X\e^t + (1 - X)\e^0} = p\e^t + 1 - p$$ 从而 $$\E{\e^{t\sum_{i=1}^{n}X_i}} \le (p\e^t + 1 - p)$$ 沿用\cref{chernoff-bound-1} 的证明即可.
+\end{proof}
+\begin{theorem}[Chernoff Bound]
+	$X_1, X_2, \cdots, X_n \in [0, 1]$ 是 $n$ 个独立随机变量, $\E{X_i} = p_i$, 记 $p = \frac{1}{n} \sum_{i=1}^{n}p_i$, 对于任意 $\varepsilon > 0$, $$\P{\frac1n\sum_{i=1}^nX_i - p \ge \varepsilon} \le \e^{-nD_B(p + \varepsilon \| p)}$$
+	\label{chernoff-bound-3}
+\end{theorem}
+\begin{proof}
+	注意到对数函数是上凸的, 从而函数 $f(x) = \ln(x\e^t + 1 - x)$ 也是上凸的, 同样根据 Jensen Inequality, 有 $$\frac1n \sum_{i=1}^{n}\ln(p_i\e^t + 1 - p_i) \le \ln(p\e^t + 1 - p)$$
+	从而 $$\E{\e^{t\sum_{i=1}^{n}X_i}} \le \prod_{i=1}^{n}(p_i\e^t + 1 - p_i) \le (p\e^t + 1 - p)^n$$
+\end{proof}
+\begin{theorem}[Additive Chernoff Bound]
+	$X_1, X_2, \cdots, X_n \in [0, 1]$ 是 $n$ 个独立随机变量, $\E{X_i} = p_i$, 记 $p = \frac{1}{n} \sum_{i=1}^{n}p_i$, 对于任意 $\varepsilon > 0$, $$\P{\frac1n\sum_{i=1}^nX_i - p \ge \varepsilon} \le \e^{-2n\varepsilon^2}$$
+	\label{chernoff-bound-additive}
+\end{theorem}
+\begin{proof}
+	只需要证明 $D_B(p + \varepsilon \| p) \ge 2\varepsilon^2$ 即可. 听说可以暴力求导.
+\end{proof}
+\begin{theorem}[Hoeffding Bound]
+	$X_1, X_2, \cdots, X_n$ 是 $n$ 个独立随机变量, $X_i \in [a_i, b_i]$, 记 $p = \frac{1}{n} \sum_{i=1}^{n}\E{X_i} = \frac1n \sum_{i=1}^{n}\frac{a_i + b_i}{2}$, 对于任意 $\varepsilon > 0$, $$\P{\frac1n\sum_{i=1}^nX_i - p \ge \varepsilon} \le \e^{-\frac{2n\varepsilon^2}{\left(\frac1n\sum_{i=1}^{n}b_i-a_i\right)^2}} \le \e^{-\frac{2n^2\varepsilon^2}{\sum_{i=1}^{n}(b_i-a_i)^2}}$$
+	\label{hoeffding-bound}
+\end{theorem}
+\begin{theorem}[McDiarmid Inequality]
+	$X_1, X_2, \cdots, X_n \in \mathcal X$ 是 $n$ 个独立随机变量, 如果对于 $f: \mathcal X^n \to \mathbb R$ 存在常数 $c_1, c_2, \cdots, c_n$ 使得 $$|f(x_1, \cdots, x_i, \cdots, x_n) - f(x_1, \cdots, x_i', \cdots, x_n)| \le c_i$$对于任意 $i \in [n], x_1, \cdots, x_n, x_i'$ 成立, 则对于任意 $\varepsilon > 0$, 有 $$\P{f(x_1, \cdots, x_n) - \E{f(x_1, \cdots, x_n)} \ge \varepsilon} \le \exp\left(\frac{-2\varepsilon^2}{\sum_{i=1}^{n}c_i^2}\right)$$
+	\label{mcdiarmid-inequ}
+\end{theorem}
+
+\newpage
+\section{VC Theory}
+对一个分类器 $f$, 通常有两种评价指标: training error $err_S(f) = \mathbb P_{(x, y) \in S}[y \neq f(x)]$ 与 generalization error $err_D(f) = \mathbb P_{(x, y) \sim D}[y \neq f(x)]$. 接下来可能会不加声明地用 $S$ 表示从数据集 $D$ 中 sample 出来的训练集.
+
+称 $err_D(f) - err_S(f)$ 为分类器 $f$ 的 generalization gap. 我们提出\obj{一致收敛(uniformly converge)}的概念, 它表示随着训练集 $S$ 的增大, hypothesis space $\mathcal F$ 中的所有分类器 $f$ 的 generalization gap 都会“一致”地被 bound 住.
+
+\begin{theorem}[Uniform Convergence when $|\mathcal F| < \infty$]
+	$S$ 是从数据集 $D$ 中随机采样的训练集, $|S| = n$, 有 $$\P{\forall f \in \mathcal F, err_D(f) - err_S(f) \ge \varepsilon} \le |\mathcal F|\e^{-2n\varepsilon^2}$$
+\end{theorem}
+\begin{proof}
+	对于某个确定的 $f \in \mathcal F$, 注意到 $err_S(f) = \frac1n \sum_{i=1}^n[y_i \neq f(x_i)]$, $\E{y_i \neq f(x_i)} = err_D(f)$, 故根据 Chernoff Bound 有 $\P{err_D(f) - err_S(f) \ge \varepsilon} \le \e^{-2n\varepsilon^2}$. 再结合 Union Bound 即得结论.
+\end{proof}
+\begin{theorem}[VC Theorem]
+	对于 VC-dimension (会在接下来定义)为 $d$ 的 hypothesis space $\mathcal F$, 从数据集 $D$ 中随机采样大小为 $n$ 的训练集 $S$, 则 $$\P{\sup_{f \in \mathcal F}|err_D(f) - err_S(f)| \ge \varepsilon} \le 2\left(\frac{2\e n}{d}\right)^d\e^{-cn\varepsilon^2}$$其中 $c$ 是常数. 或者等价地, 有至少 $1 - \delta$ 的概率, $$err_D(f) \le err_S(f) + O\left(\sqrt{\frac{d\ln n - \ln \delta}{n}}\right)$$对所有 $f \in \mathcal F$成立.
+\end{theorem}
+
+
+\newpage
+\section{Lagrange Duality}
+
+\newpage
+\section{Boosting}
+
+\newpage
+\section{PAC-Bayesian Theory}
+\begin{theorem}[PAC-Bayesian Theorem]
+	对于给定的 prior distribution of classifiers $\mathcal P$, 从数据集 $D$ 中随机抽取大小为 $n$ 的训练集 $S$, 有至少 $1 - \delta$ 的概率, 对于任意 distribution of classifiers $\mathcal Q$ 有如下不等式成立
+	$$\mathbb E_{h \sim \mathcal Q}[err_D(h)] \le \mathbb E_{h \sim \mathcal Q}[err_S(h)] + \sqrt{\frac{D_{KL}(\mathcal Q \| \mathcal P) + \log(3 / \delta)}{n}}$$
+	其中 $err_{X}(f)$ 表示 classifier $f$ 在数据集 $X$ 上的错误率, 即 $\mathbb P_{(x, y) \in X}[y \neq f(x)]$, $D_{KL}(\mathcal Q \| \mathcal P) = \mathbb E_{h \sim \mathcal Q}\left[\ln \frac{\mathcal Q_h}{\mathcal P_h}\right]$ 为概率分布 $\mathcal Q$ 与 $\mathcal P$ 的 KL 散度.
+	\label{PAC-Bayesian}
+\end{theorem}
+
+\begin{lemma}
+	对于任意在 hypothesis space $\mathcal F$ 上的概率分布 $\mathcal P, \mathcal Q$, 以及任意函数 $f: \mathcal F \to \mathbb R$, 都有
+	$$\mathbb E_{h \sim Q}[f(h)] \le \ln \mathbb E_{h' \sim P}[\exp(f(h'))] + D_{KL}(\mathcal Q \| \mathcal P)$$
+	\label{PAC-Bayesian-lem-1}
+\end{lemma}
+\begin{proof}
+	\begin{equation*}
+		\begin{split}
+			\text{RHS} -\text{LHS} &= \ln \mathbb E_{h' \sim P}[\exp(f(h'))] + D_{KL}(\mathcal Q \| \mathcal P) - \mathbb E_{h \sim Q}[f(h)]\\
+			&= \ln \mathbb E_{h' \sim P}[\exp(f(h'))] + \mathbb E_{h \sim \mathcal Q}\left[\ln \frac{\mathcal Q_h}{\mathcal P_h}\right] - \mathbb E_{h \sim Q}[f(h)]\\
+			&= \mathbb E_{h \sim Q} \left[\ln \frac{\mathcal Q_h}{\frac{\mathcal P_h \exp(f(h))}{\mathbb E_{h' \sim \mathcal P} [\exp(f(h'))]}}\right]\\
+			&= \mathbb E_{h \sim Q} \left[\ln \frac{\mathcal Q_h}{\mathcal R_h}\right]\\
+			&= D_{KL}(\mathcal Q \| \mathcal R)\\
+			& \ge 0
+		\end{split}
+	\end{equation*}
+	其中 $\mathcal R$ 也是一个 $\mathcal F$ 上的概率分布, $\mathcal R_h = \frac{\mathcal P_h \exp(f(h))}{\mathbb E_{h' \sim \mathcal P} [\exp(f(h'))]}$.
+\end{proof}
+
+\begin{lemma}
+	对于任意 $\delta > 0$, 有 $$\mathbb P_{S \sim D^n} \left(\mathbb E_{h \sim \mathcal P} [ \e^{n(err_D(h) - err_S(h))^2} ] \ge 3/\delta\right) \le \delta$$
+	\label{PAC-Bayesian-lem-2}
+\end{lemma}
+\begin{proof}
+	先证明对于某个固定的 $h \sim \mathcal P$, 有 $$\mathbb E_{S \sim D^n}[\e^{n(err_D(h) - err_S(h))^2}] \le 3$$
+
+	记 $\Delta = |err_D(h) - err_S(h)|$, 根据 Chernoff bound, 有 $$\mathbb P_{S \sim D^n}(\Delta \ge \varepsilon) \le 2\exp(-2n\varepsilon^2)$$
+
+	于是\begin{equation*}
+		\begin{split}			
+			\mathbb E_{S \sim D^n} \left[\e^{n\Delta^2}\right] &= \int_0^{+\infty}\mathbb P_{S \sim D^n}\left(\e^{n\Delta^2} \ge t\right) \text dt\\
+			&= \int_1^{+\infty}\mathbb P_{S \sim D^n}\left(\Delta \ge \sqrt{\frac{\ln t}{n}}\right) \text dt + 1\\
+			&\le \int_1^{+\infty}2\e^{-2\ln t}\text dt + 1\\
+			&= 3
+		\end{split}
+	\end{equation*}
+
+	随后, 使用 Markov Inequality 得到\begin{equation*}
+		\begin{split}
+			\mathbb P_{S \sim D^n} \left(\mathbb E_{h \sim \mathcal P} [ \e^{n\Delta^2} ] \ge 3/\delta\right) &\le \frac{\mathbb E_{S \sim D^n} \left(\mathbb E_{h \sim \mathcal P} [ \e^{n\Delta^2} ]\right)}{3/\delta} = \frac{ \mathbb E_{h \sim \mathcal P}\left(\mathbb E_{S \sim D^n} [ \e^{n\Delta^2} ]\right)}{3/\delta} \le \frac{ \mathbb E_{h \sim \mathcal P}\left(3\right)}{3/\delta} = \delta
+		\end{split}
+	\end{equation*}
+\end{proof}
+
+我们利用上述两个引理证明\cref{PAC-Bayesian}. 有至少 $1 - \delta$ 的概率, 
+\begin{equation*}
+	\begin{split}
+		\left(\mathbb E_{h \sim \mathcal Q}[err_D(h) - err_S(h)]\right)^2
+		& \le \mathbb E_{h \sim \mathcal Q}[\Delta^2]\\
+		&= \frac1n \mathbb E_{h \sim \mathcal Q}[n\Delta^2]\\
+		&\le \frac1n \left(\ln \mathbb E_{h \sim P}\left[\e^{n\Delta^2}\right] + D_{KL}(\mathcal Q \| \mathcal P)\right)\\
+		&\le \frac1n \left(\ln(3/\delta) + D_{KL}(\mathcal Q \| \mathcal P)\right)
+	\end{split}
+\end{equation*}
+其中第一行等号使用了 Cauchy Inequality, 第三行使用了\cref{PAC-Bayesian-lem-1} 代入 $f(h) = n\Delta^2$, 第四行使用了\cref{PAC-Bayesian-lem-2}, with probability at least $1 - \delta$.
+
+\subsection{PAC-Bayesian Bound for SVM}
+\begin{proposition}
+	对于任意的 distribution of classifiers $\mathcal Q$, 令 $g_{\mathcal Q}$ 为一个确定性二分类器, $g_{\mathcal Q}(x) = \text{sgn}(\mathbb E_{h \sim \mathcal Q}h(x))$, 则 $$err_D(g_{\mathcal Q}) \le 2\mathbb E_{h \sim \mathcal Q}[err_D(h)]$$
+\end{proposition}
+\begin{proof}
+	如果 $g_{\mathcal Q}$ 在一个数据点 $x$ 上出错, 则说明 $\mathcal Q$ 中至少一半的 classifier 都在 $x$ 上出错.
+\end{proof}
+
+考虑两个 distribution of classifiers $\mathcal P = \mathcal N(\mathbf 0, I_d), \mathcal Q = \mathcal N(\mu\mathbf w, I_d)$, 其中 $\|\mathbf w\|_2 = 1$, $\mu$ 是缩放系数. 此时 $g_{\mathcal Q}$ 就是传统理解下的 linear classifier $\mathbf w$ (这里不考虑常数 $b$).
+
+根据\cref{PAC-Bayesian} 的结论, 我们有 $$err_D(g_{\mathcal Q}) \le 2 \left[\mathbb E_{h \sim \mathcal Q}err_S(h) + \sqrt{\frac{D_{KL}(\mathcal Q \| \mathcal P) + \log(3 / \delta)}{n}}\right]$$
+
+\begin{equation*}
+	\begin{split}
+		D_{KL}(\mathcal Q \| \mathcal P)
+		&= \int_{\mathbb R^d}\frac{1}{(2\pi)^{d/2}}\exp\left[-\frac12\|\mathbf x - \mu\mathbf w\|^2\right]\frac12\left(\|\mathbf x\|^2 - \|\mathbf x - \mu\mathbf w\|^2\right)\text d\mathbf x\\
+		&= \int_{\lambda}\int_{\mathbf y \in \mathbb R^{d-1}, \mathbf y \perp \mathbf w}\frac{1}{(2\pi)^{d/2}}\exp\left[-\frac12\|\lambda\mathbf w + \mathbf y - \mu\mathbf w\|^2\right]\frac12\left(\|\lambda\mathbf w + \mathbf y\|^2 - \|\lambda\mathbf w + \mathbf y - \mu\mathbf w\|^2\right)\text d\lambda\text d\mathbf y\\
+		&= \int_{\lambda}\int_{\mathbf y \in \mathbb R^{d-1}, \mathbf y \perp \mathbf w}\frac{1}{(2\pi)^{d/2}}\exp\left[-\frac12(\lambda - \mu)^2 - \frac12 \|\mathbf y\|^2\right]\frac12\left(\lambda^2 + \|\mathbf y\|^2 - (\lambda - \mu)^2 - \|\mathbf y\|^2\right)\text d\lambda\text d\mathbf y\\
+		&= \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}}\exp\left[-\frac12(\lambda - \mu)^2\right]\frac12(2\lambda\mu - \mu^2)\text d\lambda\left[\int_{\mathbf y \in \mathbb R^{d-1}, \mathbf y \perp \mathbf w}\frac{1}{(2\pi)^{(d-1)/2}}\exp\left(-\frac12 \|\mathbf y\|^2\right)\text d\mathbf y\right]\\
+		&= \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}}\exp\left[-\frac12(\lambda - \mu)^2\right](\lambda\mu - \mu^2)\text d\lambda + \frac{\mu^2}{2}\\
+		&=\int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}}\exp\left[-\frac12(\lambda - \mu)^2\right]\mu\text d\frac{(\lambda - \mu)^2}{2} + \frac{\mu^2}{2}\\
+		&= \frac{\mu^2}{2}
+	\end{split}
+\end{equation*}
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\section{Algorithmic Stability}
+\begin{definition}[一致稳定, Uniform Stability]
+	$\mathcal A$ 是输入训练集 $S = (z_1, \cdots, z_n)$, 输出一个分类器 $\mathcal A(S)$ 的学习算法. 记 $S^i = (z_1, \cdots, z_{i-1}, z_i', z_{i+1}, \cdots, z_n)$ 是与 $S$ 只相差第 $i$ 个数据点的相邻训练集, $\ell (\cdot, \cdot)$ 是损失函数, 即 $\ell(f, z)$ 是在分类器 $f$ 下, 数据点 $z$ 产生的损失.
+
+	称学习算法 $\mathcal A$ 关于 $\ell(\cdot, \cdot)$ 满足 $\beta(n)$-一致稳定性, 如果对于任意大小为 $n$ 的训练集 $S$ 及其相邻训练集 $S^i$, 以及任意数据点 $z$, 都有 $$|\ell(\mathcal A(S), z) - \ell(\mathcal A(S^i), z)| \le \beta(n)$$
+\end{definition}
+\begin{definition}[Risk \& Empirical Risk]
+	分别类似于 test error 与 training error, 定义 risk 与 empirical risk 为
+	\begin{equation*}
+		\begin{split}			
+			R(\mathcal A(S)) &= \mathbb E_{z \sim D}[\ell(\mathcal A(S), z)]\\
+			R_{emp}(\mathcal A(S)) &= \frac1n \sum_{i=1}^{n}\ell(\mathcal A(S), z_i)
+		\end{split}
+	\end{equation*}
+	以下讨论中不会出现超过一个学习算法, 故简记 $\Phi(S) = R(\mathcal A(S)) - R_{emp}(\mathcal A(S))$.
+\end{definition}
+\begin{theorem}[一致稳定能说明泛化]
+	对于一个关于 $\ell(\cdot, \cdot)$ 满足 $\beta(n)$-一致稳定性的学习算法 $\mathcal A$, 其中 $|\ell(\cdot, \cdot)| \le M$ 有上界, 有 $$\P{\Phi(S) \le \varepsilon + \beta(n)} \le \exp\left( -\frac{n\varepsilon^2}{2(n\beta(n) + M)^2} \right)$$ 或者等价的, 有至少 $1 - \delta$ 的概率下式成立 $$R(\mathcal A(s)) \le R_{emp}(\mathcal A(s)) + \beta(n) + (n\beta(n) + M)\sqrt{\frac{2\ln(1/\delta)}{n}}$$
+\end{theorem}
+\begin{proof}
+	先证明两个引理.
+	\begin{lemma}
+		假设 $\mathcal A$ 是对称的, 即对于任意 $n$ 元置换 $\sigma$, 有 $\mathcal A(\{z_1, \cdots, z_n\}) = \mathcal A(\{z_{\sigma_1}, \cdots, z_{\sigma_n}\})$, 则 $$\mathbb E_{S}[\Phi(S)] \le \beta(n)$$
+		\label{uni-stab-lem-1}
+	\end{lemma}
+	\begin{proof}
+		$$\mathbb E_{S}[\Phi(S)] = \mathbb E_{S, z}[\ell(\mathcal A(S), z)] - \mathbb E_{S}[\ell(\mathcal A(S), z_1)] = \mathbb E_{S, S^1}[\ell(\mathcal A(S^1), z_1) - \ell(\mathcal A(S), z_1)] \le \beta(n)$$
+	\end{proof}
+	\begin{lemma}
+		如果 $|\ell(\cdot, \cdot)| \le M$ 有上界, 则对于任意 $S, S^i$, 有 $$|\Phi(S) - \Phi(S^i)| \le 2\left(\beta(n) + \frac Mn \right)$$
+		\label{uni-stab-lem-2}
+	\end{lemma}
+	\begin{proof}
+		除了 $\ell(\mathcal A(S), z_i) - \ell(\mathcal A(S^i), z_i')$ 一项外, 其余所有项都可以被 $\beta(n)$-稳定性限制住.
+		\begin{equation*}
+			\begin{split}
+				|\Phi(S) - \Phi(S^i)| & = |R(\mathcal A(S)) - R_{emp}(\mathcal A(S)) - R(\mathcal A(S^i)) + R_{emp}(\mathcal A(S^i))|\\
+				& \le |R_{emp}(\mathcal A(S)) - R_{emp}(\mathcal A(S^i))| + |R(\mathcal A(S)) - R(\mathcal A(S^i))|\\
+				&= \frac1n |\ell(\mathcal A(S), z_i) - \ell(\mathcal A(S^i), z_i')| + \frac1n \sum_{j \neq i}|\ell(\mathcal A(S), z_j) - \ell(\mathcal A(S^i), z_j)| + \left|\mathbb E_{z \sim D}[\ell(\mathcal A(S), z) - \ell(\mathcal A(S^i), z)]\right|\\
+				&\le \frac{2M}{n} + \frac{n-1}{n}\beta(n) + \beta(n)\\
+				&\le 2\left(\beta(n) + \frac Mn\right)
+			\end{split}
+		\end{equation*}
+	\end{proof}
+
+	考虑 McDiarmid's 不等式, 把 $\Phi$ 视作一个关于 $z_1, \cdots, z_n$ 的多元函数, 则\cref{uni-stab-lem-1} 与\cref{uni-stab-lem-2} 分别给出了 $\Phi$ 的期望以及在相邻输入上的差的上界. 于是 $$\P{\Phi(S) \ge \beta(n) + \varepsilon} \le \P{\Phi(S) - \E{\Phi(S)} \ge \varepsilon} \le \exp\left(-\frac{2n\varepsilon^2}{\sum_{i=1}^nc_i^2}\right) = \exp\left(-\frac{n\varepsilon^2}{2(n\beta(n)+M)^2}\right)$$
+\end{proof}
+
+\newpage
+\section{Unsupervised Learning}
+
+前面讨论的都是监督学习. 现在我们讨论一下无监督学习.
+
+无监督学习其实主要在做两件事情: Clustering, 以及 Dimensionality Reduction.
+
+\subsection{Clustering}
+对于一组 $\mathbf x_1, \cdots, \mathbf x_n \in \mathbb R^d$, 需要把这些数据点划分成 $k$ 个 cluster $S_1, \cdots, S_k$.
+
+可以如下定义一种划分的损失函数: 记 $\mu_i = \frac{1}{|S_i|}\sum_{j \in S_i}\mathbf x_j$ 为第 $i$ 个 cluster 的中心, 损失函数为 $$L(\{S_1, \cdots, S_k\}) = \sum_{i=1}^{k}\sum_{j \in S_i} \| \mathbf x_j - \mu_i \|^2$$
+
+\subsubsection{K-means}
+\subsubsection{K-means++}
+\begin{theorem}
+	K-means++ 算法给出的损失 $L$ 与最优解 $L_{opt}$ 满足 $$\E{L} \le 8(\ln k + 2)L_{opt}$$
+\end{theorem}
+
+
+\subsection{Dimensionality Reduction}
+
+\end{document}

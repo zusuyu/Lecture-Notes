@@ -1131,7 +1131,7 @@
 
 \section{布尔线路}
 \begin{definition}[布尔线路]
-	对于任意 $n \in \mathbb N$, 一个 $n$ 源单汇布尔线路是一张有 $n$ 个源点和 $1$ 个汇点的DAG, 其中每个非源节点标有逻辑运算符 $\{\wedge, \vee, \lnot\}$ 中的一者, 且如果标有 $\wedge$ 或者 $\vee$, 则该节点在图中的入度为 $2$, 如果标有 $\lnot$, 则该节点在图中的入度为 $1$. 记布尔线路 $C$ 的规模 $|C|$ 为 DAG 中的节点数.
+	对于任意 $n \in \mathbb N$, 一个 $n$ 源单汇布尔的线路是一张有 $n$ 个源点和 $1$ 个汇点的DAG, 其中每个非源节点标有逻辑运算符 $\{\wedge, \vee, \lnot\}$ 中的一者, 且如果标有 $\wedge$ 或者 $\vee$, 则该节点在图中的入度为 $2$, 如果标有 $\lnot$, 则该节点在图中的入度为 $1$. 记布尔线路 $C$ 的规模 $|C|$ 为 DAG 中的节点数.
 
 	对于 $n$ 源单汇的布尔线路 $C$ 和 $x \in \{0, 1\}^n$, 可以自然地定义 $C(x) \in \{0, 1\}$ 表示 $C$ 对输入 $x$ 得到的输出. 
 \end{definition}
@@ -1227,10 +1227,10 @@
 	\end{itemize}
 \end{proof}
 \begin{theorem}[Nonuniform Size Hierarchy Theorem]
-	对于任意函数 $T, T': \mathbb N \to \mathbb N$ 满足 $n < 20T(n)\log^2 T(n) < T'(n) < \frac{2^n}{n}$, 有 $$\SIZE(T(n)) \subsetneq \SIZE(T'(n))$$
+	对于任意函数 $T, T': \mathbb N \to \mathbb N$ 满足 $n \le T(n), T'(n) \le \frac{2^n}{n}$ 且 $20T(n)\log^2 T(n) \le T'(n)$, 有 $$\SIZE(T(n)) \subsetneq \SIZE(T'(n))$$
 \end{theorem}
 \begin{proof}
-	考虑计数. 任意输入 $l$ 比特的布尔函数都可以被规模为 $10l2^l$ 的布尔线路所计算, 而也存在这样的布尔函数无法被规模为 $\frac{2^l}{10l}$ 的布尔线路所计算, 记之为 $f_l$. 令 $l = \log T(n) + \log \log T(n)$, 考虑语言 $L \subseteq \{0, 1\}^*$, $x \in L \Leftrightarrow f_l(x_1, \cdots, x_l) = 1$ 即对 $x$ 的前 $l$ 位计算布尔函数 $f_l$, 其结果作为 $x$ 是否属于 $L$ 的判定标准. 此时有
+	考虑计数. 任意输入 $l$ 比特的布尔函数都可以被规模为 $10l2^l$ 的布尔线路所计算, 而也存在这样的布尔函数无法被规模为 $\frac{2^l}{10l}$ 的布尔线路所计算, 记之为 $f_l$. 令 $l = \log T(n) + \log \log T(n)$, 考虑语言 $L \subseteq \{0, 1\}^*$, 任意长度为 $n$ 的串 $x$ 满足 $x \in L \Leftrightarrow f_l(x_1, \cdots, x_l) = 1$, 即对 $x$ 的前 $l = \log T(n) + \log \log T(n)$ 位计算布尔函数 $f_l$, 其结果作为 $x$ 是否属于 $L$ 的判定标准. 此时有
 	\begin{equation*}
 		\begin{split}	
 			L &\in \SIZE(10l2^l) = \SIZE(10T(n)\log T(n)(\log T(n) + \log\log T(n))) \subseteq \SIZE(20T(n)\log^2 T(n)) \subseteq \SIZE(T'(n))\\
