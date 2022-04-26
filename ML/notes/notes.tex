@@ -31,6 +31,7 @@
 \usepackage{qcircuit}
 \usepackage{fancyhdr}
 \usepackage{fancyvrb}
+\usepackage{bbm}
 
 \fvset{showspaces=True}
 \SaveVerb{verbspace}! !
@@ -137,16 +138,16 @@
 \section{Inequalities}
 \begin{theorem}[Markov Inequality]
 	如果非负随机变量 $X$ 期望存在, 则对于任意 $k > 0$,  $$\P{X \ge k} \le \frac{\E{X}}{k}$$
-	进一步地, 如果 $r$ 阶矩 $\E{X^r}$ 存在, 则对于任意 $k > 0$, $$\P{X \ge k} \le \min_{j \le r}\frac{\E{X^j}}{j}$$
+	进一步地, 如果 $r$ 阶矩 $\E{X^r}$ 存在, 则对于任意 $k > 0$, $$\P{X \ge k} \le \min_{j \le r}\frac{\E{X^j}}{k^j}$$
 \end{theorem}
 \begin{theorem}[Chebyshev Inequality]
 	如果随机变量 $X$ 方差存在, 则对于任意 $\varepsilon > 0$, $$\P{|X - \E{X}| \ge \varepsilon} \le \frac{\Var{X}}{\varepsilon^2}$$
 \end{theorem}
 \begin{definition}[矩生成函数, Moment Generating Function, MGF]
-	如果随机变量$X$的任意 $n \in \mathbb N$ 阶矩存在, 则定义其矩生成函数为 $$\psi_X(t) = \E{\e^{tX}} = \sum_{i \ge 0}t^i\frac{\E{X^i}}{i!}$$
+	如果随机变量$X$的任意 $n \in \mathbb N$ 阶矩存在, 则定义其矩生成函数为 $$M_X(t) = \E{\e^{tX}} = \sum_{i \ge 0}t^i\frac{\E{X^i}}{i!}$$
 \end{definition}
 \begin{theorem}[Chernoff Inequality]
-	$$\P{X \ge k} \le \inf_{t > 0}\e^{-tk}\psi_X(t)$$
+	$$\P{X \ge k} \le \inf_{t > 0}\e^{-tk}M_X(t)$$
 \end{theorem}
 \begin{theorem}
 	$X_1, X_2, \cdots, X_n \sim \text{ i.i.d. } \mathcal B(1, p)$, 对于任意 $\varepsilon > 0$, $$\P{\frac1n\sum_{i=1}^nX_i - p \ge \varepsilon} \le \e^{-nD_B(p + \varepsilon \| p)}$$
@@ -201,7 +202,16 @@
 	$X_1, X_2, \cdots, X_n \in \mathcal X$ 是 $n$ 个独立随机变量, 如果对于 $f: \mathcal X^n \to \mathbb R$ 存在常数 $c_1, c_2, \cdots, c_n$ 使得 $$|f(x_1, \cdots, x_i, \cdots, x_n) - f(x_1, \cdots, x_i', \cdots, x_n)| \le c_i$$对于任意 $i \in [n], x_1, \cdots, x_n, x_i'$ 成立, 则对于任意 $\varepsilon > 0$, 有 $$\P{f(x_1, \cdots, x_n) - \E{f(x_1, \cdots, x_n)} \ge \varepsilon} \le \exp\left(\frac{-2\varepsilon^2}{\sum_{i=1}^{n}c_i^2}\right)$$
 	\label{mcdiarmid-inequ}
 \end{theorem}
+\begin{theorem}[Draw with/without Replacement]
+	有 $m$ 个数 $a_1, \cdots, a_m \in \{0, 1\}$, 记 $p = \frac1m \sum\limits_{i=1}^{m}a_i$. $X_1, \cdots, X_n$ 为从 $\{a_1, \cdots, a_m\}$ 中的随机放回抽样, $Y_1, \cdots, Y_n$ 为从 $\{a_1, \cdots, a_m\}$ 中的随机不放回抽样, 则对于任意 $\varepsilon > 0$ 有
+	$$\P{\frac1n \sum_{i=1}^{n}X_i - p \ge \varepsilon} \le \e^{-2n\varepsilon^2}, \qquad \P{\frac1n \sum_{i=1}^{n}Y_i - p \ge \varepsilon} \le \e^{-2n\varepsilon^2}$$
+	\label{draw-w-replacement}
+\end{theorem}
+\begin{proof}
+	对于随机放回抽样, 显然每次抽样是独立的, 从而结论是 Chernoff Bound 的平凡推论.
 
+	对于随机不放回抽样, 注意到 $\E{\prod_{i \in I}Y_i} \le \E{\prod_{i \in I}X_i}$ 对任意指标集 $I \subseteq \{1, \cdots, n\}$ 成立, 从而可以证明 $\E{\e^{t\sum_{i=1}^nY_i}} \le \E{\e^{t\sum_{i=1}^nX_i}}$.
+\end{proof}
 \newpage
 \section{VC Theory}
 对一个分类器 $f$, 通常有两种评价指标: training error $err_S(f) = \mathbb P_{(x, y) \in S}[y \neq f(x)]$ 与 generalization error $err_D(f) = \mathbb P_{(x, y) \sim D}[y \neq f(x)]$. 接下来可能会不加声明地用 $S$ 表示从数据集 $D$ 中 sample 出来的训练集.
@@ -215,15 +225,112 @@
 	对于某个确定的 $f \in \mathcal F$, 注意到 $err_S(f) = \frac1n \sum_{i=1}^n[y_i \neq f(x_i)]$, $\E{y_i \neq f(x_i)} = err_D(f)$, 故根据 Chernoff Bound 有 $\P{err_D(f) - err_S(f) \ge \varepsilon} \le \e^{-2n\varepsilon^2}$. 再结合 Union Bound 即得结论.
 \end{proof}
 \begin{theorem}[VC Theorem]
-	对于 VC-dimension (会在接下来定义)为 $d$ 的 hypothesis space $\mathcal F$, 从数据集 $D$ 中随机采样大小为 $n$ 的训练集 $S$, 则 $$\P{\sup_{f \in \mathcal F}|err_D(f) - err_S(f)| \ge \varepsilon} \le 2\left(\frac{2\e n}{d}\right)^d\e^{-cn\varepsilon^2}$$其中 $c$ 是常数. 或者等价地, 有至少 $1 - \delta$ 的概率, $$err_D(f) \le err_S(f) + O\left(\sqrt{\frac{d\ln n - \ln \delta}{n}}\right)$$对所有 $f \in \mathcal F$成立.
+	对于 VC-dimension (会在接下来定义)为 $d$ 的 hypothesis space $\mathcal F$, 从数据集 $D$ 中随机采样大小为 $n$ 的训练集 $S$, 则 $$\P{\sup_{f \in \mathcal F}|err_D(f) - err_S(f)| \ge \varepsilon} \le 2\left(\frac{2\e n}{d}\right)^d\e^{-cn\varepsilon^2}$$其中 $c$ 是常数. 或者等价地, 有至少 $1 - \delta$ 的概率, 对所有 $f \in \mathcal F$ 有 $$err_D(f) \le err_S(f) + O\left(\sqrt{\frac{d\ln n - \ln \delta}{n}}\right)$$
+	\label{VC-theorem}
 \end{theorem}
+
+为了接下来的叙述方便, 我们引入一些记号:
+\begin{itemize}
+	\item 对于分类器 $f \in \mathcal F$ 以及数据点 $z = (x, y) \sim D$, 定义 $\phi_f(z) = \mathbbm 1[y \neq f(x)]$, 即每个 $\phi_f$ 是一个“长度为$|D|$” 的 $01$ 串, $1$ 表示 $f$ 会在这一位对应的数据点上出错.
+	\item 定义 $\Phi_{\mathcal F} = \{\phi_f | f \in \mathcal F\}$. 由于以下不会超过一个 hypothesis space, 故省略角标简记为 $\Phi$.
+\end{itemize}
+
+如此一来, 对于$S = \{z_1 = (x_1, y_1), \cdots, z_n = (x_n, y_n)\}$, 两种错误率 $err_S(f)$ 和 $err_D(f)$ 就分别等价于 $\frac1n \sum\limits_{i=1}^{n}\phi_f(z_i)$ 和 $\mathbb E_{z \sim D}\phi_f(z)$, 而我们需要限制的概率也变成了 $$\mathbb P_{S \sim D^n}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_{z \sim D}[\phi(z)]\right| \ge \varepsilon\right]$$
+
+\begin{lemma}[Double Sampling]
+	取 $n \ge \frac{\ln 2}{\varepsilon^2}$, 有
+	$$\mathbb P_{S \sim D^n}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_{z \sim D}[\phi(z)]\right| \ge \varepsilon\right] \le 2\mathbb P_{S \sim D^{2n}}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \frac{\varepsilon}{2}\right]$$
+\end{lemma}
+
+通过 Double Sampling, 我们只需要限制 $\frac1n\sum\limits_{i=1}^{n}\phi(z_i)$ 与 $\frac1n\sum\limits_{i=n+1}^{2n}\phi(z_i)$ 的差. 考虑一种新的抽样方式, 先随机抽取 $\{z_1, \cdots, z_{2n}\}$, 再对其随机排列, 这样显然是与原先等价的, 即
+
+$$\mathbb P_{S \sim D^{2n}}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon\right] = \mathbb E_{S \sim D^n} \left[\mathbb P_{\sigma}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right]\right]$$
+
+这么做的意义是什么? 意义是可以先只考虑内层的 $\mathbb P_{\sigma}$ 而不管 $S \sim D^n$ 的选取. 看似强行取的随机排列 $\sigma$ 是为了内层可以被 bound, 不然 $\mathbbm 1\left[\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon \right]$ 还不太方便处理.
+
+记 $N^{\Phi}(z_1, \cdots, z_n)$ 表示 $\#\{(\phi(z_1), \cdots, \phi(z_n)) | \phi \in \Phi\}$, 即 $\Phi$ 中的所有 $01$ 串在数据点 $z_1, \cdots, z_n$ 上有多少种不同的. 从这个角度想, 其实 $\sup_{\phi \in \Phi}$ 只是在对有限项求 $\max$, 故根据 Union Bound 可以得到 $$\mathbb P_{\sigma}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right] \le N^{\Phi}(z_1, \cdots, z_{2n})\mathbb P_{\sigma}\left[\left|\frac1n\sum_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right]$$
+
+\textit{其实这里写得不太严谨, 右边应该是对 $N^{\Phi}(z_1, \cdots, z_{2n})$ 个不同的 $\phi$ 分别求概率再相加, 但我们接下来会对任意 $\phi$ 限制 $\mathbb P_{\sigma}\left[\left|\frac1n\sum\limits_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum\limits_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right]$, 所以应该也无伤大雅.}
+
+对于一个特定的 $\phi \in \Phi$, 考虑 $\frac1n\sum\limits_{i=1}^{n}\phi(z_{\sigma(i)})$ 其实就是在 $\{\phi(z_1), \cdots, \phi(z_{2n})\}$ 这 $2n$ 个数中做不放回抽样, 故根据\cref{draw-w-replacement}, 有 \begin{equation*}
+	\begin{split}
+		\mathbb P_{\sigma}\left[\left|\frac1n\sum\limits_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum\limits_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right]
+		&=2\mathbb P_{\sigma}\left[\frac1n\sum\limits_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum\limits_{i=n+1}^{2n}\phi(z_{\sigma(i)}) \ge \varepsilon\right]\\
+		&=2\mathbb P_{\sigma}\left[\frac1n\sum\limits_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1{2n}\sum\limits_{i=1}^{2n}\phi(z_{\sigma(i)}) \ge \frac{\varepsilon}{2}\right]\\
+		&=2\mathbb P_{\sigma}\left[\frac1n\sum\limits_{i=1}^{n}\phi(z_{\sigma(i)}) - p \ge \frac{\varepsilon}{2}\right]\\
+		&\le 2\e^{-\frac{n\varepsilon^2}{2}}
+	\end{split}
+\end{equation*}
+
+从而我们得到了 $$\mathbb P_{S \sim D^{2n}}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon\right] \le 2\e^{-\frac{n\varepsilon^2}{2}}\mathbb E_{S \sim D^{2n}}\left[N^{\Phi}(z_1, \cdots, z_{2n})\right]$$
 
 
 \newpage
 \section{Lagrange Duality}
 
 \newpage
+\section{Game Theory}
+
+Game theory is the study of mathematical models of strategic interactions among rational agents, cited from Wikipedia.
+
+我们引入“双人矩阵博弈”作为对博弈论最基础的介绍. 注意, 接下来我们考虑的所有问题都是零和的.
+
+\begin{definition}[Two-player Matrix Game]
+	有一个 $M \in \mathbb R^{m \times n}$ 的矩阵. 两名玩家 Alice 和 Bob 参加了这场博弈. Alice, \obj{the row player} 选择一行 $i \in [m]$, 相应的, Bob, \obj{the column player} 选择一列 $j \in [n]$, 此时 Alice 获得收益 $-M_{ij}$, Bob 获得收益 $M_{ij}$.
+\end{definition}
+
+我们首先探讨\obj{纯策略(pure strategy)}的情景, 指的是 Alice 和 Bob 必须分别选择某个确定的行或列.
+
+当 Alice 先做出选择时, 当她选出第 $i$ 行后, 她会认为 Bob 会选择第 $j_i = \arg\max_{j}M_{ij}$ 列, 因此她会选择第 $\arg\min_i\max_jM_{ij}$ 行, 导致最终的博弈结果为 $\min_i\max_jM_{ij}$.
+
+同理, 当 Bob 先做选择时, 他会选择第 $\arg\max_j\min_iM_{ij}$ 列, 导致最终的博弈结果为 $\max_j\min_iM_{ij}$.
+
+我们指出在纯策略的情境下, 后手是有优势的, 即
+
+\begin{theorem}
+	$\min_i\max_jM_{ij} \ge \max_j\min_iM_{ij}$ 对于任意 $M \in \mathbb R^{m \times n}$ 都成立, 同时存在 $M'$, 使 $\min_i\max_j{M'}_{ij} > \max_j\min_i{M'}_{ij}$.	
+\end{theorem}
+\begin{proof}
+	记 $i_0 = \arg\min_i\max_jM_{ij}, j_0 = \arg\max_j\min_iM_{ij}$, 有 $$\min_i\max_jM_{ij} = \max_jM_{i_0j} \ge M_{i_0j_0} \ge \min_iM_{ij_0} = \max_j\min_iM_{ij}$$
+
+	考虑 $M' = \begin{pmatrix}
+		-1 & 1 \\ 1 & -1
+	\end{pmatrix}$, 有 $\min_i\max_j{M'}_{ij} = -1, \max_j\min_i{M'}_{ij} = 1$.
+\end{proof}
+
+接着我们研究\obj{混合策略(mixed strategy)}, 其意味着玩家做出的决策可以不是确定的行列选择, 而是一个概率分布. 相应地, 得到的收益也就变成了期望收益.
+
+形式化地, Alice 选择给出概率分布 $p = (p_1, \cdots, p_m) \in [0, 1]^m$, Bob 给出概率分布 $q = (q_1, \cdots, q_n) \in [0, 1]^n$. 合法的概率分布需要满足 $\|p\|_1 = \|q\| = 1$, 而此时两人的收益也分别是 $-p^{\text T}Mq$ 与 $p^{\text T}Mq$.
+
+与纯策略的情境同理, 当 Alice 先手时, 博弈结果为 $\min_{p \in [0, 1]^m, \|p\|_1 = 1}\max_{q \in [0, 1]^n, \|q\|_1 = 1} p^{\text T}Mq$, 当 Bob 先手时, 博弈结果为 $\max_{q \in [0, 1]^n, \|q\|_1 = 1}\min_{p \in [0, 1]^m, \|p\|_1 = 1} p^{\text T}Mq$. 在接下来的叙述中, 我们默认 $p, q$ 应取合法的概率分布, 而忽略在 $\min, \max$ 记号下的明确限制.
+
+我们想要知道混合策略下后手还有没有优势. John von Neuman 告诉我们, 没有.
+
+\begin{theorem}[von Neuman Minimax Theorem]
+	$$\min_{ p}\max_{ q}  p^{\text T}M q = \max_{ q}\min_{ p}  p^{\text T}M q$$
+	\label{minimax}
+\end{theorem}
+
+\newpage
 \section{Boosting}
+\begin{algorithm}
+	\caption{AdaBoost}
+	\begin{algorithmic}[1]
+		\Require training set $S = \{(x_1, y_1), \cdots, (x_n, y_n)\}$, weak learning algorithm $\mathcal A$
+		\State $D_1(i) \gets \frac1n, \forall i \in [n]$.
+		\For{$t = 1 \to T$}
+			\State Use $\mathcal A$ to learn a classifier $h_t$ based on $D_t$.
+			\State $\varepsilon_t \gets \sum\limits_{i=1}^{n}D_t(i)\mathbbm 1[y_i \neq h_t(x_i)]$
+			\State $\gamma_t \gets 1 - 2\varepsilon_t$
+			\State $\alpha_t \gets \frac12 \ln\frac{1 + \gamma_t}{1 - \gamma_t}$
+			\State $Z_t \gets 2(\varepsilon_t (1 - \varepsilon_t))^2$
+			\State $D_{t + 1}(i) \gets \frac{1}{Z_t}D_t(i)\exp(-y_i\alpha_th_t(x_i))$
+		\EndFor
+		\State \Return a classifier $F$, $F(x) = \text{sgn}\left(\sum\limits_{t=1}^{T}\alpha_th_t(x)\right)$
+	\end{algorithmic}
+\end{algorithm}
+
+
 
 \newpage
 \section{PAC-Bayesian Theory}
@@ -372,7 +479,7 @@
 		\end{equation*}
 	\end{proof}
 
-	考虑 McDiarmid's 不等式, 把 $\Phi$ 视作一个关于 $z_1, \cdots, z_n$ 的多元函数, 则\cref{uni-stab-lem-1} 与\cref{uni-stab-lem-2} 分别给出了 $\Phi$ 的期望以及在相邻输入上的差的上界. 于是 $$\P{\Phi(S) \ge \beta(n) + \varepsilon} \le \P{\Phi(S) - \E{\Phi(S)} \ge \varepsilon} \le \exp\left(-\frac{2n\varepsilon^2}{\sum_{i=1}^nc_i^2}\right) = \exp\left(-\frac{n\varepsilon^2}{2(n\beta(n)+M)^2}\right)$$
+	考虑 McDiarmid Inequality (\cref{mcdiarmid-inequ}), 把 $\Phi$ 视作一个关于 $z_1, \cdots, z_n$ 的多元函数, 则\cref{uni-stab-lem-1} 与\cref{uni-stab-lem-2} 分别给出了 $\Phi$ 的期望以及在相邻输入上的差的上界. 于是 $$\P{\Phi(S) \ge \beta(n) + \varepsilon} \le \P{\Phi(S) - \E{\Phi(S)} \ge \varepsilon} \le \exp\left(-\frac{2n\varepsilon^2}{\sum_{i=1}^nc_i^2}\right) = \exp\left(-\frac{n\varepsilon^2}{2(n\beta(n)+M)^2}\right)$$
 \end{proof}
 
 \newpage
@@ -388,12 +495,181 @@
 可以如下定义一种划分的损失函数: 记 $\mu_i = \frac{1}{|S_i|}\sum_{j \in S_i}\mathbf x_j$ 为第 $i$ 个 cluster 的中心, 损失函数为 $$L(\{S_1, \cdots, S_k\}) = \sum_{i=1}^{k}\sum_{j \in S_i} \| \mathbf x_j - \mu_i \|^2$$
 
 \subsubsection{K-means}
+\begin{algorithm}
+	\caption{K-means}
+	\begin{algorithmic}[1]
+		\State Choose $k$ points as cluster centers $\mu_1, \cdots, \mu_k$ uniformly at random.
+		\Repeat
+			\State $S_i \gets \{j : \|\mathbf x_j - \mu_i\|^2 \le \|\mathbf x_j - \mu_k\|^2, \forall k \in [m]\}$
+			\State $\mu_i \gets \frac{1}{|S_i|} \sum_{j \in S_i} \mathbf x_j$
+		\Until{$k$ cluster centers do not change}
+		\State \Return $\{\mu_1, \cdots, \mu_k\}$
+	\end{algorithmic}
+\end{algorithm}
+
 \subsubsection{K-means++}
+\begin{algorithm}
+	\caption{K-means++}
+	\begin{algorithmic}[1]
+		\State 	Choose a point as the cluster center $\mu_1$ uniformly at random.
+		\For{$i: 2 \to n$}
+			\State Choose a point as the cluster center $\mu_i$, with probability proportional to $\min\limits_{1 \le k < i}\|\mathbf x_j - \mu_k\|^2$.
+		\EndFor
+		\State \Return $\{\mu_1, \cdots, \mu_k\}$
+	\end{algorithmic}
+\end{algorithm}
 \begin{theorem}
 	K-means++ 算法给出的损失 $L$ 与最优解 $L_{opt}$ 满足 $$\E{L} \le 8(\ln k + 2)L_{opt}$$
 \end{theorem}
-
-
 \subsection{Dimensionality Reduction}
+wlw不讲了.
+
+\newpage
+\section{Online Learning}
+在在线学习的设定下, 数据是以流的形式给出的, 在每次得到一个数据点之后, 都需要以恰当的方式更新预测器, 以优化将来的预测.
+
+相比监督学习, 在线学习主要区别在于: \num{1} 不再区分 training 与 test, \num{2} 没有对数据的分布假设, 因而不存在 generalization 的概念. 相应的, mistake model 以及 regret 的概念会被用于衡量在线学习算法的表现效果.
+
+\subsection{Online Learning with Expert Advice}
+
+有 $n$ 位专家. 预测会持续 $T$ 轮, 每轮中每位专家都会给出各自的预测 $\tilde{y_{t, i}} \in \{0, 1\}$, 学习者需要根据此前得到的所有信息给出预测 $\tilde{y_t} \in \{0, 1\}$, 同时也会获得正确结果 $y_t \in \{0, 1\}$. 学习者的目标是让自己的预测结果与最好的专家尽量接近, 即最小化 $\sum\limits_{t=1}^{T}\mathbbm 1[\tilde{y_t} \neq y_t]$ 与 $\min\limits_{i \in [n]}\sum\limits_{t=1}^{T}\mathbbm 1[\tilde{y_{t, i}} \neq y_t]$ 的差(这就是regret).
+
+\subsubsection{Weighted Majority Vote}
+\begin{algorithm}
+	\caption{Weighted Majority Vote}
+	\begin{algorithmic}[1]
+		\State Initialize $w_{1, i} \gets 1, \forall i \in [n]$
+		\State Choose parameter $\beta \in (0, 1)$
+		\For{$t = 1 \to T$}
+			\State Make the Weighted Majority Vote $\tilde{y_t} = \begin{cases}
+				0, & \sum\limits_{\tilde{y_{t, i}} = 0} >  \sum\limits_{\tilde{y_{t, i}} = 1}\\
+				1, & \text{otherwise}
+			\end{cases}$
+			\If{$\tilde{y_t} = y_t$}
+				\State $w_{t + 1, i} \gets w_{t, i}, \forall i \in [n]$
+			\Else
+			\State $w_{t + 1, i} \gets \begin{cases}
+				\beta \cdot w_{t, i}, & \tilde{y_{t, i}} \neq y_t\\
+				w_{t, i}, & \tilde{y_{t, i}} = y_t
+			\end{cases}, \forall i \in [n]$
+			\EndIf
+
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+即每轮选择 $\tilde{y_t}$ 为 $n$ 位专家预测的加权  marjority, 如果出错了, 就把所有导致自己出错的专家的权值乘上 $\beta$ 作为惩罚.
+
+\begin{theorem}
+	记 $L_T = \sum\limits_{t=1}^{T}\mathbbm 1[\tilde{y_t} \neq y_t]$ 为学习者的 loss, $m_T^* = \min\limits_{i \in [n]}\sum\limits_{t=1}^{T}\mathbbm 1[\tilde{y_{t, i}} \neq y_t]$ 为最好的专家的 loss, 则在 Weighted Majority Vote 算法下, 有 $$L _T \le \frac{m_T^*\log(1 / \beta) + \log n}{\log(2/(1 + \beta))}$$
+\end{theorem}
+\begin{proof}
+	注意到 \num{1} $T$ 轮结束后, 所有专家剩余的总权值至少还有 $\beta^{m_T^*}$, \num{2} 每次学习者出错都会导致总权值乘上不大于 $\frac{1 + \beta}{2}$ 的系数, 故
+	$$\beta^{m_T^*} \le n\left(\frac{1 + \beta}{2}\right)^{L_T} \Rightarrow L_T \le \frac{m_T^*\log(1 / \beta) + \log n}{\log(2/(1 + \beta))}$$
+\end{proof}
+\begin{remark}
+	考虑 $\beta \to 1$, 由 L'Hospital Rule 可知 $\frac{\log(1 / \beta)}{\log(2 / (1 + \beta))} \to 2$, 即 Weighted Majority Vote 算法给出的最好的界中, $m_T^*$ 前的系数至少是 $2$. 接下来的 Randomized Weighted Updating 算法会给出更好的界.
+\end{remark}
+\subsubsection{Randomized Weighted Updating}
+\begin{algorithm}
+	\caption{Randomized Weighted Updating}
+	\begin{algorithmic}[1]
+		\State Initialize $w_{1, i} \gets 1, \forall i \in [n]$
+		\State Choose parameter $\beta \in [\frac12, 1)$
+		\For{$t = 1 \to T$}
+			\State Chooes $\tilde{y_t} = \tilde{y_{t, i}}$ with probability proportional to $w_{t, i}$
+			\State $w_{t + 1, i} \gets \begin{cases}
+				\beta \cdot w_{t, i}, & \tilde{y_{t, i}} \neq y_t\\
+				w_{t, i}, & \tilde{y_{t, i}} = y_t
+			\end{cases}, \forall i \in [n]$
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+\begin{theorem}
+	在Randomized Weighted Updating 算法下, 有 $$\E{L_T} \le (2 - \beta)m_T^* + \frac{\ln n}{1 - \beta}$$
+	\label{random-weighted-update}
+\end{theorem}
+\begin{proof}
+	注意到权值的更新无关于每轮有没有答错, 因此 $\mathbbm 1 [\tilde{y_t} \neq y_t]$ 是独立随机变量. 
+	
+	第 $i$ 轮结束后, 总权值的变化一定是 $W \to W(1 - (1 - \beta)\P{\tilde{y_t} \neq y_t})$, 由于 $\E{L_T} = \sum\limits_{t=1}^T\P{\tilde{y_t} \neq y_t}$, 因此
+
+	$$\beta^{m_T^*} \le n \prod_{t=1}^{T}(1 - (1 - \beta)\P{\tilde{y_t} \neq y_t}) \le n\prod_{t=1}^{T}\e^{-(1-\beta)\P{\tilde{y_t} \neq y_t}} = n\e^{-(1 - \beta)\E{L_T}}$$ 从而得到了 $$\E{L_T} \le \frac{\ln(1/\beta)m_T^* + \ln n}{1 - \beta}$$
+
+	只需要进一步证明 $\frac{\ln(1 / \beta)}{1 - \beta} \le 2 - \beta$. 考虑函数 $f(\beta) = \ln\beta + (1 - \beta)(2 - \beta), f'(\beta) = \frac{(1-  \beta)(1 - 2\beta)}{\beta}$, 当 $\beta \in [\frac12, 1)$ 时恒有 $f'(\beta) \le 0$, 从而 $f(\beta) \ge f(1) = 0$, 说明了 $\ln(1 / \beta) \le (1 - \beta)(2 - \beta), \frac{\ln(1 / \beta)}{1 - \beta} \le 2 - \beta$.
+\end{proof}
+\subsubsection{Hedge Algorithm}
+我们再提出一种叫做 Hedge Algorithm 的算法, 它其实只是 Randomized Weighted Updating 的推广, 但这个结果可以为后续证明\cref{minimax} 的工作做准备.
+
+在 Hedge Algorithm 的设定下, loss 不再是“答错了几次”, 而是每一轮每一位专家的回答都有一个loss $g_t(i) \in [0, 1]$, 记学习者在第 $t$ 轮的 loss 为 $l_t$, 则 $l_t$ 的期望就是 $n$ 位专家的加权平均: $$\E{l_t} = \left(\sum\limits_{i=1}^{n}w_{t, i}g_t(i)\right) \bigg/ \left(\sum\limits_{i=1}^{n}w_{t, i}\right)$$.
+
+\begin{algorithm}
+	\caption{Hedge Algorithm}
+	\begin{algorithmic}[1]
+		\State Initialize $w_{1, i} \gets 1, \forall i \in [n]$
+		\State Choose parameter $\beta \in (0, 1)$
+		\For{$t = 1 \to T$}
+			\State Chooes $i_t \in [n]$ with probability proportional to $w_{t, i}$, and obtain the loss $l_t = g_t(i_t)$
+			\State $w_{t + 1, i} \gets w_{t, i} \cdot \beta^{g_t(i)}, \forall i \in [n]$
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}
+	重新定义 $L_T = \sum\limits_{t=1}^{T}l_t$, 在 Hedge Algorithm 下, 有
+	$$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = O(\sqrt{T\log n})$$
+	\label{Hedge}
+\end{theorem}
+\begin{proof}
+	仍然注意到 $l_t$ 是独立随机变量.
+
+	第 $i$ 轮结束后, 总权值的变化是 $W \to W \cdot \E{\beta^{l_t}}$, 从而有
+	\begin{equation*}
+		\begin{split}
+			\e^{-\ln(1/\beta)m_T^*} = \beta^{m_T^*} &\le n\prod_{t=1}^{T}\E{\beta^{l_t}} = n\prod_{t=1}^{T}\E{\e^{-\ln(1/\beta)l_t}} \\
+			&\le n\prod_{t=1}^{T}\E{1 - \ln(1/\beta)l_t + \ln^2(1/\beta)l_t^2} \\
+			&\le n\prod_{t=1}^{T}\left(1 - \ln(1/\beta)\E{l_t} + \ln^2(1/\beta)\right) \\
+			&\le n\prod_{t=1}^{T}\e^{-\ln(1/\beta)\E{l_t} + \ln^2(1/\beta)} \\
+			&= n\e^{-\ln(1/\beta)\E{L_T} + T\ln^2(1/\beta)}
+		\end{split}
+	\end{equation*}
+	其中 $m_T^* = \min_{i \in [n]}\sum_{t=1}^{T}g_t(i)$. 两边取对数得到
+
+	$$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) \le \frac{\ln n}{\ln(1/\beta)} + T\ln(1/\beta) \le 2\sqrt{T\ln n} = O(\sqrt{T\log n})$$
+\end{proof}
+
+\subsection{Proof of Minimax Theorem via Online Learning}
+
+在 Game Theory 一章中, 我们陈述了 Minimax Theorem (\cref{minimax}), 其表明在混合策略的双人零和博弈下, 先后手并不会影响博弈的最终结果. 接下来我们利用在线学习的技术来证明这个结论.
+
+$$\min_p\max_q p^{\text T}Mq = \max_q\min_p p^{\text T}Mq$$
+
+\subsubsection{The $\ge$ Direction}
+
+这个方向的结论应该是平凡的, 直观上来说就是“后手总不劣于先手”. 
+
+形式化地, 记 $p^* = \arg\min_p\max_qp^{\text T}Mq$ 为 row player 后手时选择的最优的 $p$, $q^* = \arg\max_q\min_pp^{\text T}Mq$ 为 column player 后手时选择的最优的 $q$, 则 $$\min_p\max_q p^{\text T}Mq = \max_q {p^*}^{\text T}Mq \ge {p^*}^{\text T}Mq^* \ge \min_p p^{\text T}Mq^* = \max_q\min_p p^{\text T}Mq$$
+
+\subsubsection{The $\le$ Direction}
+
+把 row player 当作在线学习中的学习者, column player 则对应 adversary, 收益矩阵 $M$ 的 $m$ 行分别是一位专家.
+
+在第 $t$ 轮中, 学习者选择列向量 $p_t$ 满足 $(p_t)_i = \frac{w_{t, i}}{\sum_{i=1}^{m}w_{t, i}}$, 其中 $w_{t, i}$ 表示第 $t$ 轮时第 $i$ 位专家的权值. 给出了 $p_t$ 后, adversary 可以很容易地给出 $q_t = \max_{q}p_t^{\text T}Mq$. 第 $i$ 位专家建议选第 $i$ 行, 他这样的方案对应的 loss 是 $g_t(i) = (Mq_t)_i$. 显然学习者此时的 loss 的期望恰好等于 $m$ 为专家各自损失的加权平均, 即 $$\E{l_t} = \left(\sum\limits_{i=1}^{n}w_{t, i}g_t(i)\right) \bigg/ \left(\sum\limits_{i=1}^{n}w_{t, i}\right) = p_t^{\text T}Mq_t$$
+
+由 Hedge Algorithm 以及\cref{Hedge}, 我们知道了
+
+$$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq_t - \min_{i \in [n]}\left(M\sum_{t=1}^{T}q_t\right)_i \le O(\sqrt{T\log m})$$
+
+由此得到
+\begin{equation*}
+	\begin{split}
+		\frac1T\sum_{t=1}^{T}p_t^{\text T}Mq_t &\le \min_{i \in [n]}\left(M\sum_{t=1}^{T}q_t\right)_i + O\left(\sqrt{\frac{\log m}{T}}\right)\\
+		&= \min_p\left(p^{\text T}M\left(\frac1T\sum_{t=1}^Tq_t\right)\right) + o(1)\\
+		&\le \max_q\min_p p^{\text T}Mq + o(1)
+	\end{split}
+\end{equation*}
+(其中$O\left(\sqrt{\frac{\log m}{T}}\right) = o(1)$ 因为我们视 $m$ 为常数)而又注意到 $$\min_p\max_q p^{\text T}Mq \le \max_q \left(\frac1T\sum_{t=1}^{T}p_t^{\text T}\right)Mq \le \frac1T\sum_{t=1}^T\max_qp_t^{\text T}Mq = \frac1T\sum_{t=1}^{T}p_t^{\text T}Mq_t$$
+
+因此 $\min_p\max_q p^{\text T}Mq \le \max_q\min_p p^{\text T}Mq + o(1)$, 即 $\min_p\max_q p^{\text T}Mq \le \max_q\min_p p^{\text T}Mq$.
 
 \end{document}
