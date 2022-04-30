@@ -1,0 +1,235 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{bbm}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Cov#1{\text{Cov}\left({#1}\right)}
+
+
+\title{\heiti\zihao{2} 概率统计(A)课程作业: 数理统计的基本概念}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{概率统计(A)}
+	\chead{2022 Spring}
+	\rhead{数理统计的基本概念}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+\begin{enumerate}
+	\item 对于 $x \in \{0, 1\}^n$, 记 $k = \sum\limits_{i=1}^{n}x_i$, 有$$\P{X_1 = x_1, \cdots, X_n = x_n} = p^k(1 - p)^{n - k}$$
+	\item \begin{equation*}
+		\begin{split}
+			\E{\overline{X}} &= \E{X} = p \\
+			\Var{\overline{X}} &= \E{\overline{X}^2} - \E{\overline{X}}^2 = \frac{n \E{X^2} - n(n-1)\E{X}^2}{n^2} - \E{X}^2 = \frac{\Var{X}}{n} = \frac{p(1 - p)}{n}\\
+			\E{S^2} &= \Var{X} = p(1 - p)
+		\end{split}
+	\end{equation*}
+\end{enumerate}
+
+\section{}
+\begin{equation*}
+	\begin{split}
+		\E{\overline{X}} &= \E{X} = m \\
+		\Var{\overline{X}} &= \E{\overline{X}^2} - \E{\overline{X}}^2 = \frac{n \E{X^2} - n(n-1)\E{X}^2}{n^2} - \E{X}^2 = \frac{\Var{X}}{n} = \frac{2m}{n}\\
+		\E{S^2} &= \Var{X} = 2m
+	\end{split}
+\end{equation*}
+
+\section{}
+$T = \frac{X}{\sqrt{Y / n}}$, 其中 $X \sim \mathcal N(0, 1), Y \sim \chi^2(n)$ 且 $X, Y$ 独立, 则 $T^2 = \frac{X^2}{Y / n}$, 注意到 $X^2 \sim \chi^2(1)$, 故 $T^2 \sim F(1, n)$.
+
+\section{}
+$F = \frac{X / n_1}{Y / n_2}$, 其中 $X \sim \chi^2(n_1), Y \sim \chi^2(n_2)$ 且 $X, Y$ 独立, 则 $1 / F = \frac{Y / n_2}{X / n_1}$, 故 $1 / F \sim F(n_2, n_1)$.
+
+\section{}
+\begin{lemma}
+	考虑多元正态分布 $\mathbf X \sim \mathcal N(\mathbf a, B)$, 其中 $\mathbf a$ 是分布的期望(均值), $B$ 是分布的协方差矩阵. 对于任意可逆矩阵 $A \in \mathbb R^{n \times n}$, 有 $A\mathbf X \sim \mathcal N(A\mathbf a, ABA^{\text T})$.
+\end{lemma}
+\begin{proof}
+	记 $\mathbf Y = A\mathbf X$, 根据密度变换, 可得 $\mathbf Y$ 的概率密度函数为 \begin{equation*} \begin{split}		
+		f_{\mathbf Y}(\mathbf y) &= \left|\frac{\partial \mathbf x}{\partial \mathbf y}\right| f_{\mathbf X}(\mathbf x) = \left|\frac{\partial A^{-1}\mathbf y}{\partial \mathbf y}\right| f_{\mathbf X}(A^{-1}\mathbf y) \\
+		&= \frac{1}{\det(A)} \cdot \frac{1}{(2\pi)^{n/2}\sqrt{\det(B)}} \exp\left(-\frac12(A^{-1}\mathbf y - \mathbf a)^{\text T}B^{-1}(A^{-1}\mathbf y - \mathbf a)\right) \\
+		&= \frac{1}{(2\pi)^{n/2}\sqrt{\det(ABA^{\text T})}} \exp\left(-\frac12(\mathbf y - A\mathbf a)^{\text T}(ABA^{\text T})^{-1}(\mathbf y - A\mathbf a)\right)
+		\end{split}
+	\end{equation*}
+	故证明了 $\mathbf Y \sim \mathcal N(A\mathbf a, ABA^{\text T})$.
+\end{proof}
+
+当 $\mathbf X \sim \mathcal N(\mathbf 0, I_n)$ 时, $\mathbf Y = A\mathbf X \sim \mathcal N(A\mathbf 0, AI_nA^{\text T}) = \mathcal N(\mathbf 0, AA^{\text T})$, 故 $\mathbf Y \sim \mathcal N(\mathbf 0, I_n)$ 是 $n$ 维标准正态分布的充要条件是 $AA^{\text T} = I_n$, 也即 $A$ 是正交矩阵.
+
+\section{}
+
+取 $\mathbb R^n$ 中向量 \begin{equation*}
+	\begin{split}
+		\alpha &= \left(\frac{(t_1 - \overline{t})}{\sqrt{\sum_{k=1}^{n}(t_k - \overline{t})^2}}, \cdots, \frac{(t_n - \overline{t})}{\sqrt{\sum_{k=1}^{n}(t_k - \overline{t})^2}}\right)^{\text T} \\
+		\beta &= \left(\frac1{\sqrt n}, \cdots, \frac1{\sqrt n} \right)^{\text T}
+	\end{split}
+\end{equation*}
+不难验证 $|\alpha| = |\beta| = 1$, 且 $\alpha \cdot \beta = 0$. 故存在正交矩阵 $A \in \mathbb R^{n \times n}$ 以 $\alpha^{\text T}$ 和 $\beta^{\text T}$ 作为其前两行. 由于 $\mathbf X = (X_1, \cdots, X_n) \sim \mathcal N(\mathbf 0, \sigma^2I_n)$, 根据上一题的结论, 有 $\mathbf Y = (Y_1, \cdots, Y_n) = A\mathbf X \sim \mathcal N(\mathbf 0, \sigma^2I_n)$.
+
+注意到 \begin{equation*}
+	\begin{split}
+		\sum_{i=1}^n Y_i^2 &= |\mathbf Y|^2 = |A\mathbf X|^2 = |\mathbf X|^2 = \sum_{i=1}^n X_i^2 \\
+		Y_1^2 &= \left(\sum\limits_{j=1}^{n}\frac{(t_j - \overline{t})X_j}{\sqrt{\sum_{k=1}^{n}(t_k - \overline{t})^2}}\right)^2 \\
+		Y_2^2 &= \frac1n \left(\sum_{j=1}^nX_j\right)^2
+	\end{split}
+\end{equation*}
+以及 $\sum\limits_{i=1}^{n}(X_i - \overline{X})^2 = \sum\limits_{i=1}^n X_i^2 - \frac1n \left(\sum\limits_{j=1}^nX_j\right)^2$, 故 $Q = \sum\limits_{i=1}^n Y_i^2 - Y_2^2 - Y_1^2 = \sum\limits_{i=3}^n Y_i^2$. 由于 $Y_i \sim \text{i.i.d. } \mathcal N(0, \sigma^2), Y_i / \sigma \sim \text{i.i.d. } \mathcal N(0, 1)$, 所以 $Q / \sigma^2 = \sum\limits_{i=3}^n (Y_i / \sigma)^2 \sim \chi^2(n - 2)$.
+
+同理, 对于 $F = \frac{(Y_1 / \sigma)^2}{(Q / \sigma^2) / (n - 2)}$, 由于 $(Y_1 / \sigma)^2 \sim \chi^2(1)$ 且与 $Q$ 独立, 所以 $F \sim F(1, n - 2)$.
+
+\section{}
+\begin{enumerate}
+	\item 注意到 $Z, W \sim \text{i.i.d. } \mathcal N(0, 1)$, 故 $U = Z^2 + W^2 \sim \chi^2(2)$, 概率密度函数为 $f_U(u) = \frac12\e^{-u/2} \mathbbm 1[u > 0]$, 从而也有 $U \sim \text{Exp}\left(\frac12\right)$.
+	\item 由于 $X_1, \cdots, X_n \sim \text{i.i.d. } \text{Exp}(\lambda)$, 故 $n$ 个指数分布随机变量的和 $S = n\overline{X}$ 的概率密度为 $$f_S(s) = \frac{s^{n-1}\lambda^n\e^{-\lambda s}}{(n-1)!}\cdot \mathbbm 1[s > 0]$$ 从而 $T = 2\lambda S$ 的概率密度为 $$f_T(t) = \frac{1}{2\lambda} f_S\left(\frac{t}{2\lambda}\right) = \frac{1}{2\Gamma(n)}\left(\frac t2\right)^{n-1}\e^{-t/2} \cdot \mathbbm 1[t > 0]$$ 故 $T \sim \chi^2(2n)$.
+	\item 注意到 $\frac{Y}{\sqrt{\lambda \overline{X}}} = \frac{Y}{\sqrt{T / (2n)}}$, 其中 $Y \sim \mathcal N(0, 1), T \sim \chi^2(2n)$ 且 $Y$ 与 $(X_1, \cdots, X_n)$ 独立说明 $Y$ 与 $T$ 独立, 故根据定义 $\frac{Y}{\sqrt{\lambda \overline{X}}} \sim t(2n)$.
+\end{enumerate}
+
+\section{}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.75]{chi2(5)-histogram.pdf}
+	\caption{$\chi^2(5)$ 分布直方图}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.75]{t(5)-histogram.pdf}
+	\caption{$t(5)$ 分布直方图}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.75]{F(3,5)-histogram.pdf}
+	\caption{$F(3, 5)$ 分布直方图}
+\end{figure}
+
+\section{}
+\begin{enumerate}
+	\item 注意到 $F_n(x; \omega)$ 与 $F(x)$ 都是单调增函数, 故 \begin{equation*}
+			F_n(x; \omega) - F(x) \le F_n(x_{M, k+1}-0; \omega) - F(x_{M, k}) \le F_n(x_{M, k+1}-0) - F(x_{M, k+1}-0) + \frac1M
+	\end{equation*}
+	\item 由于 $|F_n(x; \omega) - F(x)| \le \max\limits_{1 \le k \le M} \max\left\{|F_n(x_{M,k}-0; \omega) - F(x_{M,k}-0)|, |F_n(x_{M,k}; \omega) - F(x_{M,k})|\right\} + \frac1M$ 对任意 $x \in \mathbb R$ 成立, 故\begin{equation*}
+		\sup_{x \in \mathbb R}|F_n(x; \omega) - F(x)| \le \max\limits_{1 \le k \le M} \max\left\{|F_n(x_{M,k}-0; \omega) - F(x_{M,k}-0)|, |F_n(x_{M,k}; \omega) - F(x_{M,k})|\right\} + \frac1M
+	\end{equation*}
+	\begin{equation*}
+		\begin{split}
+			&\P{\sup_{x \in \mathbb R}|F_n(x; \omega) - F(x)| \ge \frac 2M} \\
+			\le &\sum_{k=1}^M\P{|F_n(x_{M,k}-0; \omega) - F(x_{M,k}-0)| \ge \frac2M} + \P{|F_n(x_{M,k}; \omega) - F(x_{M,k})| \ge \frac2M}
+		\end{split}
+	\end{equation*}
+
+	由于 $|F_n(x; \omega) - F(x)| \overset{P}{\to} 0 \ (n \to \infty)$, 对于任意 $\varepsilon > 0$ 都有 $\lim\limits_{n \to \infty}\P{|F_n(x_{M,k}; \omega) - F(x_{M,k})| \ge \varepsilon} = 0$, 进一步也可以证明 $\lim\limits_{n \to \infty}\P{|F_n(x_{M,k}; \omega) - F(x_{M,k}-0)| \ge \varepsilon} = 0$, 从而 $$\lim_{n \to \infty}\P{\sup_{x \in \mathbb R}|F_n(x; \omega) - F(x)| \ge \frac 2M} = 0$$
+
+	\item 由于 $M$ 的任意性, 对于任意 $\varepsilon > 0$, $$\lim_{n \to \infty}\P{D_n(\omega) \ge \varepsilon} = \lim_{n \to \infty}\P{\sup_{x \in \mathbb R}|F_n(x; \omega) - F(x)| \ge \varepsilon} = 0$$ 即说明 $D_n(\omega) \overset{P}{\to} 0 \ (n \to \infty)$.
+\end{enumerate}
+
+\end{document}
+

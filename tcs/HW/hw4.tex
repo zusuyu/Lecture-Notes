@@ -1,0 +1,267 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+%\setCJKmainfont[ItalicFont=Noto Serif CJK SC Bold, BoldFont=Noto Serif CJK SC Black]{Noto Serif CJK SC}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+
+
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} 计算理论导论 \ 第四次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{计算理论导论}
+	\chead{2022 Spring}
+	\rhead{第四次作业}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+
+
+考虑建立 $\textsf{Vertex-Cover} = \{\langle G, k \rangle | G \text { has a subset of } k \text{ vertices that covers all 	edges}\}$ 到 $\textsf{Dominating-Set} = \{\langle G, k \rangle | G \text { has a subset of } k \text{ vertices that covers all 	vertices}\}$ 的多项式时间规约, 从而证明 $\textsf{Dominating-Set} \in \mathbf{NP}$-complete.
+
+对于 $G = (V, E)$, 记 $G$ 中孤立点(度数为 $0$ 的点)的集合为 $\text{iso}(G)$, 考虑映射 $f(\langle G, k \rangle) = \langle G', k + |\text{iso}(G)| \rangle$, 其中 $G' = (V', E')$ 满足 \begin{equation*}
+	\begin{split}
+		V' &= V \cup E \\
+		E' &= E \cup \bigcup_{(u, v) \in E}\{((u, v), u), ((u, v), v)\}
+	\end{split}
+\end{equation*}
+
+也即, $G'$ 保留 $G$ 中所有点与边, 并对原图中的每条边 $(u, v)$ 建立一个新点, 并连接两点 $u, v$.
+
+容易发现 $f$ 是多项式时间可计算的. 考虑验证 $\langle G, k \rangle \in \textsf{Vertex-Cover} \Leftrightarrow f(\langle G, k \rangle) \in \textsf{Dominating-Set}$:
+\begin{itemize}
+	\item 如果 $\langle G, k \rangle \in \textsf{Vertex-Cover}$, 则存在大小为 $k$ 的覆盖集 $S \subseteq V$, 满足对任意 $(u, v) \in E$ 都有 $u \in S$ 或者 $v \in S$. 我们验证 $S \cup \text{iso}(G)$ 是 $G'$ 的一个支配集:
+	\begin{itemize}
+		\item 对于任意 $u \in V \subseteq V'$, 要么 $u \in \text{iso}(G)$, 要么存在一条边 $(u, v) \in E$, 说明 $u \in S$ 与 $v \in S$ 至少一者成立, 两种情况下 $u$ 均被 $S \cup \text{iso}(G)$ 支配.
+		\item 对于任意 $(u, v) \in E \subseteq V'$, $u \in S$ 与 $v \in S$ 至少一者成立, 从而 $(u, v)$ 被 $S \cup \text{iso}(G)$ 支配.
+		\item 从而 $V'$ 被 $S \cup \text{iso}(G)$ 支配. 而 $|S \cup \text{iso}(G)| \le |S| + |\text{iso}(G)| = k + |\text{iso}(G)|$, 随便补充一些点使支配集大小达到 $k + |\text{iso}(G)|$ 即可说明 $f(\langle G, k \rangle) \in \textsf{Dominating-Set}$.
+	\end{itemize}  
+	\item 如果 $f(\langle G, k \rangle) \in \textsf{Dominating-Set}$, 则存在大小为 $k + |\text{iso}(G)|$ 的支配集 $S' \subseteq V'$, 满足对于任意 $v' \in V'$, 都要么 $v' \in S'$, 要么存在 $(u', v') \in E'$ 使得 $u' \in S'$.
+	\begin{itemize}
+		\item 如果 $S' \subseteq V$, 即 $S'$ 中的点都是原 $G$ 中的点, 则直接构造 $S = S' \setminus \text{iso}(G)$ 即为 $G$ 的一个覆盖集(因为每条边都被覆盖了). 注意到 $S'$ 是支配集, 从而必然有 $\text{iso}(G) \subseteq S'$, 说明 $|S| = |S' \setminus \text{iso}(G)| = k$, 故 $\langle G, k \rangle \in \textsf{Vertex-Cover}$ 成立.
+		\item 如果 $S'$ 中存在某个点 $(u, v) \in E$ 不是原 $G$ 中的点, 注意到选择 $(u, v)$ 时支配的点集只有 $\{u, v, (u, v)\}$, 而通过把 $(u, v)$ 的选择改成 $u$ 或者 $v$, 也可以支配这个点集. 换句话说, 如果 $S'$ 包含 $(u, v)$ 是支配集, 则 $S' \setminus \{(u, v)\} \cup \{u\}$ 也是支配集, 同时有 $|S' \setminus \{(u, v)\} \cup \{u\}| \le |S'|$. 因此可以不断替换 $S'$ 中不是原 $G$ 中的点, 将 $S'$ 转化为第一种情形. 替换过程中可能发生 $|S'|$ 变小的情况, 但这是无足轻重的, 因为存在较小的支配集/覆盖集总能推出存在更大的支配集/覆盖集.
+	\end{itemize}
+\end{itemize}
+
+故 $\textsf{Vertex-Cover} \le_p \textsf{Dominating-Set}$, 从而证明了$\textsf{Dominating-Set} \in \mathbf{NP}$-complete.
+
+\section{}
+假设存在 $\mathbf{NP}$-complete 的 unary language $L$, 则存在多项式时间可计算函数 $f: \text{CNF} \to 1^*$ 满足 $\varphi \in \textsf{SAT} \Leftrightarrow f(\varphi) \in L$. 由于 $f$ 多项式时间可计算, 故存在常数 $c$ 使得 $\forall \varphi \in \text{CNF}, |f(\varphi)| \le |\varphi|^c$.
+
+我们通过设计一个判定 $\textsf{SAT}$ 的多项式时间算法来证明 $\textbf{P} = \textbf{NP}$.
+
+\begin{algorithm}
+	\caption{\textsf{SAT} in polynomial time}
+	\begin{algorithmic}[1]
+		\Require{a boolean formula $\varphi$ on $n$ variables $x_1, x_2, \cdots, x_n$}
+		\State $S_0 \gets \langle f(\varphi), \varphi \rangle$
+		\For{$i = 1 \to n$}
+			\State $S_i \gets \varnothing$
+			\For{$\langle f(\phi), \phi \rangle$ in $S_{i-1}$}\Comment{$\phi$ is a boolean formula on variables $x_i, x_{i+1}, \cdots, x_n$}
+				\State substitute $x_i = \texttt{True}$ and then $x_i = \texttt{False}$ in $\phi$, obtaining boolean formulas $\phi_{T}$ and $\phi_{F}$
+				\State insert $\langle f(\phi_T), \phi_T \rangle$ and $\langle f(\phi_F), \phi_F \rangle$ into $S_i$
+			\EndFor
+			\State for each $n \in \mathbb N$, retain only one element of form $\langle 1^n, \psi \rangle$ in $S_i$ and drop the others
+		\EndFor
+		\If{$\langle f(\texttt{True}), \texttt{True} \rangle \in S_n$}
+			\State \Return $\varphi$ is satisfiable
+		\Else
+			\State \Return $\varphi$ is not satisfiable
+		\EndIf
+	\end{algorithmic}
+\end{algorithm}
+
+如果 $\varphi$ 是可满足的, 则在任意 $S_i$ 中, 都包含元素 $\langle f(\phi), \phi \rangle$, 其中 $\phi$ 是可满足的(这是因为$f(\phi) = f(\psi)$能说明$\phi, \psi$可满足性相同, 故不会因缩减 $S_i$ 的规模而导致可满足的 CNF 全部被丢弃), 从而 $S_n$ 中包含可满足的 CNF $\texttt{True}$, 算法输出$\varphi$ 是可满足的. 
+
+如果 $\varphi$ 是不可满足的, 则显然任意 $S_i$ 中不会有可满足的 $\phi$ 形成 $\langle f(\phi), \phi \rangle$ 出现, 因此$S_n$ 中也不会包含 $\texttt{True}$, 算法输出$\varphi$ 是不可满足的. 
+
+注意到因为代入只会使表达式长度变短, 算法中涉及到的任意 $\phi$ 都有 $|\phi| \le |\varphi|$, 故 $f(\phi) \le |\phi|^c \le |\varphi|^c$, 这说明任意 $S_i$ 在缩减规模后大小都不超过 $|\varphi|^c$, 因此算法的运行时间是关于 $|\varphi|$ 的多项式.
+
+\section{}
+$$\textsf{SPACE-TM} = \{\langle M, w, 1^n \rangle | \text{DTM } M \text{ accepts } w \text{ in space } n\}$$
+\begin{itemize}
+	\item $\textsf{SPACE-TM} \in \mathbf{PSPACE}$: 构造判定 \textsf{SPACE-TM} 的图灵机 $D$ 为, 使用通用图灵机 $\mathcal U$ 模拟 $M$ 在输入 $w$ 上运行, 并时刻检查是否只使用了不超过 $n$ 的运行空间. 由于通用图灵机模拟只需要常数的额外空间, 故 $D$ 的运行空间关于输入规模呈线性. 显然 $L(D) = \textsf{SPACE-TM}$, 故 $\textsf{SPACE-TM} \in \mathbf{PSPACE}$.
+	\item $\textsf{SPACE-TM} \in \mathbf{PSPACE}$-hard: 对于任意 $\textbf{PSAPCE}$ 语言 $L$, 都存在一台运行空间为 $O(n^c)$ 的图灵机 $M$ 满足 $L(M) = L$. 取映射 $f$ 满足 $f(x) = \langle M, x, 1^{|x|^c} \rangle$, 显然 $f$ 是多项式时间可计算的, 且 $x \in L \Leftrightarrow f(x) \in \textsf{SPACE-TM}$, 于是 $L \le_p \textsf{SPACE-TM}$, 故 $\textsf{SPACE-TM} \in \textbf{PSPACE}$-hard.
+\end{itemize}
+
+综上, $\textsf{SPACE-TM} \in \textbf{PSPACE}$-complete.
+
+\section{}
+$$\textsf{EXACT-INDSET} = \{\langle G, k \rangle | \text{ the largest independent set of } G \text{ is of size } k\}$$
+\subsection{}
+图 $G$ 的最大独立集大小为 $k$, 当且仅当存在大小为 $k$ 的独立集, 且不存在大小为 $k + 1$ 的独立集.
+$$\textsf{EXACT-INDSET} = \textsf{INDSET} \cap \overline{\textsf{INDSET}'}$$
+其中 \begin{equation*}
+	\begin{split}
+		\textsf{INDSET} &= \{\langle G, k \rangle | G \text{ has an independent set of size } k\} \in \textbf{NP} \\
+		\overline{\textsf{INDSET}'} &= \overline{\{\langle G, k \rangle | G \text{ has an independent set of size } k + 1\}}\\
+		&= \{\langle G, k \rangle | G \text{ has no independent set of size } k + 1\} \in \textbf{coNP} \\
+	\end{split}
+\end{equation*}
+故 $\textsf{EXACT-INDSET} \in \textbf{DP}$.
+\subsection{}
+回顾 $\textsf{3SAT} \le_p \textsf{INDSET}$ 的证明, 我们对 3CNF $\varphi$ 的每个大小为 $l \le 3$ 的 clause 建立了不超过 $2^l$ 个点表示能使这个 clause 为 True 的赋值方式, 并在所有会产生冲突的赋值方式之间连边. 记这张图为 $G$, $\varphi$ 一共有 $k$ 个 clause, 此时有 $\varphi \in \textsf{3SAT} \Leftrightarrow \langle G, k \rangle \in \textsf{EXACT-INDSET}$.
+
+可以考虑对构造的图进行一些修改: 建立 $k - 1$ 个新点, 分别与原先的所有点连边, 这样一来 $G$ 的最大独立集必然是 $k$ 或者 $k - 1$, 且有 $\varphi \in \textsf{3SAT} \Leftrightarrow \langle G, k \rangle \in \textsf{EXACT-INDSET}, \varphi \notin \textsf{3SAT} \Leftrightarrow \langle G, k - 1 \rangle \in \textsf{EXACT-INDSET}$.
+
+回到原问题. 对于任意 $L \in \textbf{DP}$, 存在 $L_1, L_2 \in \textbf{NP}$, 使得 $x \in L \Leftarrow x \in L_1, x \notin L_2$. 考虑多项式时间可计算函数 $f, g$ 分别将 $L_1, L_2$ 规约到 $\textsf{3SAT}$, 设 $f(x), g(x)$ 两个 3CNF 分别有 $k_1, k_2$ 个 clause, 按照前述的方式对 $f(x), g(x)$ 建图得到 $G_1, G_2$, 则有
+$$x \in L \Leftrightarrow x \in L_1, x \notin L_2 \Leftrightarrow f(x) \in \textsf{3SAT}, g(x) \notin \textsf{3SAT} \Leftrightarrow \langle G_1, k_1 \rangle, \langle G_2, k_2 - 1 \rangle \in \textsf{EXACT-INDSET}$$
+
+对于图 $G_1 = (V_1, E_1), G_2 = (V_2, E_2)$, 建立其“笛卡尔积”$G = G_1 \times G_2 =  (V, E)$, 其中 $V = V_1 \times V_2$, $((u_1, u_2), (v_1, v_2)) \in E$ 当且仅当 $(u_1, v_1) \in E_1$ \obj{或者} $(u_2, v_2) \in E_2$. 可以验证 $\langle G_1, k_1 \rangle, \langle G_2, k_2 \rangle \in \textsf{EXACT-INDSET} \Rightarrow \langle G, k_1k_2 \rangle \in \textsf{EXACT-INDSET}$. 
+
+记 $\langle G = G_1 \times G_2, k_1(k_2 - 1) \rangle = h(x)$, 其中 $G_1, G_2, k_1, k_2$ 如前述定义.
+
+接下来将证明 $x \in L \Leftrightarrow h(x) \in \textsf{EXACT-INDSET}$.
+\begin{itemize}
+	\item $x \in L \Rightarrow \langle G_1, k_1 \rangle, \langle G_2, k_2 - 1 \rangle \in \textsf{EXACT-INDSET} \Rightarrow \langle G, k_1(k_2-1) \rangle \in \textsf{EXACT-INDSET}$, 这个方向是容易的.
+	\item 如果 $x \notin L$, 则要么 $x \notin L_1 \Rightarrow \langle G_1, k_1-1 \rangle \in \textsf{EXACT-INDSET}$, 要么 $x \in L_2 \Rightarrow \langle G_2, k_2 \rangle \in \textsf{EXACT-INDSET}$, 这将导致 \num{1} $\langle G, (k_1 - 1)(k_2 - 1) \rangle$, \num{2} $\langle G, k_1k_2 \rangle$, \num{3} $\langle G, (k_1 - 1)k_2 \rangle$, 三者中存在某一者属于 $\textsf{EXACT-INDSET}$. 为了与 $\langle G, k_1(k_2 - 1) \rangle \in \textsf{EXACT-INDSET}$ 产生矛盾, 需要额外保证 $k_1 \neq 0, k_2 \neq 0, k_1 \neq k_2$, 注意到 $k_1, k_2$ 分别是两个 3CNF 的clause 数量, 只需要在构造 $f(x), g(x)$ 时重复部分 clause 即可实现这样的保证.
+\end{itemize}
+
+所以 $h$ 是从 $L$ 到 $\textsf{EXACT-INDSET}$ 的多项式时间规约, 说明 $L \le_p \textsf{EXACT-INDSET}$.
+
+\section{}
+$$\textsf{STR-CON} = \{\langle G \rangle | G \text{ is a strongly connected directed graph}\}$$
+欲证明 $\textsf{STR-CON} \in \textbf{NL}$-complete, 只需证明:
+\begin{itemize}
+	\item $\textsf{STR-CON} \in \textbf{NL}$: 按照 $\textbf{NL}$ 的 certificate definition, 只需要证明存在 $O(\log n)$ 空间图灵机(verifier) $M$, 对于任意有向图 $G = (V, E)$, $G$ 强连通当且仅当存在多项式规模的 certificate $u$ 满足 $M(G, u) = 1$.
+	
+	按如下形式构造 $M$ 和 $u$: 按照字典序升序, $u$ 给出每对 $(i, j) \in V \times V$ “$G$ 中存在 $i$ 到 $j$ 的有向路径”的 certificate, 每段 certificate 包含一个 $G$ 的顶点序列 $v_0v_1 \cdots v_k$, 相邻 certificate 之间用特殊符号分隔. 显然这样的 $u$ 是多项式规模的.
+
+	至于 verifier $M$, 它应该检查: \num{i} 是否按照升序完整给出了所有 $(i, j)$ 对的 certificate, \num{ii} 每个 $(i, j)$ 对的 certificate 是否合法, 即是否满足 $v_0 = i, v_k = j$, 且 $(v_t, v_{t + 1}) \in E$ 对所有 $0 \le t < k$ 成立. 显然 $M$ 只需要 $O(\log n)$ 的工作空间.
+
+	\item $\textsf{STR-CON} \in \textbf{NL}$-hard: 考虑将 $$\textsf{PATH} = \{\langle G, s, t \rangle | G = (V, E) \text{ is a directed graph in which there is a path from } s \text{ to } t\}$$ 规约到 $\textsf{STR-CON}$. 构造映射 $f$, $f(\langle G, s, t \rangle) = G' = (V, E')$, 其中 $G'$ 有与 $G$ 相同的点集 $V$, 包含 $G$ 中的所有边, 同时对于任意 $v \in V$ 都有 $(t, v), (v, s) \in E'$.
+	\begin{itemize}
+		\item $G'$ 的构造是简单的, 可以在 $O(\log n)$ 的工作空间中计算出 $G'$ 邻接矩阵的每一位, 故 $f$ 是隐对数空间可计算函数.
+		\item 当 $\langle G, s, t \rangle \in \textsf{PATH}$ 时, $G'$ 中存在 $s$ 到 $t$ 的有向路径, 因而对于任意 $(i, j) \in V \times V$ 都有 $i \to s \to t \to j$ 的有向路径, 说明 $G'$ 强连通.
+		\item 当 $\langle G, s, t \rangle \in \textsf{PATH}$ 时, $G'$ 中不存在 $s$ 到 $t$ 的有向路径, 导致 $G'$ 不强连通.
+	\end{itemize}
+
+	于是 $\langle G, s, t \rangle \in \textsf{PATH} \Leftrightarrow f(\langle G, s, t \rangle) \in \textsf{STR-CON}$, 说明 $\textsf{PATH} \le_l \textsf{STR-CON}$, 说明 $\textsf{STR-CON} \in \textbf{NL}$-hard.
+\end{itemize}
+
+\section{}
+\begin{definition}[\textbf{NL} 的 certificate definition]
+	称语言 $L \in \textbf{NL}$, 如果存在一台 DTM $M$ 和多项式 $p: \mathbb N \to \mathbb N$, 满足对于任意 $x \in \{0, 1\}^*$, $x \in L \Leftrightarrow \exists u \in \{0, 1\}^{p(|x|)}, \text{s.t. } M(x, u) = 1$, 其中 $u$ 被放在 $M$ 一条\uline{只能读一次的}纸带上, 且 $M$ 只能使用到 $O(\log |x|)$ 个工作纸带空间.
+\end{definition}
+
+考虑去掉“只能读一次”的限制, 记新得到的语言类为 \textbf{NL'}. 以下证明 $\textbf{NL'} = \textbf{NP}$:
+\begin{itemize}
+	\item $\textbf{NL'} \subseteq \textbf{NP}$: 显然, 因为只要在定义中去掉对 $M$ 工作纸带空间的限制, 就变成了 \textbf{NP} 的定义.
+	\item $\textbf{NP} \subseteq \textbf{NL'}$: 考虑证明任意 $L \in \textbf{NP}$ 都满足 $L \le_l \textsf{SAT} \in \textbf{NL'}$, 从而说明 $L \in \textbf{NL'}$:
+	\begin{itemize}
+		\item 任取 $L \in \textbf{NP}$, 在 Cook Levin Theorem 中证明了 $L \le_p \textsf{SAT}$, 方式是考虑判定 $L$ 的 oblivious TM $M$, 对 $M$ 在输入 $x$ 上运行过程的 snapshot 序列建立多项式规模的 CNF. 我们指出这个规约实际上还是隐对数空间可计算的, 因为构造出的这个 CNF 的长度以及任意一位比特都可以在对数空间内计算得到. 所以 $L \le_l \textsf{SAT}$.
+		\item 对于 $\varphi \in \textsf{SAT}$, 将其一组可满足赋值作为其 certificate, 构造 DTM $M$, 其计算过程为顺序遍历输入 CNF $\varphi$ 的每一个 clause, 在给出的 certificate 中查询每一个文字的真值, 判断是否每一个 clause 内都存在至少一个为 True 的文字. $M$ 的计算只需要 $O(\log |\varphi|)$ 额外空间, 因此 $M$ 符合 \textbf{NL} 的 certificate definition 中的要求, 而 $L(M) = \textsf{SAT}$, 说明 $\textsf{SAT} \in \textbf{NL'}$.
+	\end{itemize}
+\end{itemize}
+
+
+\end{document}
