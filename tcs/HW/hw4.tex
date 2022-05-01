@@ -125,8 +125,7 @@
 
 \section{}
 
-
-考虑建立 $\textsf{Vertex-Cover} = \{\langle G, k \rangle | G \text { has a subset of } k \text{ vertices that covers all 	edges}\}$ 到 $\textsf{Dominating-Set} = \{\langle G, k \rangle | G \text { has a subset of } k \text{ vertices that covers all 	vertices}\}$ 的多项式时间规约, 从而证明 $\textsf{Dominating-Set} \in \mathbf{NP}$-complete.
+考虑建立 $\textsf{Vertex-Cover} = \{\langle G, k \rangle | G \text { has a subset of } k \text{ vertices that covers all 	edges}\}$ 到 $\textsf{Dominating-Set} = \{\langle G, k \rangle | G \text { has a subset of } k \text{ vertices that covers all 	vertices}\}$ 的多项式时间规约.
 
 对于 $G = (V, E)$, 记 $G$ 中孤立点(度数为 $0$ 的点)的集合为 $\text{iso}(G)$, 考虑映射 $f(\langle G, k \rangle) = \langle G', k + |\text{iso}(G)| \rangle$, 其中 $G' = (V', E')$ 满足 \begin{equation*}
 	\begin{split}
@@ -152,7 +151,8 @@
 	\end{itemize}
 \end{itemize}
 
-故 $\textsf{Vertex-Cover} \le_p \textsf{Dominating-Set}$, 从而证明了$\textsf{Dominating-Set} \in \mathbf{NP}$-complete.
+故 $\textsf{Vertex-Cover} \le_p \textsf{Dominating-Set}$, 从而证明了$\textsf{Dominating-Set} \in \mathbf{NP}$-hard. 而显然 $\textsf{Dominating-Set} \in \mathbf{NP}$, 因为只需要将大小为 $k$ 的支配集作为 certificate  即可, 故 $\textsf{Dominating-Set} \in \mathbf{NP}$-complete.
+
 
 \section{}
 假设存在 $\mathbf{NP}$-complete 的 unary language $L$, 则存在多项式时间可计算函数 $f: \text{CNF} \to 1^*$ 满足 $\varphi \in \textsf{SAT} \Leftrightarrow f(\varphi) \in L$. 由于 $f$ 多项式时间可计算, 故存在常数 $c$ 使得 $\forall \varphi \in \text{CNF}, |f(\varphi)| \le |\varphi|^c$.

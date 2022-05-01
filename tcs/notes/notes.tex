@@ -126,6 +126,16 @@
 \def\NC{\textbf{NC}}
 \def\AC{\textbf{AC}}
 
+\def\BPTIME{\textbf{BPTIME}}
+\def\BPP{\textbf{BPP}}
+\def\coBPP{\textbf{coBPP}}
+
+\def\RTIME{\textbf{RTIME}}
+\def\RP{\textbf{RP}}
+\def\coRP{\textbf{coRP}}
+\def\ZTIME{\textbf{ZTIME}}
+\def\ZPP{\textbf{ZPP}}
+
 \title{\heiti\zihao{1} 计算理论导论\ 课程笔记}
 \author{\kaishu\zihao{-3} 酥雨\\zusuyu@stu.pku.edu.cn}
 
@@ -1299,5 +1309,88 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \begin{theorem}
 	$\NC^0 \subsetneq \AC^0 \subsetneq \NC^1$.
 \end{theorem}
+\begin{proof}
+	$1^* \in \AC^0, 1^* \notin \NC^0$.
+	$\textsf{PARITY} = \{x | x \text{ has an odd number of 1s}\} \in \NC^1, \textsf{PARITY} \notin \AC^0$. 
+
+	其中证明 $\textsf{PARITY} \notin \AC^0$ 使用到了 Switching Lemma. 但我懒得学了, 同时觉得反正学了写下来也不会有人看. 那就不管了.
+\end{proof}
+
+\newpage
+\section{随机计算}
+\begin{definition}[Probabilistic Turing Machine, PTM]
+	PTM 是一台有两个转移函数 $\delta_0, \delta_1$ 的图灵机, 其在每步转移中以 $1/2$ 的概率按照 $\delta_0$ 转移, 以 $1/2$ 的概率按照 $\delta_1$ 转移.
+	
+	因此 PTM $M$ 对输入 $x$ 的输出结果可以看作一个随机变量 $M(x)$. 对于 $T: \mathbb N \to \mathbb N$, 称 PTM $M$ 的运行时间为 $T(n)$, 如果 $M$ 对任意输入 $x$, 在任意的随机选择下, 都会在 $T(|x|)$ 步内停机.
+\end{definition}
+\begin{definition}[\BPTIME 与 \BPP]
+	称语言 $L \in \BPTIME(T(n))$, 如果存在运行时间为 $T(n)$ 的 PTM $M$, 使得对于任意 $x \in \{0, 1\}^*$ 都有 $\mathbb P[x \in L \Leftrightarrow M(x) = 1] \ge 2/3$. 记 $\BPP = \bigcup_{c \ge 0}\BPTIME(n^c)$.
+\end{definition}
+\begin{definition}[\BPP 的另一种定义]
+	称语言 $L \in \BPP$, 如果存在多项式时间图灵机 $M$ 和一个多项式 $p: \mathbb N \to \mathbb N$, 满足对于任意 $x \in \{0, 1\}^*$, $\mathbb P_{r \in \{0, 1\}^{p(|x|)}}[x \in L \Leftrightarrow M(x, r) = s] \ge 2/3$.
+\end{definition}
+\begin{remark}
+	从 \BPP 的另一种定义中可以看出 $\BPP \subseteq \EXP$, 但即使是 $\BPP \subsetneq \NEXP$ 的真包含关系都没有被证明. 另一方面, $\P \subseteq \BPP$ 是显然的, 但是否等于也仍是 open problem. 许多计算机理论科学家相信 $\P = \BPP$.
+\end{remark}
+\begin{proposition}
+	$\BPP = \coBPP = \{L | \overline{L} \in \BPP\}$.
+\end{proposition}
+\subsection{单边错误与“零边错误”}
+之前讨论的 \BPP 涵盖了具有所谓“双边错误”的随机算法, 即算法(图灵机)可能对 $x \in L$ 输出 $0$, 也可能对 $x \notin L$ 输出 $1$. 事实上部分随机算法能够保证不存在 true negative 或者 false positive.
+\begin{definition}[\RTIME 与 \RP]
+	称语言 $L \in \RTIME$, 如果存在运行时间为 $T(n)$ 的 PTM $M$, 使得对于任意 $x \in \{0, 1\}^*$ 都有 \begin{equation*}
+		\begin{split}
+			x \in L &\Rightarrow \mathbb P[M(x) = 1] \ge 2/3 \\
+			x \notin L &\Rightarrow \mathbb P[M(x) = 0] = 1
+		\end{split}
+	\end{equation*}
+	
+	记 $\RP = \bigcup_{c \ge 0} \RTIME(n^c)$.
+\end{definition}
+
+可以看出 $\RP \subseteq \NP$, 因为一个使 $M(x) = 1$ 的随机选择的序列能够作为 $x \in L$ 的 certificate.
+
+类似地, 可以定义 $\coRP = \{L | \overline{L} \in \RP\}$ 为另一个方向的单边错误语言类.
+\begin{proposition}
+	$\RP, \coRP \in \BPP$.
+\end{proposition}
+\begin{definition}[\ZTIME 与 \ZPP]
+	称语言 $L \in \ZTIME(T(n))$, 如果存在运行时间\obj{期望}为 $T(n)$ 的 PTM $M$, 满足对于任意 $x \in \{0, 1\}^*$, $x \in L \Leftrightarrow M(x) = 1$. 称 PTM $M$ 的运行时间\obj{期望}为 $T(n)$, 如果对于任意输入 $x \in \{0, 1\}^*$, $M$ 的运行时间 $T_{M, x}$ 都满足 $\mathbb E[T_{M, x}] \le T(|x|)$. 记 $\ZPP = \bigcup_{c \ge 0}\ZTIME(n^c)$.
+\end{definition}
+\begin{theorem}
+	$\ZPP = \RP \cap \coRP$.
+\end{theorem}
+\begin{proof}
+	$\subseteq$: 只证明 $\ZPP \subseteq \RP$, 另外一个是同理的.
+
+	对于任意 $L \in \ZPP$, 设判定 $L$ 的 PTM $M$ 的期望运行时间是 $\mathbb E[T]$, 考虑构造另一台 PTM $M'$, 它模拟 $M$ 运行至多 $3\mathbb E[T]$ 步, 如果 $M$ 停机了就输出 $M$ 的结果, 否则就摆烂输出 $0$. 显然 $M'$ 是多项式时间的.
+
+	根据 Markov Inequality, 我们知道 $$\mathbb P\left[T \ge 3\mathbb E[T]\right] \le \frac{1}{3}$$ 因此只有不超过 $1/3$ 的概率在摆烂, 从而, $x \in L \Rightarrow \mathbb P[M'(x) = 1] \ge 2/3, x \notin L \Rightarrow \mathbb P[M'(x) = 0] = 1$, 故 $L \in \RP$.
+
+	$\supseteq$: 对于任意 $L \in \RP \cap \coRP$, 考虑 PTM $M, M'$ 满足 \begin{equation*}
+		\begin{split}
+			x \in L &\Rightarrow \mathbb P[M(x) = 1] \ge 2/3, \mathbb P[M'(x) = 1] = 1 \\
+			x \notin L &\Rightarrow \mathbb P[M(x) = 0] = 1, \mathbb P[M'(x) = 0] \ge 2/3 \\
+		\end{split}
+	\end{equation*}
+	重复运行 $M, M'$, 直到 $M$ 输出 $1$ 或者 $M'$ 输出 $0$. 期望在常数次重复内有一者发生, 故运行时间也是多项式的, 从而说明 $L \in \ZPP$.
+\end{proof}
+
+\subsection{如何提升正确率}
+为什么 $\BPP$ 的定义中出现了奇怪的常数 $2/3$? 我们将证明这个常数的具体取值是无关紧要的.
+\begin{theorem}
+	假设对于语言 $L \subseteq \{0, 1\}^*$ 存在多项式时间 PTM $M$ 满足对于任意 $x \in \{0, 1\}^*$ 有 $$\mathbb P[x \in L \Leftrightarrow M(x) = 1] \ge 0.5 + |x|^{-c}$$ 则对于任意常数 $d > 0$ 都存在多项式时间 $M'$ 满足对于任意 $x \in \{0, 1\}^*$ 有 $$\mathbb P[x \in L \Leftrightarrow M'(x) = 1] \ge 1 - 2^{-|x|^d}$$
+\end{theorem}
+\begin{proof}
+	“正确率低的话多测几次不就好了啦.”
+
+	重复运行算法 $k$ 次, 得到 $k$ 个结果 $X_1, \cdots, X_k$, 拿这些结果做个 majority vote.
+	
+	显然 $X_i \sim \text{i.i.d. } \mathcal B(1, p)$, 其中 $p = \mathbb E[X_i] \ge 0.5 + |x|^{-c}$. 根据 Chernoff Bound\footnote{翻 ML notes 把.}, 我们知道 $$\mathbb P\left[ \frac{1}{k}\sum_{i=1}^kX_i - p \le -\varepsilon \right] \le \mathrm{e}^{-2k\varepsilon^2}$$ 代入 $k = \frac{\ln 2}{2}|x|^{2c+d}$ 以及 $\varepsilon = |x|^{-c}$ 可以得到 $$\mathbb P[\text{make mistake}] = \mathbb P\left[ \sum_{i=1}^{k}X_i \le 0.5k\right] = \mathbb P\left[ \frac{1}{k}\sum_{i=1}^kX_i - p \le -|x|^{-c} \right] \le \mathrm{e}^{-2k|x|^{-2c}} = 2^{-|x|^d}$$
+\end{proof}
+\begin{remark}
+	对于单边错误的情况, 提升正确率是更加简单的, 甚至不用要求原正确率大于 $0.5$, 大于 $0$ 就行了!
+\end{remark}
+\subsection{\BPP 与其他语言类的关系}
 
 \end{document}
