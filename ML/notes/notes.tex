@@ -601,7 +601,7 @@ wlw不讲了.
 \subsubsection{Hedge Algorithm}
 我们再提出一种叫做 Hedge Algorithm 的算法, 它其实只是 Randomized Weighted Updating 的推广, 但这个结果可以为后续证明\cref{minimax} 的工作做准备.
 
-在 Hedge Algorithm 的设定下, loss 不再是“答错了几次”, 而是每一轮每一位专家的回答都有一个loss $g_t(i) \in [0, 1]$, 记学习者在第 $t$ 轮的 loss 为 $l_t$, 则 $l_t$ 的期望就是 $n$ 位专家的加权平均: $$\E{l_t} = \left(\sum\limits_{i=1}^{n}w_{t, i}g_t(i)\right) \bigg/ \left(\sum\limits_{i=1}^{n}w_{t, i}\right)$$.
+在 Hedge Algorithm 的设定下, loss 不再是“答错了几次”, 而是每一轮每一位专家的回答都有一个loss $g_t(i) \in [0, 1]$, 记学习者在第 $t$ 轮的 loss 为 $l_t$, 则 $l_t$ 的期望就是 $n$ 位专家的加权平均: $$\E{l_t} = \left(\sum\limits_{i=1}^{n}w_{t, i}g_t(i)\right) \bigg/ \left(\sum\limits_{i=1}^{n}w_{t, i}\right)$$
 
 \begin{algorithm}
 	\caption{Hedge Algorithm}
@@ -652,7 +652,7 @@ $$\min_p\max_q p^{\text T}Mq = \max_q\min_p p^{\text T}Mq$$
 
 \subsubsection{The $\le$ Direction}
 
-把 row player 当作在线学习中的学习者, column player 则对应 adversary, 收益矩阵 $M$ 的 $m$ 行分别是一位专家.
+row player 对应在线学习中的学习者, column player 对应 adversary, 收益矩阵 $M$ 的 $m$ 行分别是一位专家.
 
 在第 $t$ 轮中, 学习者选择列向量 $p_t$ 满足 $(p_t)_i = \frac{w_{t, i}}{\sum_{i=1}^{m}w_{t, i}}$, 其中 $w_{t, i}$ 表示第 $t$ 轮时第 $i$ 位专家的权值. 给出了 $p_t$ 后, adversary 可以很容易地给出 $q_t = \max_{q}p_t^{\text T}Mq$. 第 $i$ 位专家建议选第 $i$ 行, 他这样的方案对应的 loss 是 $g_t(i) = (Mq_t)_i$. 显然学习者此时的 loss 的期望恰好等于 $m$ 为专家各自损失的加权平均, 即 $$\E{l_t} = \left(\sum\limits_{i=1}^{n}w_{t, i}g_t(i)\right) \bigg/ \left(\sum\limits_{i=1}^{n}w_{t, i}\right) = p_t^{\text T}Mq_t$$
 
@@ -672,4 +672,124 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 
 因此 $\min_p\max_q p^{\text T}Mq \le \max_q\min_p p^{\text T}Mq + o(1)$, 即 $\min_p\max_q p^{\text T}Mq \le \max_q\min_p p^{\text T}Mq$.
 
+\subsection{Multi-arm Bandits (MAB) Problem}
+有一台多臂老虎机, 它有 $k$ 个拉杆, 第 $i$ 个拉杆拉动后会返回一个服从分布 $\mathcal D_i$ 的随机变量loss, 其中 $\mathcal D_i$ 的均值为 $\mu_i$. 需要最小化拉 $T$ 轮后得到的 loss 之和.
+
+记第 $t$ 轮中选择拉动了第 $a_t$ 个拉杆, 我们可以定义 $T$ 轮操作后的 regret 为 $$R_T = \mathbb E_{\mathcal A}\left[\sum_{t=1}^T\mu_{a_t} - \mu^*\right]$$ 其中 $\mathcal A = (a_1, \cdots, a_T)$ 为选择拉动的拉杆编号序列, $\mu^* = \min_{1 \le i \le k}\mu_i$ 为最优的期望 loss. 概率源自于 $\mathcal A$ 中 $a_t$ 的选取会基于之前随机变量 $l_1 \sim \mathcal D_{a_1}, \cdots, l_{t-1} \sim \mathcal D_{t-1}$ 的实际取值.
+
+由于在 MAB 问题中我们并不先验地知道每个分布的均值, 因此这是一个在 exploration (调查每个拉杆) 和 exploitation (对着“最好”的薅) 之间权衡的过程.
+
+\subsubsection{UCB Algorithm}
+
+\begin{algorithm}
+	\caption{UCB Algorithm}
+	\begin{algorithmic}[1]
+		\State $n_t(a)$ represents \# of times arm $a$ has been pulled at time $t$
+		\State $\mu_t(a)$ represents the empirical loss of arm $i$ at time $t$
+		\State Initialize $n_0(a) \gets 0, \mu_0(a) \gets 0$
+		\For{$t = 1 \to T$}
+			\State For each arm $a$, compute $\text{UCB}_t(a) \gets \mu_{t-1}(a) - \sqrt{\frac{\ln T}{n_{t-1}(a)}}$
+			\State Pull the arm $a_t = \arg \min_{1 \le a \le k}\text{UCB}_t(a)$
+			\State Update $n_t(a)$ and $\mu_t(a)$ for each $1 \le a \le k$
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+特别地, 当 $n_{t-1}(a) = 0$ 时, 记 $\text{UCB}_t(a) = -\infty$.
+
+\begin{theorem}
+	不失一般性假设 $\mu_1 \le \min\{\mu_2, \cdots, \mu_k\}$, UCB Algorithm 得到的 regret 可以被限制为
+	$$R_T = \mathbb E_{\mathcal A}\left[\sum_{t=1}^T\mu_{a_t} - \mu_1\right] \le \sum_{\Delta_a > 0}\left(\frac{16\ln T}{\Delta_a} + 2\Delta_a\right)$$
+	其中 $\Delta_a = \mu_a - \mu_1$.
+\end{theorem}
+\begin{proof}
+	注意到 $$R_T = \mathbb E_{\mathcal A}\left[\sum_{t=1}^T\mu_{a_t} - \mu_1\right] = \sum_{a=1}^{k}\Delta_a \cdot \mathbb E_{\mathcal A}[n_T(a)]$$ 只需要证明对于每个 $\Delta_a > 0$ 的拉杆 $a$, 都有 $$\mathbb E_{\mathcal A}[n_T(a)] \le \frac{16\ln T}{\Delta_a^2} + 2$$
+
+	对于任意正整数 $m$, 我们有 \begin{equation*}
+		\begin{split}
+			\mathbb E_{\mathcal A}[n_T(a)] &= \sum_{t=1}^T \P{a_t = a} \\
+			&= \sum_{t=1}^T \P{a_t = a \wedge n_{t-1}(a) < m} + \sum_{t=1}^T \P{a_t = a \wedge n_{t-1}(a) \ge m}\\
+			&\le m + \sum_{t=m+1}^T \P{a_t = a \wedge n_{t-1}(a) \ge m}
+		\end{split}
+	\end{equation*}
+
+	\begin{proposition}
+		假如某个 $\Delta_a > 0$ 的拉杆 $a$ 在第 $t$ 轮被拉动了, 则要么 $\text{UCB}_t(1) > \mu_1$, 要么 $\text{UCB}_t(a) < \mu_1 = \mu_a - \Delta_a$.
+	\end{proposition}
+	\begin{proof}
+		否则 $\text{UCB}_t(1) \le \mu_1 \le \text{UCB}_t(a)$, 拉动 $a$ 不如拉动 $1$.
+	\end{proof}
+
+	利用上述命题, \begin{equation*}
+		\begin{split}
+			\P{a_t = a \wedge n_{t-1}(a) \ge m} &= \P{\left(\text{UCB}_t(1) > \mu_1 \vee \text{UCB}_t(a) < \mu_1\right) \wedge n_{t-1}(a) \ge m}\\
+			&\le \P{\text{UCB}_t(1) > \mu_1 \wedge n_{t-1}(a) \ge m} + \P{\text{UCB}_t(a) < \mu_1 \wedge n_{t-1}(a) \ge m}\\
+			&\le \P{\text{UCB}_t(1) > \mu_1} + \P{\text{UCB}_t(a) < \mu_1 \wedge n_{t-1}(a) \ge m}
+		\end{split}
+	\end{equation*}
+
+	对于前一部分, \begin{equation*}
+		\begin{split}
+			\P{\text{UCB}_t(1) > \mu_1} &= \sum_{k=1}^T \P{\mu_{t-1}(1) - \sqrt{\frac{\ln T}{k}} > \mu_1 \wedge n_{t-1}(1) = k} \\
+			&\le \sum_{k=1}^T \P{\mu_{t-1}(1) - \mu_1 > \sqrt{\frac{\ln T}{k}} \bigg| n_{t-1}(1) = k}\\
+			&\le \sum_{k=1}^T \exp\left(-2k\left(\sqrt{\frac{\ln T}{k}}\right)^2\right) \\
+			&= \sum_{k=1}^T \frac{1}{T^2} = \frac 1T
+		\end{split}
+	\end{equation*}
+	其中第三行用到了 Chernoff Bound (\cref{chernoff-bound-additive}).
+	
+	对于第二个, 取 $m$ 满足 $2\sqrt{\frac{\ln T}{m}}\le \Delta_a \le 4\sqrt{\frac{\ln T}{m}}$, 有 $m \le \frac{16 \ln T}{\Delta_a^2}$, \begin{equation*}
+		\begin{split}
+			\P{\text{UCB}_t(a) < \mu_1 \wedge n_{t-1}(a) \ge m} &= \P{\mu_{t-1}(a) - \mu_a < \sqrt{\frac{\ln T}{n_{t-1}(a)}} - \Delta_a \wedge n_{t-1}(a) \ge m}\\
+			&\le \P{\mu_{t-1}(a) - \mu_a < -\sqrt{\frac{\ln T}{m}}} \le \frac1T
+		\end{split}
+	\end{equation*}
+
+	结合上述结果, 我们得到
+	$$\mathbb E_{\mathcal A}[n_T(a)] \le m + \sum_{t=m+1}^T \P{a_t = a \wedge n_{t-1}(a) \ge m} \le m + \sum_{t=m+1}^T \frac2T \le \frac{16\ln T}{\Delta_a^2} + 2$$
+
+	完成了证明.
+\end{proof}
+\begin{remark}
+	上述结论是 instance-dependent 的, 因为其限制中包含了 $\Delta_a$ 项. 如果我们把 $\Delta_a$ 视作常数, 那么 $R_T$ 就是 $O(k\ln T)$ 级别, 这比 Online Learning with Expert Advice 的 $O(\sqrt{T\log n})$ 要厉害. 不过, 如果 $\Delta_a$ 很小, 上述结论给出的界就会很差. 接下来我们给出一个更精细化的结论.
+\end{remark}
+\begin{theorem}
+	假设 $\Delta_a$ 有界(存在 $M > 0$ 使得 $\Delta_a \le M$ 成立), 则最坏情况下 UCB Algorithm 得到的 regret 为 $$R_T = O(\sqrt{kT\ln T})$$
+\end{theorem}
+\begin{proof}
+	取 $\delta = \sqrt{\frac{k\ln T}{T}}$, 将所有 $a$ 按照 $\Delta_a$ 与 $\delta$ 的大小关系分为两组: \begin{equation*}
+		\begin{split}
+			R_T^{(1)} &= \sum_{t=1}^{T} \sum_{0 < \Delta_a < \delta} \Delta_a \cdot \P{a_t = a} \le T \cdot \delta \le \sqrt{kT\ln T}\\
+			R_T^{(2)} &= \sum_{\Delta_a \ge \delta}\left(\frac{16\ln T}{\Delta_a} + 2\Delta_a\right) = O\left(\frac{kT}{\delta} + k\right) = O(\sqrt{kT\ln T})\\
+			R_T &= R_T^{(1)} + R_T^{(2)} = O(\sqrt{kT\ln T})
+		\end{split}
+	\end{equation*}
+\end{proof}
+
+\subsubsection{Thompson Sampling}
+\begin{definition}[$Beta$ 分布]
+	$Beta$ 分布是在区间 $(0, 1)$ 上的连续分布, 对于参数 $\alpha, \beta > 0$, 分布 $Beta(\alpha, \beta)$ 的概率密度函数为 $$f(x; \alpha, \beta) = \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1}$$
+\end{definition}
+
+在 Thompson Sampling 中, 我们假设所有 loss 都是 $[0, 1]$ 的.
+
+\begin{algorithm}
+	\caption{Thompson Sampling}
+	\begin{algorithmic}[1]
+		\State Initialize $S_a \gets 0, F_a \gets 0$
+		\For{$t = 1 \to T$}
+			\State For each arm $a$, sample $\Theta_a(t) \sim Beta(S_a + 1, F_a + 1)$
+			\State Pull the arm $a_t = \arg \max_{1 \le a \le k}\Theta_a(t)$, and obtain the loss $l_t \sim \mathcal D_{a_t}$ \Comment{$l_t \in [0, 1]$}
+			\State Sample $\tilde{l_t} \sim \mathcal B(1, l_t)$ \Comment{$\tilde{l_t} \in \{0, 1\}$}
+			\State $S_{a_t} \gets S_{a_t} + \tilde{l_t}, F_{a_t} \gets F_{a_t} + 1 - \tilde{l_t}$
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+\begin{theorem}
+	不失一般性假设 $\mu_1 \le \min\{\mu_2, \cdots, \mu_k\}$, 对于任意 $\varepsilon > 0$, Thompson Sampling 得到的 regret 都满足 $$R_T \le (1 + \varepsilon)\sum_{\mu_a \neq \mu_1}\frac{\Delta_a\log T}{D(\mu_a \| \mu_1)} + O\left(\frac{k}{\varepsilon^2}\right) \le (1 + \varepsilon)\sum_{\mu_a \neq \mu_1}\frac{\log T}{2\Delta_a} + O\left(\frac{k}{\varepsilon^2}\right)$$
+\end{theorem}
+
+证明太长了, 就不讲了.
+
 \end{document}
+

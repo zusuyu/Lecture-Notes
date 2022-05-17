@@ -885,10 +885,10 @@
 		\item 假如 $\textsf{SAT}_H \in \NP$-complete, 则存在一种运行时间为 $O(n^i)$ 的从 $\textsf{SAT}$ 到 $\textsf{SAT}_H$ 的规约 $f$. 注意到由上一条归谬我们已经知道了 $\lim\limits_{n \to \infty}H(n) = \infty$, 故存在 $N$ 使 $H(n) > 3i$ 对 $\forall n > N$ 成立. 考虑构造一种多项式时间算法来实现 $\textsf{SAT}$ 的判定: 
 		
 		\begin{itemize}
-			\item 对于输入 $\varphi$, 若 $|\varphi| < N$则暴力判定, 否则 $O(|\varphi|^i)$ 地计算 $f(\varphi)$ 并检查其是否形如 $\psi01^{|\psi|^{H(\psi)}}$, 若不形如则直接返回 False, 否则有 $\varphi \in \textsf{SAT} \Leftrightarrow f(\varphi) \in \textsf{SAT}_H \Leftrightarrow \psi \in \textsf{SAT}$, 可以递归判定 $\psi$.
+			\item 对于输入 $\varphi$, 若 $|\varphi| < N$则暴力判定, 否则 $O(|\varphi|^i)$ 地计算 $f(\varphi)$ 并检查其是否形如 $\psi01^{|\psi|^{H(|\psi|)}}$, 若不形如则直接返回 False, 否则有 $\varphi \in \textsf{SAT} \Leftrightarrow f(\varphi) \in \textsf{SAT}_H \Leftrightarrow \psi \in \textsf{SAT}$, 可以递归判定 $\psi$.
 		\end{itemize}
 		
-		考虑限制一下 $|\psi|$. 注意到 $|\psi01^{|\psi|^{H(\psi)}}| = |\psi| + 1 + |\psi|^{H(\psi)} \le |\varphi| + |\varphi|^i$, 随意缩放一下有 $|\psi|^{3i} < |\psi|^{H(\psi)} \le |\varphi|^{i+1}$, 从而 $|\psi| \le \sqrt{|\varphi|}$. 那么算法的时间复杂度就是 $T(n) \le O(n^i) + T(\sqrt n) \Rightarrow T(n) = O(n^i)$. 这也导致 $\textsf{SAT} \in \P$, 与 $\P \neq \NP$ 矛盾.
+		考虑限制一下 $|\psi|$. 注意到 $\left|\psi01^{|\psi|^{H(|\psi|)}}\right| = |\psi| + 1 + |\psi|^{H(|\psi|)} \le |\varphi| + |\varphi|^i$, 随意缩放一下有 $|\psi|^{3i} < |\psi|^{H(\psi)} \le |\varphi|^{i+1}$, 从而 $|\psi| \le \sqrt{|\varphi|}$. 那么算法的时间复杂度就是 $T(n) \le O(n^i) + T(\sqrt n) \Rightarrow T(n) = O(n^i)$. 这也导致 $\textsf{SAT} \in \P$, 与 $\P \neq \NP$ 矛盾.
 	\end{itemize}
 \end{proof}
 \begin{theorem}[Nondeterministic Time Hierarchy Theorem]
@@ -1336,9 +1336,9 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 	$\BPP = \coBPP = \{L | \overline{L} \in \BPP\}$.
 \end{proposition}
 \subsection{单边错误与“零边错误”}
-之前讨论的 \BPP 涵盖了具有所谓“双边错误”的随机算法, 即算法(图灵机)可能对 $x \in L$ 输出 $0$, 也可能对 $x \notin L$ 输出 $1$. 事实上部分随机算法能够保证不存在 true negative 或者 false positive.
+之前讨论的 \BPP 涵盖了具有所谓“双边错误”的随机算法, 即算法(图灵机)可能对 $x \in L$ 输出 $0$, 也可能对 $x \notin L$ 输出 $1$. 事实上部分随机算法能够保证不存在 false positive 或者 false negative.
 \begin{definition}[\RTIME 与 \RP]
-	称语言 $L \in \RTIME$, 如果存在运行时间为 $T(n)$ 的 PTM $M$, 使得对于任意 $x \in \{0, 1\}^*$ 都有 \begin{equation*}
+	称语言 $L \in \RTIME(T(n))$, 如果存在运行时间为 $T(n)$ 的 PTM $M$, 使得对于任意 $x \in \{0, 1\}^*$ 都有 \begin{equation*}
 		\begin{split}
 			x \in L &\Rightarrow \mathbb P[M(x) = 1] \ge 2/3 \\
 			x \notin L &\Rightarrow \mathbb P[M(x) = 0] = 1
@@ -1350,7 +1350,7 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 
 可以看出 $\RP \subseteq \NP$, 因为一个使 $M(x) = 1$ 的随机选择的序列能够作为 $x \in L$ 的 certificate.
 
-类似地, 可以定义 $\coRP = \{L | \overline{L} \in \RP\}$ 为另一个方向的单边错误语言类.
+类似地, 可以定义 $\coRP = \{L | \overline{L} \in \RP\}$ 为另一个方向的单边错误语言类. 可以看出 $\coRP \subseteq \coNP$.
 \begin{proposition}
 	$\RP, \coRP \in \BPP$.
 \end{proposition}
@@ -1363,7 +1363,7 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \begin{proof}
 	$\subseteq$: 只证明 $\ZPP \subseteq \RP$, 另外一个是同理的.
 
-	对于任意 $L \in \ZPP$, 设判定 $L$ 的 PTM $M$ 的期望运行时间是 $\mathbb E[T]$, 考虑构造另一台 PTM $M'$, 它模拟 $M$ 运行至多 $3\mathbb E[T]$ 步, 如果 $M$ 停机了就输出 $M$ 的结果, 否则就摆烂输出 $0$. 显然 $M'$ 是多项式时间的.
+	对于任意 $L \in \ZPP$, 设判定 $L$ 的 PTM $M$ 的期望运行时间是 $\mathbb E[T]$, 考虑构造另一台 PTM $M'$, 它仿照 $M$ 运行至多 $3\mathbb E[T]$ 步, 如果 $M$ 停机了就输出 $M$ 的结果, 否则就摆烂输出 $0$. 显然 $M'$ 是多项式时间的.
 
 	根据 Markov Inequality, 我们知道 $$\mathbb P\left[T \ge 3\mathbb E[T]\right] \le \frac{1}{3}$$ 因此只有不超过 $1/3$ 的概率在摆烂, 从而, $x \in L \Rightarrow \mathbb P[M'(x) = 1] \ge 2/3, x \notin L \Rightarrow \mathbb P[M'(x) = 0] = 1$, 故 $L \in \RP$.
 
@@ -1377,12 +1377,12 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \end{proof}
 
 \subsection{如何提升正确率}
-为什么 $\BPP$ 的定义中出现了奇怪的常数 $2/3$? 我们将证明这个常数的具体取值是无关紧要的.
+为什么 $\BPP$ 的定义中出现了奇怪的常数 $2/3$? 我们将证明这个常数的具体取值是不重要的.
 \begin{theorem}
 	假设对于语言 $L \subseteq \{0, 1\}^*$ 存在多项式时间 PTM $M$ 满足对于任意 $x \in \{0, 1\}^*$ 有 $$\mathbb P[x \in L \Leftrightarrow M(x) = 1] \ge 0.5 + |x|^{-c}$$ 则对于任意常数 $d > 0$ 都存在多项式时间 $M'$ 满足对于任意 $x \in \{0, 1\}^*$ 有 $$\mathbb P[x \in L \Leftrightarrow M'(x) = 1] \ge 1 - 2^{-|x|^d}$$
 \end{theorem}
 \begin{proof}
-	“正确率低的话多测几次不就好了啦.”
+	\textit{“正确率低的话多测几次不就好了啦.”}
 
 	重复运行算法 $k$ 次, 得到 $k$ 个结果 $X_1, \cdots, X_k$, 拿这些结果做个 majority vote.
 	
