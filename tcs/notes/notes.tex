@@ -89,7 +89,7 @@
 \newtheorem{proposition}{命题}[section]
 \newtheorem{corollary}{推论}[section]
 \newtheorem{example}{例}[section]
-\newtheorem{claim}{声明}[section]
+\newtheorem{claim}{断言}[section]
 \newtheorem{remark}{注}[section]
 \newtheorem{thesis}{论点}[section]
 \newtheorem{Proof}{证明}
@@ -572,7 +572,7 @@
 
 	注意每步模拟的过程中, 读取 $M$ 所在状态, 读取转移函数都是关于 $n$ 常数时间的.
 
-	可以设计一种类似势能分析的算法, 把单纸带模拟多纸带的 overhead 降到 $O(n \log n)$, 从而使通用图灵机模拟的复杂度优化到 $O(T \log T)$.
+	可以设计一种基于势能分析的算法, 把单纸带模拟多纸带的 overhead 降到 $O(n \log n)$, 从而使通用图灵机模拟的复杂度优化到 $O(T \log T)$.
 \end{proof}
 
 \newpage
@@ -1254,6 +1254,7 @@
 \subsection{接受建议的图灵机}
 \begin{definition}[接受建议的图灵机]
 	考虑一个这样的语言类, 其包含所有这样的语言 $L$: 存在一列字符串(建议) $\{\alpha_n\}_{n \in \mathbb N}$ 满足 $|\alpha(n)| = a(n)$, 以及运行时间为 $T(n)$ 的图灵机 $M$, 满足 $x \in L \Leftrightarrow M(x, \alpha_{|x|}) = 1$. 把这样的语言类记作 $\DTIME(T(n)) / a(n)$.
+	\label{take_advise}
 \end{definition}
 \begin{theorem}
 	\PPOLY = $\bigcup_{c, d \ge 0}\DTIME(n^c) / n^d$.
@@ -1380,6 +1381,7 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 为什么 $\BPP$ 的定义中出现了奇怪的常数 $2/3$? 我们将证明这个常数的具体取值是不重要的.
 \begin{theorem}
 	假设对于语言 $L \subseteq \{0, 1\}^*$ 存在多项式时间 PTM $M$ 满足对于任意 $x \in \{0, 1\}^*$ 有 $$\mathbb P[x \in L \Leftrightarrow M(x) = 1] \ge 0.5 + |x|^{-c}$$ 则对于任意常数 $d > 0$ 都存在多项式时间 $M'$ 满足对于任意 $x \in \{0, 1\}^*$ 有 $$\mathbb P[x \in L \Leftrightarrow M'(x) = 1] \ge 1 - 2^{-|x|^d}$$
+	\label{robustness}
 \end{theorem}
 \begin{proof}
 	\textit{“正确率低的话多测几次不就好了啦.”}
@@ -1392,5 +1394,125 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 	对于单边错误的情况, 提升正确率是更加简单的, 甚至不用要求原正确率大于 $0.5$, 大于 $0$ 就行了!
 \end{remark}
 \subsection{\BPP 与其他语言类的关系}
+\begin{theorem}
+	$\BPP \subseteq $ \PPOLY.
+\end{theorem}
+\begin{proof}
+	任取 $L \in \BPP$, 由\cref{robustness} 知存在一台多项式时间图灵机 $M: \{0, 1\}^n \times \{0, 1\}^{m(n)} \to \{0, 1\}$ 满足 $\forall x \in \{0, 1\}^n$, $$\mathbb P_{r \in \{0, 1\}^{m(n)}}[M(x, r) \neq L(x)] \le 2^{-n-1}$$ 那么一定存在某个 $r_n \in \{0, 1\}^{m(n)}$ 对于所有 $x \in \{0, 1\}^n$ 都满足 $M(x, r_n) = L(x)$, 这是因为"存在 $x$ 使 $M(x, r) \neq L(x)$"的 $r$ 的数量只有不超过 $2^n \cdot \frac{2^m}{2^{n+1}} = 2^{m-1}$ 个.
+
+	于是 $x \{0, 1\}^n \in L \Leftrightarrow \exists r_n, M(x, r_n) = 1$. 根据 Turing Machines that Take Advice (\cref{take_advise}) 的模型, 我们得到了 $L \in $ \PPOLY.
+\end{proof}
+\begin{theorem}
+	$\BPP \subseteq \Sigma_2^p \cap \Pi_2^p$.
+\end{theorem}
+\begin{proof}
+	只证明 $\BPP \subseteq \Sigma_2^p$. 因为 $\BPP = \coBPP$, 故另一边也可以简单得到.
+
+	任取 $L \in \BPP$, 由\cref{robustness} 知存在一台多项式时间图灵机 $M: \{0, 1\}^n \times \{0, 1\}^{m} \to \{0, 1\}$ 满足 $\forall x \in \{0, 1\}^n$, $$\mathbb P_{r \in \{0, 1\}^{m}}[M(x, r) \neq L(x)] \le 2^{-n-1}$$ 其中 $m = \text{poly}(n)$. 对于 $x \in \{0, 1\}^n$, 记 $S_x$ 为所有满足 $M(x, r) = 1$ 的 $r$ 构成的集合, 则要么 $|S_x| \ge (1 - 2^{-n})2^m$, 要么 $|S_x| \le 2^{-n}2^m$.
+	\begin{proposition}
+		对于 $S \subseteq \{0, 1\}^m$ 和 $x \in \{0, 1\}^m$, 记 $S + x = \{y \oplus x | y \in S\} \subseteq \{0, 1\}^m$, 其中 $\oplus$ 为二进制不进位加法(XOR). 记 $k = \lceil \frac mn \rceil + 1$, 对于任意 $S \subseteq \{0, 1\}^m$, \begin{itemize}
+			\item 如果 $|S| \le 2^{m-n}$, 则任意 $u_1, \cdots, u_k \in \{0, 1\}^m$ 都有 $\bigcup_{i=1}^k (S + u_i) \neq \{0, 1\}^m$.
+		    \item 如果 $|S| \ge (1-2^{-n})2^m$, 则存在 $u_1, \cdots, u_k \in \{0, 1\}^m$ 使得 $\bigcup_{i=1}^k (S + u_i) = \{0, 1\}^m$.
+		\end{itemize}
+	\end{proposition}
+	\begin{proof}
+		\begin{itemize}
+			\item 如果 $|S| \le 2^{m-n}$, $\left|\bigcup_{i=1}^k (S + u_i)\right| \le k|S| \le 2^m$, 对于充分大的 $n$ 成立, 所以不会等于.
+		   \item 使用概率方法, 可以独立均匀随机地选取 $u_i$, 证明 $\mathbb P\left[\bigcup_{i=1}^k (S + u_i) \neq \{0, 1\}^m\right] < 1$. 根据 Union Bound, 只需要证明某一个 $r \in \{0, 1\}^m$ 不属于 $\bigcup_{i=1}^k (S + u_i)$ 的概率小于 $2^{-m}$, 而这个概率可以算出来是 $(2^{-n})^k = 2^{-nk}$, 于是得证.
+		\end{itemize}
+	\end{proof}
+
+	根据上述命题, 我们知道了 $x \in L$ 当且仅当 $$\exists u_1, \cdots, u_k, \forall r \in \{0, 1\}^m, r \in \bigcup_{i=1}^k (S_x + u_i)$$ 这等价于 $$\exists u_1, \cdots, u_k, \forall r \in \{0, 1\}^m, \bigvee_{i=1}^k M(x, r \oplus u_i) = 1$$ 于是 $L \in \Sigma_2^p$.
+\end{proof}
+
+\subsection{空间受限的随机计算}
+\def\BPL{\textbf{BPL}}
+\def\RL{\textbf{RL}}
+
+\begin{definition}[\BPL, \RL]
+	称语言 $L \in \BPL$, 如果存在 $O(\log n)$ 空间的 PTM $M$ 使得 $\mathbb P[M(x) = L(x)] \ge 2/3$. 称语言 $L \in \RL$, 如果存在 $O(\log n)$ 空间的 PTM $M$ 使得 $x \in L \Rightarrow \mathbb P[M(x)=1] \ge 2/3, x \notin L \Rightarrow \mathbb P[M(x) = 0] = 1$.
+\end{definition}
+\begin{proposition}
+	$\RL \subseteq \NL \subseteq \P$, 因为存在 certificate.
+\end{proposition}
+\begin{theorem}
+	$\BPL \subseteq \P$.
+\end{theorem}
+\begin{proof}
+	任取 $L \in \BPL$, 存在 $O(\log n)$ 空间的 PTM $M$ 使得 $\mathbb P[M(x) = L(x)] \ge 2/3$. 对于输入 $x$, 考虑 configuration graph $G_{M, x}$, 其有 $\text{poly}(n)$ 个点, 每条转移边都有 $0/0.5/1$ 的转移概率, 可以写成一个转移矩阵 $A$. 利用矩阵乘法可以计算出 $t$ 步的转移概率(即 $A^t_{i, j}$ 表示从点 $i$ 出发走 $t$ 步, 走到点 $j$ 的概率), 其中 $t = \text{poly}(n)$ 为 $M$ 的运行时间. 此时 $x \in L \Leftrightarrow A^t_{q_{\text{start}}, q_{\text{accept}}} \ge 2/3$, 故只需要多项式时间地将 $A^t$ 算出即可.
+\end{proof}
+
+\newpage
+\section{交互式证明}
+数学证明的标准形式恰似 \NP 定义中的 certificate: 证明人在纸带上写下一串符号, 验证者拿着纸带验证这是否是一个合法的证明, 从而做出 accept/reject 的判断.
+
+但证明的形式可不止这一种. 我们会遇到形如法庭, 或者是论文答辩的场景: 验证者会提出一系列问题, 证明人需要给出回答, 一切问答都可以建立在先前进行的问答的基础上, 证明形式变为了交互式. 为了完成证明, 证明人需要持续回答问题直到使验证者信服.
+
+简单举一个交互式证明的小例子: 有一个红球和一个绿球, 它们除了颜色外完全相同. Bob 是红绿色盲而 Alice 不是. 为了向 Bob 证明这两个球是不同的, Alice 只需要从这两个球中指认出哪一个是红球, 重复 100 次. 此时虽然 Alice 没有给出任何能说明两个球不同的信息, 但 Bob 已经几乎完全相信这两个球是不同的了.
+
+上述情境中的关键因素在于, Bob 可以任意打乱两个球的顺序, 即 Bob 制造了 Alice 不应该知道的信息. 但 Alice 全都答出来了, 一般地来讲, 我们会认为 Alice, 或者说证明人, 是全能的.
+
+接下来我们尝试形式化地定义一下交互式证明. 先从简单的情况出发吧.
+
+\def\dIP{\textbf{dIP}}
+\subsection{确定性交互式证明, \dIP}
+\begin{definition}[确定性函数的交互]
+	考虑函数 $f, g: \{0, 1\}^* \to \{0, 1\}^*$ 以及偶数 $k \ge 0$, $f$ 与 $g$ 关于输入 $x \in \{0, 1\}^*$ 的 $k$ 轮交互(记作$\langle f, g\rangle(x)$), 是一列字符串 $a_1, \cdots, a_k \in \{0, 1\}^*$ 满足 \begin{align*}
+		\begin{split}
+			a_1 &= f(x) \\
+			a_2 &= g(x, a_1) \\ 
+			&\cdots \\
+			a_{2i+1} &= f(x, a_1, \cdots, a_{2i}) \\
+			a_{2i+2} &= g(x, a_1, \cdots, a_{2i+1})			
+		\end{split}
+	\end{align*}
+	交互结束时 $f$ 的输出(记作 $\textsf{out}_f\langle f, g \rangle (x)$), 被定义为 $f(x, a_1, \cdots, a_k)$. 我们假设这个输出 $\in \{0, 1\}$.
+	\label{deterministic_interaction}
+\end{definition}
+\begin{definition}[确定性交互式证明系统, \dIP]
+	称语言 $L$ 有一个 \obj{$k$ 轮确定性交互式证明系统}, 如果存在一台 DTM $V$ (作为验证者, 可以看作一个 $\{0, 1\}^* \to \{0, 1\}^*$ 的函数), 对于输入 $x, a_1, \cdots, a_{2i}$, 能在关于 $|x|$ 多项式时间内计算出 $a_{2i+1}$, 同时能正确完成与证明人 $P$ 的 $k$ 轮确定性交互, 即满足 \begin{center}
+		\begin{tabular}{cc}
+			完备性 (Completeness) & $x \in L \Rightarrow \exists P: \{0, 1\}^* \to \{0, 1\}^*, \textsf{out}_V\langle V, P\rangle(x) = 1$ \\
+			可靠性 (Soundness) & $x \notin L \Rightarrow \forall P: \{0, 1\}^* \to \{0, 1\}^*, \textsf{out}_V\langle V, P\rangle(x) = 0$ \\
+		\end{tabular}
+	\end{center}
+	语言类 \dIP 包含所有拥有 $k(n)$ 轮确定性交互式证明系统的语言 $L$, 其中 $k(n)$ 是关于输入规模 $n$ 的多项式.
+\end{definition}
+
+注意到我们没有对证明人做出任何限制, 因为在我们的设定下他可以任意强. 接下来的定理, 指出了确定性交互式证明是没有前途的, 因为其根本没有跳脱原有的证明范式: \NP 中的 certificate.
+
+\begin{theorem}
+	$\dIP = \NP$.
+\end{theorem}
+\begin{proof}
+	$\NP \subseteq \dIP$ 是简单的, 因为 \NP 本身就是一个进行了 $1$ 轮的确定性交互式证明.
+
+	任取 $L \in \dIP$, 那么就存在 $L$ 的验证者 DTM $V$. 考虑下面的等价关系 $$x \in L \Leftrightarrow \exists a_1, \cdots, a_k, \bigwedge_{i=0}^{k/2-1}V(x, a_1, \cdots, a_{2i}) = a_{2i+1} \wedge V(x, a_1, \cdots, a_k) = 1$$ 其中 $\Rightarrow$ 是因为存在证明人 $P$ 从而可以构造出 $a_1, \cdots, a_k$, $\Leftarrow$ 则是可以根据这样的 $\{a_i\}$ 来构造证明人 $P$.
+
+	这说明了 $L \in \NP$, 故 $\dIP \subseteq \NP$.
+\end{proof}
+
+\def\IP{\textbf{IP}}
+\subsection{概率性交互式证明, \IP}
+现在我们尝试给验证者加上概率性. 在\cref{deterministic_interaction} 的交互中引入概率, 考虑验证者 $f$ 可以得到一个 $m$-bit 随机串 $r$ 作为输入, 即 $a_1 = f(x, r), \cdots, a_{2i+1} = f(x, r, a_1, \cdots, a_{2i})$. 然而, $g$ 作为证明人是看不到这个随机串的, 即仍然有 $a_2 = g(x, a_1), \cdots, a_{2i+2} = g(x, a_1, \cdots a_{2i+1})$. 于是, $f, g$ 关于 $x$ 的交互 $\langle f, g \rangle(x)$, 以及交互结束时 $f$ 的输出 $\textsf{out}_f\langle f, g \rangle (x)$, 都成为了关于 $r \in \{0, 1\}^m$ 的随机变量.
+
+\begin{definition}[概率性交互式证明系统, \IP]
+	对于偶数 $k \ge 0$, 称语言 $L \in \IP[k]$, 如果存在一台多项式时间 PTM $V$ 能正确完成与证明人 $P$ 的 $k$ 轮确定性交互, 即满足 \begin{center}
+		\begin{tabular}{cc}
+			完备性 (Completeness) & $x \in L \Rightarrow \exists P, \mathbb P[\textsf{out}_V\langle V, P\rangle(x) = 1] \ge 2/3$ \\
+			可靠性 (Soundness) & $x \notin L \Rightarrow \forall P, \mathbb P[\textsf{out}_V\langle V, P\rangle(x) = 0] \le 1/3$ \\
+		\end{tabular}
+	\end{center}
+
+	定义 $\IP = \bigcup_{c \ge 0}\IP[n^c]$.
+\end{definition}
+
+我们介绍关于 \IP 的一些性质, 其中的一部分会在之后的章节中给出证明:
+\begin{enumerate}
+	\item 利用\cref{robustness} 的方法, 可以将 \IP 定义中的 $2/3$ 和 $1/3$ 提升至任意接近 $1$ 和 $0$ 的实数.
+	\item 将 $2/3$ 修改成 $1$ 不会改变 \IP 语言类.
+	\item 将 $1/3$ 修改成 $0$ 等价于要求 $L$ 有一个确定性的验证者, 从而会使语言类退化到 \NP.
+ \item 将证明人变为概率性的, 不会改变 \IP 语言类, 因为根据 $\mathbb P[X \ge \mathbb E[X]] > 0$, 总存在一位确定性的证明人可以达到不低于原概率性证明人的通过概率.
+\end{enumerate}
 
 \end{document}

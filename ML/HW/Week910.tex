@@ -1,0 +1,152 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{bbm}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+
+
+\title{\heiti\zihao{2} Machine Learning Homework: Week 9 \& 10}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\rhead{Homework: Week 9 \& 10}
+	\chead{2022 Spring}
+	\lhead{Machine Learning}
+	\cfoot{Page \thepage \ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{Lemma}{Lemma}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\begin{algorithm}
+	\caption{Randomized Weighted Updating}
+	\begin{algorithmic}[1]
+		\State Initialize $w_{1, i} \gets 1, \forall i \in [n]$
+		\State Choose parameter $\beta \in [\frac12, 1)$
+		\For{$t = 1 \to T$}
+			\State Chooes $\tilde{y_t} = \tilde{y_{t, i}}$ with probability proportional to $w_{t, i}$
+			\State $w_{t + 1, i} \gets \begin{cases}
+				\beta \cdot w_{t, i}, & \tilde{y_{t, i}} \neq y_t\\
+				w_{t, i}, & \tilde{y_{t, i}} = y_t
+			\end{cases}, \forall i \in [n]$
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+\begin{theorem}
+	在Randomized Weighted Updating 算法下, 有 $$\E{L_T} \le (2 - \beta)m_T^* + \frac{\ln n}{1 - \beta}$$
+	\label{random-weighted-update}
+\end{theorem}
+\begin{proof}
+	注意到权值的更新无关于每轮有没有答错, 因此 $\mathbbm 1 [\tilde{y_t} \neq y_t]$ 是独立随机变量. 
+	
+	第 $i$ 轮结束后, 总权值的变化一定是 $W \to W(1 - (1 - \beta)\P{\tilde{y_t} \neq y_t})$, 由于 $\E{L_T} = \sum\limits_{t=1}^T\P{\tilde{y_t} \neq y_t}$, 因此
+
+	$$\beta^{m_T^*} \le n \prod_{t=1}^{T}(1 - (1 - \beta)\P{\tilde{y_t} \neq y_t}) \le n\prod_{t=1}^{T}\e^{-(1-\beta)\P{\tilde{y_t} \neq y_t}} = n\e^{-(1 - \beta)\E{L_T}}$$ 从而得到了 $$\E{L_T} \le \frac{\ln(1/\beta)m_T^* + \ln n}{1 - \beta}$$
+
+	只需要进一步证明 $\frac{\ln(1 / \beta)}{1 - \beta} \le 2 - \beta$. 考虑函数 $f(\beta) = \ln\beta + (1 - \beta)(2 - \beta), f'(\beta) = \frac{(1-  \beta)(1 - 2\beta)}{\beta}$, 当 $\beta \in [\frac12, 1)$ 时恒有 $f'(\beta) \le 0$, 从而 $f(\beta) \ge f(1) = 0$, 说明了 $\ln(1 / \beta) \le (1 - \beta)(2 - \beta), \frac{\ln(1 / \beta)}{1 - \beta} \le 2 - \beta$.
+\end{proof}
+
+\end{document}
+
+

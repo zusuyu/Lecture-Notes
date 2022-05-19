@@ -791,5 +791,50 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 
 证明太长了, 就不讲了.
 
+\section{Differential Privacy}
+
+设计差分隐私的主要目的, 是在不透露过多个体信息(privacy)的前提下, 提供尽量多, 或者尽量准确的整体统计信息(non-privacy). 有一种简单的想法, 就是给输出的整体信息加 noise.
+
+\begin{definition}[相邻数据集]
+	考虑 $D = \{x_1, x_2, \cdots, x_n\}, x_i \in \mathcal X$ 是单个数据点, 则 $D \in \mathcal X^n$ 是大小为 $n$ 的数据集. 两个数据集 $D, D'$ 被称为相邻的, 如果其只存在一位不同.
+\end{definition}
+\begin{definition}[统计查询]
+	一个依据 $h: \mathcal X \to \{0, 1\}$ 定义的统计查询 $Q$ 是 $\mathcal X^n \to \mathbb Q$ 的映射, 满足 $$Q(D) = \frac{1}{|D|} \sum_i h(x_i)$$
+\end{definition}
+\begin{definition}[差分隐私]
+	令 $A$ 为一个在输入数据集 $D$ 上运行的随机算法, 称 $A$ 满足 $\varepsilon$-差分隐私, 如果对于任意相邻数据集 $D, D' \in \mathcal X^n$, 任意 $S \subseteq \im A$, 都有 $$\P{A(D) \in S} \le \e^{\varepsilon}\P{A(D') \in S}$$
+\end{definition}
+\begin{definition}[$(\alpha, \beta)$-精确]
+	称随机算法 $A$ 对于统计查询 $Q$ 满足 $(\alpha, \beta)$-精确, 如果对于任意 $D \in \mathcal X^n$, $$\P{|A(D) - Q(D)| \ge \alpha} \le \beta$$
+\end{definition}
+\begin{definition}[拉普拉斯分布]
+	随机变量 $X$ 服从参数为 $\mu, \sigma$ 的拉普拉斯分布(记作 $X \sim \text{Lap}(\mu, \sigma)$), 其密度函数为 $$f_X(x) = \frac{1}{2\sigma}\exp\left(\frac{|x-\mu|}{\sigma}\right)$$
+\end{definition}
+\begin{definition}[Laplace Mechanism, or Additive noise mechanism]
+	Laplace Mechanism 就是在一个统计查询 $Q: \mathcal X^n \to \mathbb Q$ 的基础上, 添加一个服从分布 $\text{Lap}(\mu = 0, \sigma)$ 的noise, 得到 $A: \mathcal X^n \to \mathbb R$, $A(D) = Q(D) + Z, Z \sim \text{Lap}(0, \sigma)$.
+\end{definition}
+\begin{theorem}
+	Laplace Mechanism 满足 $\varepsilon$-差分隐私以及 $(\alpha, \beta)$-精确, 其中(假设 $\beta$ 是常数) $\varepsilon = \frac{1}{n\sigma}, \alpha = \sigma \ln \frac{1}{\beta}$.
+\end{theorem}
+\begin{proof}
+	对于任意 $a \in \im A = \mathbb R$, 有 $$\frac{\P{A(D) = a}}{\P{A(D') = a}} = \frac{f_Z(a - Q(D))}{f_Z(a - Q(D'))} = \frac{\frac{1}{2\sigma}\exp\left(-\frac{a-Q(D)}{\sigma}\right)}{\frac{1}{2\sigma}\exp\left(-\frac{a-Q(D')}{\sigma}\right)} \le \exp\left(\frac{|Q(D) - Q(D')|}{\sigma}\right) \le \exp\left(\frac{1}{n\sigma}\right)$$ \footnote{这里 $A(D) = a$ 实际上想表达的是 $a \le A(D) < a + \text dt$.}故 $\varepsilon = \frac{1}{n \sigma}$. 至于 $\alpha$, 
+	$$\P{|A(D) - Q(D)| \ge \alpha} = \int_{-\infty}^{-a}\frac{1}{2\sigma}\exp\left(-\frac t{\sigma}\right)\text dt + \int_a^{\infty}\frac{1}{2\sigma}\exp\left(-\frac t{\sigma}\right)\text dt = \exp\left(-\frac{\alpha}{\sigma}\right) = \beta \Rightarrow \alpha = \sigma \ln \frac{1}{\beta}$$
+\end{proof}
+\begin{definition}[多组查询下的精确]
+	记 $Q = (Q_1, \cdots, Q_k): \mathcal X^n \to \mathbb Q^k$ 是 $k$ 次统计查询, 令 $A = (A_1, \cdots, A_k)$ 为针对每个查询, 用 Laplace Mechanism 构造的随机算法, $A_i(D) - Q_i(D) \sim \text{i.i.d. } \text{Lap}(0, \sigma)$. 称 $A$ 对于 $Q$ 满足 $(\alpha, \beta)$-精确, 如果对于任意 $D \in \mathcal X^n$, $$\P{\|A(D) - Q(D)\|_{\infty} \ge \alpha} \le \beta$$
+\end{definition}
+\begin{theorem}
+	当每个 Laplace Mechanism $A_i$ 都满足 $\varepsilon$-差分隐私和 $(\alpha, \beta)$-精确时, $A = (A_1, \cdots, A_k)$ 满足 $k\varepsilon$-差分隐私和 $(\alpha, k\beta)$-精确.
+\end{theorem}
+\begin{proof}
+	\begin{itemize}
+		\item $k\varepsilon$-差分隐私: 注意到 noise 是 i.i.d. 的, 故联合分布密度等于各自相乘, 由 $f_{A_i(D)}(x_i) \le \e^{\varepsilon}f_{A_i(D')}(x_i)$ 可以很容易得到 $f_{A_i(D)}(\vec x) \le \e^{k\varepsilon} f_{A_i(D')}(\vec x)$.
+	    \item $(\alpha, k\beta)$-精确: 使用 Union Bound 即可.
+	\end{itemize}
+	
+\end{proof}
+
+
+
 \end{document}
 

@@ -1,0 +1,276 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{bbm}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Cov#1{\text{Cov}\left({#1}\right)}
+
+
+\title{\heiti\zihao{2} 概率统计(A)课程作业: 参数估计}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{概率统计(A)}
+	\chead{2022 Spring}
+	\rhead{参数估计}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+\begin{enumerate}
+	\item $L(a, b) = \prod_{i=1}^{n}f(x_i; a, b) = \begin{cases}
+		\frac{1}{(b - a)^n}, & a \le x_1, \cdots, x_n \le b \\
+		0, & \text{otherwise}
+	\end{cases}$, 可以发现当 $x_i \in [a, b]$ 时, 似然函数 $L(a, b)$ 是关于区间长度 $b - a$ 的减函数, 因此 $a, b$ 的极大似然估计量为使 $L(a, b)$ 取到最大值的 $\hat{a} = \min\{x_1, \cdots, x_n\}, \hat{b} = \max\{x_1, \cdots, x_n\}$.
+	\item 矩关于参数 $a, b$ 的函数为 $$\E{X} = \frac{a+b}{2}, \quad \Var{X} = \frac{(b - a)^2}{12}$$ 可以解得参数关于矩的反函数 $$a = \E{X} - \sqrt{3\Var{X}}, \quad b = \E{X} + \sqrt{3\Var{X}}$$ 于是利用样本一阶矩 $A_1 = \overline{X}$, 二阶中心距 $B_2 = \sum_i (X - \overline{X})^2 / n$ 分别替代 $\E{X}, \Var{X}$, 得到 $a, b$ 的矩估计 $$\hat{a} = A_1 - \sqrt{3B_2}, \quad \hat{b} = A_1 + \sqrt{3B_2}$$
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item $$\E{T/n} = \frac1n \E{X_1 + X_2 + \cdots + X_n} = \frac1n \sum_{i=1}^{n}\E{X_i} = \lambda$$ 从而 $T/n$ 是对参数 $\lambda$ 的无偏估计量.
+ \item $\varphi(T) = \frac{T^2-T}{n^2}$ 是 $\lambda^2$ 的无偏估计量, 因为 $$\E{\frac{T^2-T}{n^2}} = \frac 1{n^2}\left(\E{T^2} - \E{T}\right) = \frac1{n^2}\left(n^2\lambda^2 + n\lambda - n\lambda \right) = \lambda^2$$
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item $$\E{T(a)} = \frac1n \sum_{i=1}^{n}a_i\E{X_i} = \frac1n \sum_{i=1}^{n} a_ip = p$$ 所以 $T(a)$ 是对 $p$ 的无偏估计量.
+ \item $$\Var{T(a)} = \frac{1}{n^2}\sum_{i=1}^{n}a_i^2\Var{X_i} = \frac{p - p^2}{n^2}\sum_{i=1}^{n}a_i^2$$ 取 $a = (a_1 = 1, \cdots, a_n = 1)$ 得到 $\Var{T(a)} = \frac{p(1-p)}{n}$ 是最小的. 由 Cramer-Rao 不等式, $$\Var{\hat{p}} \ge \frac{1}{n\E{\left( \frac{\partial \ln f(x; p)}{\partial p} \right)^2}} = \frac{p(1-p)}{n}$$ 这说明 $T(a)$ 的方差达到了 Cramer-Rao 不等式下界, 因此是无偏估计中最好的.
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item 
+由上一次作业第 \textbf{7} 题, $2\lambda n \overline{X} \sim \chi^2(2n)$.
+\begin{lemma}
+	若 $Z \sim \chi^2(q)$ 其中 $q > 2$, 则 $\E{1 / Z} = \frac{1}{q-2}$.
+\end{lemma}
+\begin{proof}
+	考虑 $Z \sim \chi^2(q)$ 的密度函数 $f_Z(z) = \begin{cases}
+		\frac{1}{2^{q/2}\Gamma(q/2)}z^{q/2-1}\e^{-z/2}, & z > 0\\
+		0, & z \le 0
+	\end{cases}$, 于是 \begin{align*}
+		\begin{split}
+			\E{\frac 1Z} &= \int_0^{\infty}\frac{1}{2^{q/2}\Gamma(q/2)}z^{q/2-2}\e^{-z/2}\text dz = \int_0^{\infty}\frac{1}{2^{q/2}\Gamma(q/2)}(2t)^{q/2-2}\e^{-t}\text d(2t) \\&= \int_0^{\infty}\frac{1}{2\Gamma(q/2)}t^{q/2-2}\e^{-t}\text dt = \frac{\Gamma(q/2-1)}{2\Gamma(q/2)} = \frac{1}{q-2}
+		\end{split}
+	\end{align*}
+\end{proof}
+
+根据上述引理, 有 $\E{1 / 2\lambda n \overline{X}} = \frac{1}{2n-2}$, 从而 $\E{1 / \overline{X}} = \frac{\lambda n}{n-1}$.
+\item $\varphi(X_1, \cdots, X_n) = \frac{n-1}{n\overline{X}}$ 是对 $\lambda$ 的无偏估计.
+\end{enumerate}
+
+\section{}
+记 $Y = \frac{X - a}{b}$, 可以验证 $f_Y(y) = \frac{\text dx}{\text dy}f_X(y) = \e^{-y}\mathbbm 1[y > 0]$, 即 $Y \sim \text{Exp}(1)$.
+
+同样, 记 $Y_i = \frac{X_i - a}{b}$, 于是 $Y_i \sim \text{i.i.d. Exp}(1)$, 故可计算 $Y_{(1)} = \min\{Y_1, \cdots, Y_n\}$ 的密度函数为 $$f_{Y_{(1)}}(y) = \left[1 - (1 - F_Y(y))^n \right]' = n(1 - F_Y(y))^{n-1}f_Y(y) = n\e^{-ny}\mathbbm 1[y > 0]$$
+
+从而有 $\E{Y_{(1)}} = \frac1n$. 此外显然有 $\E{\overline{Y}} = \E{Y} = 1$.
+
+\begin{enumerate}
+	\item 不难发现 $X_{(1)} = a + bY_{(1)}$, 因此 $\E{X_{(1)}} = a + b\E{Y_{(1)}} = a + \frac{b}{n}$, 故当 $b$ 已知时, $\psi(X_{(1)}) = X_{(1)} - \frac bn$ 是 $a$ 的一个无偏估计.
+ \item 不难发现 $\overline{X} = a + b\overline{Y}$, 因此 $\E{\overline{X}} = a + b\E{\overline{Y}} = a + b$, 故当 $a$ 已知时, $\varphi(\overline{X}) = \overline{X} - a$ 是 $b$ 的一个无偏估计.
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item 容易验证 $\E{\overline{X}^2} = \mu^2 + \frac1n \sigma^2$ 以及 $\E{S^2} = \sigma^2$, 因此 $\varphi(\overline{X}, S^2) = \overline{X} - \frac1n S^2$ 是 $\mu^2$ 的一个无偏估计.
+ \item \begin{lemma}
+	 设 $X \sim \mathcal N(\mu, \sigma^2)$, 则有 $\E{X^3} = \mu^3 + 3\mu\sigma^2$.
+ \end{lemma}
+ \begin{proof}
+	 \begin{align*}
+		 \begin{split}
+			 \E{X^3} &= \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)x^3\text dx = \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{u^2}{2\sigma^2}\right)(u+\mu)^3\text du \\
+			 &= \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{u^2}{2\sigma^2}\right)(u^3 + 3\mu u^2 + 3\mu^2 u + \mu^3)\text du \\
+			 &= \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{u^2}{2\sigma^2}\right)u^3\text du + 3\mu\E{(X-\mu)^2} + 3\mu^2\E{X-\mu} + \mu^3\\
+			 &= 0 + 3\mu\sigma^2 + 0 + \mu^3\\
+			 &= \mu^3 + 3\mu\sigma^2
+		 \end{split}
+	 \end{align*}
+ \end{proof}
+ 直接考虑计算 $\E{\overline{X}S^2}$: \begin{align*}
+	 \begin{split}
+		\E{\overline{X}S^2} &= \frac{1}{n(n-1)}\E{\left(\sum_i X_i\right) \left(\sum_j (X_j - \overline{X})^2\right)}\\
+		&= \frac{1}{n^3(n-1)}\E{\left(\sum_i X_i\right)\left(\sum_j\left((n-1)X_j - \sum_{k \neq j}X_k\right)^2\right)}\\
+		&= \frac{1}{n^3(n-1)}\E{\left(\sum_i X_i\right)\left(n(n-1)\sum_jX_j^2 - n\sum_{j \neq k}X_jX_k\right)}\\
+		&= \frac{1}{n^3(n-1)}\E{n(n-1)\sum_i X_i^3 + n(n-1)(n-3)\sum_{i \neq j}X_iX_j^2 - n(n-1)(n-2)\sum_{i \neq j, i \neq k, j \neq k}X_iX_jX_k}\\
+		&= \frac1n\E{X^3} + \frac{n-3}{n}\E{X}\E{X^2} - \frac{n-2}{n}\E{X}^3\\
+		&= \frac1n(\mu^3 + 3\mu\sigma^2) + \frac{n-3}{n}\mu(\mu^2 + \sigma^2) - \frac{n-2}{n}\mu^3 \\
+		&= \mu\sigma^2
+	 \end{split}
+ \end{align*}
+ 因此常数 $c = 1$.
+\end{enumerate}
+
+\section{}
+记 $Z_k = X_k - \mu$, 则 $Z_k \sim \mathcal N(0, 1)$ 为标准正态分布, 故
+$$\P{Y_k = 1} = \P{X_k \le 0} = \P{Z_k \le -\mu} = \Phi(\mu) = 1 - \Phi(\mu)$$
+
+定义似然函数 $$L(\mu) = \P{y_1, \cdots, y_n | \mu} = \prod_{i=1}^{n} \P{Y_i = y_i | \mu} = (1 - \Phi(\mu))^{\sum_i Y_i} \Phi(\mu)^{n - \sum_iY_i}$$
+
+为了最大化 $L(\mu)$, 考虑 $\ln L(\mu) = \sum_i Y_i \ln (1 - \Phi(\mu)) + (n - \sum_i Y_i)\ln \Phi(\mu)$, 对 $\mu$ 求导得到 $\frac{\partial L(\mu)}{\partial \mu} = \sum_i Y_i \frac{-\phi(\mu)}{1 - \Phi(\mu)} + (n - \sum_i Y_i)\frac{\phi(\mu)}{\Phi(\mu)}$. 求解 $\frac{\partial L(\mu)}{\partial \mu} = 0$, 得到 $\hat{\mu} = \Phi^{-1}\left(1 - \frac{\sum_i Y_i}{n}\right)$, 此即为 $\mu$ 的极大似然估计.
+
+\section{}
+\begin{enumerate}
+	\item 令 $Y_i = X_i / \theta$, 则显然有 $Y_i \sim \text{i.i.d. }U(0, 1)$, 此时 $Y / \theta = \max\{Y_1, \cdots, Y_n\}$ 的概率密度函数为 $f(y) = ny^{n-1}\mathbbm 1[0 \le y \le 1]$, 说明 $Y / \theta$ 的分布与未知参数 $\theta$ 无关, 从而是枢轴量.
+ \item \begin{align*}
+	 \begin{split}
+		 \P{aY < \theta < bY} = \P{\frac1b < \frac{Y}{\theta} < \frac1a} = \frac1a - \frac1b \ge 1 - \alpha
+	 \end{split}
+ \end{align*}
+ 当 $\frac1a > 1 - \alpha$ 时, 最小的满足条件的 $b$ 为 $\frac{1}{\frac1a - 1 + \alpha}$. 当 $\frac1a \le 1 - \alpha$ 时, 不存在满足条件的 $b$.
+\end{enumerate}
+\section{}
+
+设 $T \sim t(n)$, 以下记 $t_{\beta}(n)$ 表示满足 $\P{T \le t} = \beta$ 的 $t \in \mathbb R$. $\chi^2_{\beta}(n)$ 同理.
+
+\begin{align*}
+	\begin{split}
+		\frac{\overline{X} - \mu}{\sqrt{S^2 / n}} \sim t(n-1) \Rightarrow 1 - \alpha &= \P{t_{\alpha/2}(n-1) < \frac{\overline{X} - \mu}{\sqrt{S^2 / n}} < t_{1 - \alpha/2}(n-1)}\\
+		&= \P{\overline{X} + \sqrt{\frac{S^2}{n}}t_{\alpha/2}(n-1) < \mu < \overline{X} + \sqrt{\frac{S^2}{n}}t_{1 - \alpha/2}(n-1)}\\
+		\frac{(n-1)S^2}{\sigma^2} \sim \chi^2(n-1) \Rightarrow 1 - \alpha &= \P{\chi^2_{\alpha/2}(n-1) < \frac{(n-1)S^2}{\sigma^2} < \chi^2_{1 - \alpha/2}(n-1)} \\
+		&= \P{\frac{(n-1)S^2}{\chi^2_{1 - \alpha/2}(n-1)} < \sigma^2 < \frac{(n-1)S^2}{\chi^2_{\alpha/2}(n-1)}} \\
+		&= \P{\sqrt{\frac{(n-1)S^2}{\chi^2_{1 - \alpha/2}(n-1)}} < \sigma < \sqrt{\frac{(n-1)S^2}{\chi^2_{\alpha/2}(n-1)}}}
+	\end{split}
+\end{align*}
+代入 $n = 145, \overline{X} = 89.3, S^2 = 116.2, \alpha = 0.05$, 有 \begin{align*}
+	\begin{split}
+		t_{\alpha/2}(n-1) &= -1.976575 \\
+		t_{1 - \alpha/2}(n-1) &= 1.976575 \\
+		\chi^2_{\alpha/2}(n-1) &= 112.671131 \\
+		\chi^2_{1 - \alpha/2}(n-1) &= 179.113678
+	\end{split}
+\end{align*}
+此时 $\mu$ 和 $\sigma$ 的 $1 - \alpha$ 置信区间分别为 \begin{align*}
+	\begin{split}
+		\left(\overline{X} + \sqrt{\frac{S^2}{n}}t_{\alpha/2}(n-1) , \overline{X} + \sqrt{\frac{S^2}{n}}t_{1 - \alpha/2}(n-1)\right) &= (87.530574, 91.069426) \\
+		\left(\sqrt{\frac{(n-1)S^2}{\chi^2_{1 - \alpha/2}(n-1)}} , \sqrt{\frac{(n-1)S^2}{\chi^2_{\alpha/2}(n-1)}}\right) &= (9.665402, 12.186472)
+	\end{split}
+\end{align*}
+
+\section{}
+
+\begin{enumerate}
+	\item 注意到 $\overline{X} \sim \mathcal N(\mu_1, \sigma^2 / n_1), \overline{Y} \sim \mathcal N(\mu_2, \sigma^2 / n_2)$, 因此其线性组合 $\overline{X} - \overline{Y}$ 也服从正态分布, 计算 $\E{\overline{X} - \overline{Y}} = \mu_1 - \mu_2, \Var{\overline{X} - \overline{Y}} = \left(\frac{1}{n_1} + \frac{1}{n_2}\right)\sigma^2$ 可知 $\overline{X} - \overline{Y} \sim \mathcal N\left(\mu_1 - \mu_2, \left(\frac{1}{n_1} + \frac{1}{n_2}\right)\sigma^2 \right)$, 即 $\frac{\overline{X} - \overline{Y} - \mu_1 + \mu_2}{\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\sigma} \sim \mathcal N(0, 1)$.
+ 
+	注意到 $\frac{(n_1-1)S_1^2}{\sigma^2} \sim \chi^2(n_1-1), \frac{(n_2-1)S_2^2}{\sigma^2} \sim \chi^2(n_2-1)$ 且两者独立, 从而 $\frac{(n_1 + n_2 - 2)S_w^2}{\sigma^2} = \frac{(n_1-1)S_1^2}{\sigma^2} + \frac{(n_2-1)S_2^2}{\sigma^2} \sim \chi^2(n_1 + n_2 - 1)$.
+
+	需要进一步说明的是 $\frac{\overline{X} - \overline{Y} - \mu_1 + \mu_2}{\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\sigma}$ 与 $\frac{(n_1 + n_2 - 2)S_w^2}{\sigma^2}$ 是相互独立的, 在上一次作业的第 \textbf{6} 题中已经证明过类似结论, 故不再赘述. 综上, 我们得到了 $$\frac{\overline{X} - \overline{Y} - \mu_1 + \mu_2}{S_w\sqrt{n_1^{-1} + n_2^{-1}}} = \frac{\frac{\overline{X} - \overline{Y} - \mu_1 + \mu_2}{\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\sigma}}{\sqrt{\frac{(n_1 + n_2 - 2)S_w^2}{\sigma^2} / (n_1 + n_2 - 2)}} \sim t(n_1 + n_2 - 2)$$	
+	\item 注意到 $\frac{\overline{X} - \overline{Y} - \mu_1 + \mu_2}{S_w\sqrt{n_1^{-1} + n_2^{-1}}}\sim t(n_1 + n_2 - 2)$,  \begin{align*}
+		\begin{split}
+			1 - \alpha &= \P{t_{1-\alpha/2}\left(n_1+n_2-2\right) < \frac{\overline{X} - \overline{Y} - \mu_1 + \mu_2}{S_w\sqrt{n_1^{-1} + n_2^{-1}}} < t_{\alpha/2}(n_1+n_2-2)} \\
+			&= \P{\overline{X} - \overline{Y} - S_w\sqrt{n_1^{-1} + n_2^{-1}}t_{\alpha/2}(n_1+n_2-2) < \mu_1 - \mu_2 < \overline{X} - \overline{Y} - S_w\sqrt{n_1^{-1} + n_2^{-1}}t_{1-\alpha/2}(n_1+n_2-2)}
+		\end{split}
+	\end{align*}
+	即 $\mu_1 - \mu_2$ 的 $1 - \alpha$ 置信区间为 $$\left[\overline{X} - \overline{Y} - S_w\sqrt{n_1^{-1} + n_2^{-1}}t_{\alpha/2}(n_1+n_2-2), \overline{X} - \overline{Y} - S_w\sqrt{n_1^{-1} + n_2^{-1}}t_{1-\alpha/2}(n_1+n_2-2)\right]$$
+\end{enumerate}
+
+\end{document}
+
