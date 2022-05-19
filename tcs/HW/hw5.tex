@@ -1,0 +1,177 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+%\setCJKmainfont[ItalicFont=Noto Serif CJK SC Bold, BoldFont=Noto Serif CJK SC Black]{Noto Serif CJK SC}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+
+
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} 计算理论导论 \ 第五次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{计算理论导论}
+	\chead{2022 Spring}
+	\rhead{第五次作业}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+考虑 $$f(x_1, x_2, \cdots, x_n) = (x_1 \wedge f(1, x_2, \cdots, x_n)) \vee (\lnot x_1 \wedge f(0, x_2, \cdots, x_n))$$其中 $f(1, x_2, \cdots, x_n) = f_1(x_2, \cdots, x_n), f(0, x_2, \cdots, x_n) = f_0(x_2, \cdots, x_n)$ 是另外两个输入 $n - 1$ 比特的布尔函数, 可以递归构造. 归纳可知任意 $n$ 比特布尔函数都可以在 $10 \cdot 2^n - 5$ 的线路规模内被构造出.
+
+\section{}
+考虑 $k$ 比特布尔函数只有 $2^{2^k}$ 个, 可以使用前述方法将这些函数对应的线路全部预构造出来. 修改 \textbf{1} 中描述的递归构造方法, 在递归到 $n = k$ 时停止递归, 转而直接利用预构造得到的结果. 这种构造方法的电路规模为 $2^{2^k} \cdot 10 \cdot 2^k + 10 \cdot 2^{n-k}$, 取 $k = \log n - 1$, 电路规模为 $$10\left(2^{n-k} + 2^{2^k+k}\right) = 10 \left(\frac{2^{n+1}}{n} + 2^{n/2+\log n-1}\right) \le 1000\cdot \frac{2^n}{n}$$.
+
+\section{}
+\subsection*{Statement}
+证明对于任意 $k > 0$, 都存在语言 $L \in \textbf{PH}$ 其电路复杂性为 $\Omega(n^k)$, 即 $L \notin \textbf{SIZE}(f(n))$ 对任意 $f(n) = o(n^k)$ 成立.
+\subsection*{Solution}
+我们知道对于任意 $l$, 存在无法被规模为 $\frac{2^l}{10l}$ 的线路所计算的 $l$ 比特布尔函数, 而任意 $l$ 比特布尔函数都可以被规模为 $10l2^l$ 的线路所计算. 取 $l = k(\log n + \log\log n)$, 考虑语言
+\begin{equation*}
+	\begin{split}
+		L_k = \{w \in \{0, 1\}^n | &\exists f \text{ a } l \text{-bit boolean function}, C_f \text{ a circuit of size } \in \left[\frac{2^l}{10l}, 10l2^l\right], \\
+		&\forall g \text{ a } l \text{-bit boolean function}, C_g \text{ a circuit of size } \in \left[\frac{2^l}{10l}, 10l2^l\right], \\ &\forall C_f' \text{ a circuit of size } < |C_f|, C_g' \text{ a circuit of size } < |C_g|\\
+		&\exists y \in \{0, 1\}^l, z_f \in \{0, 1\}^l, z_g \in \{0, 1\}^l,\\
+		&\forall x \in \{0, 1\}^l, \\
+		&f(x) = C_f(x) \wedge g(x) = C_g(x) \wedge C_f(z_f) \neq C_f'(z_f) \wedge C_g(z_g) \neq C_g'(z_g) \\ &\wedge(x \succcurlyeq y \vee f(x) = g(x)) \wedge f(y) < g(y) \wedge f(w[:l]) = 1\\
+		&\}
+	\end{split}
+\end{equation*}
+
+也即, $L_k$ 中包含了所有 $f(w[:l]) = 1$ 的 $w \in \{0, 1\}^n$, 其中布尔函数 $f$ 需要满足: \num{a} 需要规模为至少 $\frac{2^l}{10l} = \frac{(n\log n)^k}{10k(\log n + \log\log n)} = \Omega(n^k)$ 的线路所计算, \num{b} 在满足前者条件下“字典序”最小的.
+
+因此使用 $\exists C_f$ 来构造 $f$ 的线路, 使用 $\forall C_f'$ 来保证 $f$ 无法被比 $C_f$ 规模更小的线路计算, 从而保证条件 a 成立, 设置 $C_f$ 规模上界是为了满足条件保证 certificate 规模是关于 $n$ 多项式. 
+
+为了满足条件 b, 使用相同的方式构造了任意满足条件 a 的布尔函数 $g$, $f$ 的“字典序”小于 $g$ 等价于存在某一个 $y \in \{0, 1\}^l$, $f, g$ 对于字典序小于 $y$ 的输入$x$(记作 $x \prec y$)的输出结果都相同, 而对于 $y$ 有 $f(y) < g(y)$.
+
+不难验证每个 quantifier 下的 certificate 都是关于 $n$ 的多项式量级, 因此 $L_k \in \textbf{PH}$. 显然 $L_k$ 的电路复杂性是 $\Omega(n^k)$, 于是结论得证.
+
+\section{}
+类似 \textbf{3}, 我们可以构造如下语言\begin{equation*}
+	\begin{split}
+		L = \{w \in \{0, 1\}^n | &\exists f \text{ a } n \text{-bit boolean function}, C_f \text{ a circuit of size } \in \left[\frac{2^n}{10n}, 10n2^n\right], \\
+		&\forall g \text{ a } n \text{-bit boolean function}, C_g \text{ a circuit of size } \in \left[\frac{2^n}{10n}, 10n2^n\right], \\ &\forall C_f' \text{ a circuit of size } < |C_f|, C_g' \text{ a circuit of size } < |C_g|\\
+		&\exists y \in \{0, 1\}^n, z_f \in \{0, 1\}^n, z_g \in \{0, 1\}^n,\\
+		&\forall x \in \{0, 1\}^n, \\
+		&f(x) = C_f(x) \wedge g(x) = C_g(x) \wedge C_f(z_f) \neq C_f'(z_f) \wedge C_g(z_g) \neq C_g'(z_g) \\ &\wedge(x \succcurlyeq y \vee f(x) = g(x)) \wedge f(y) < g(y) \wedge f(w) = 1\\
+		&\}
+	\end{split}
+\end{equation*}
+
+也即, $L$ 中包含了所有 $f(w) = 1$ 的 $w \in \{0, 1\}^n$, 其中 $f$ 满足: \num{a} 需要规模为至少 $\frac{2^n}{10n}$ 的线路所计算, \num{b} 在满足前者条件下“字典序”最小的. 
+
+注意到利用 padding 技术, 我们有 $\textbf{P} = \textbf{NP} \Rightarrow \textbf{EXP} = \textbf{NEXP}$, 如上 $L$ 的每一个 quantifier 下的 certificate 都是关于 $n$ 指数级, 考虑由内而外地利用 $\textbf{EXP} = \textbf{NEXP} = \textbf{coNEXP}$ 的结论去掉 quantifier, 最终可以验证 $L \in \textbf{EXP}$.
+
+\section{}
+任取 $L \in \text{uniform-}\textbf{NC}^1$, $L$ 可以由 logspace-uniform 的线路族 $\{C_n\}_{n \in \mathbb N}$ 计算. 考虑构造判定 $L$ 的 DTM $M$, 其针对输入 $w$, 在 $C_{|w|}$ 上(得益于$C_{|w|}$ 的结构是 implicitly-logspace-computable 的)进行 DFS 并计算 $C_{|w|}(w)$. 由于 $C_w$ 的深度为 $O(\log |w|)$, 所以 DFS 的过程只需要 $O(\log |w|)$ 的额外空间保存搜索栈. 这说明 $L \in \textbf{SPACE}(\log n) = \textbf{L}$. 故 $\text{uniform-}\textbf{NC}^1 \subseteq \textbf{L}$.
+
+根据 Space Hierarchy Theorem 知 $\textbf{L} = \textbf{SPACE}(\log n) \subsetneq \textbf{SPACE}(n) \subseteq \textbf{PSPACE}$, 故 $\text{uniform-}\textbf{NC}^1 \neq \textbf{PSPACE}$.
+
+\end{document}
