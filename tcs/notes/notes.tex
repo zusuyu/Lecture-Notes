@@ -1497,22 +1497,100 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 现在我们尝试给验证者加上概率性. 在\cref{deterministic_interaction} 的交互中引入概率, 考虑验证者 $f$ 可以得到一个 $m$-bit 随机串 $r$ 作为输入, 即 $a_1 = f(x, r), \cdots, a_{2i+1} = f(x, r, a_1, \cdots, a_{2i})$. 然而, $g$ 作为证明人是看不到这个随机串的, 即仍然有 $a_2 = g(x, a_1), \cdots, a_{2i+2} = g(x, a_1, \cdots a_{2i+1})$. 于是, $f, g$ 关于 $x$ 的交互 $\langle f, g \rangle(x)$, 以及交互结束时 $f$ 的输出 $\textsf{out}_f\langle f, g \rangle (x)$, 都成为了关于 $r \in \{0, 1\}^m$ 的随机变量.
 
 \begin{definition}[概率性交互式证明系统, \IP]
-	对于偶数 $k \ge 0$, 称语言 $L \in \IP[k]$, 如果存在一台多项式时间 PTM $V$ 能正确完成与证明人 $P$ 的 $k$ 轮确定性交互, 即满足 \begin{center}
+	对于偶数 $k \ge 0$, 称语言 $L \in \IP(k)$, 如果存在一台多项式时间 PTM $V$ 能正确完成与证明人 $P$ 的 $k$ 轮确定性交互, 即满足 \begin{center}
 		\begin{tabular}{cc}
 			完备性 (Completeness) & $x \in L \Rightarrow \exists P, \mathbb P[\textsf{out}_V\langle V, P\rangle(x) = 1] \ge 2/3$ \\
-			可靠性 (Soundness) & $x \notin L \Rightarrow \forall P, \mathbb P[\textsf{out}_V\langle V, P\rangle(x) = 0] \le 1/3$ \\
+			可靠性 (Soundness) & $x \notin L \Rightarrow \forall P, \mathbb P[\textsf{out}_V\langle V, P\rangle(x) = 1] \le 1/3$ \\
 		\end{tabular}
 	\end{center}
 
-	定义 $\IP = \bigcup_{c \ge 0}\IP[n^c]$.
+	定义 $\IP = \bigcup_{c \ge 0}\IP(n^c)$.
 \end{definition}
 
 我们介绍关于 \IP 的一些性质, 其中的一部分会在之后的章节中给出证明:
 \begin{enumerate}
-	\item 利用\cref{robustness} 的方法, 可以将 \IP 定义中的 $2/3$ 和 $1/3$ 提升至任意接近 $1$ 和 $0$ 的实数.
-	\item 将 $2/3$ 修改成 $1$ 不会改变 \IP 语言类.
+	\item 利用\cref{robustness} 的方法, 可以将 \IP 定义中的 $2/3$ 和 $1/3$ 替换称任意 $(1/2, 1)$ 和 $(0, 1/2)$ 的实数.
+	\item 将 $2/3$ 修改成 $1$ 不会改变 \IP 语言类(non-trivial).
 	\item 将 $1/3$ 修改成 $0$ 等价于要求 $L$ 有一个确定性的验证者, 从而会使语言类退化到 \NP.
  \item 将证明人变为概率性的, 不会改变 \IP 语言类, 因为根据 $\mathbb P[X \ge \mathbb E[X]] > 0$, 总存在一位确定性的证明人可以达到不低于原概率性证明人的通过概率.
+ \item 证明人事实上并不需要是全能的, 只需要是 \PSPACE 的就足够了. 换句话说, 我们有 $\IP \subseteq \PSPACE$.
 \end{enumerate}
 
+\begin{proposition}
+	$\IP \subseteq \PSPACE$.
+\end{proposition}
+\begin{proof}
+	$L \in \IP$, 存在多项式时间 DTM $V$, 只需要利用多项式空间递归暴搜 $V$ 接下来所有可能的询问, 选择使最终达到 accept 概率最大的当前问题答案即可.
+\end{proof}
+
+\begin{example} 考虑图同构问题
+\begin{align*}
+	\begin{split}
+		\textsf{GI} &= \{\langle G_1, G_2 \rangle | G_1 \text{ and } G_2 \text{ are isomorphic}\} \\
+		\textsf{GNI} &= \{\langle G_1, G_2 \rangle | G_1 \text{ and } G_2 \text{ are not isomorphic}\}
+	\end{split}
+\end{align*}
+
+显然 $\textsf{GI} \in \NP, \textsf{GNI} \in \coNP$, 不过 $\textsf{GI}$ 是否属于 \NP-complete 仍是一个 open problem.
+
+我们可以证明 $\textsf{GNI} \in \IP$. 使用的策略与之前的红绿球问题是一样的: 验证者随机选择一张图作点的随机打乱, 然后发给证明人, 证明人告诉验证者被打乱的是 $G_1$ 还是 $G_2$.
+
+\end{example}
+
+\subsection{$\IP = \PSPACE$}
+结论已经写在标题里了.
+
+$\IP \subseteq \PSPACE$ 这个方向相对是平凡的, 反过来我们想要证明 $\PSPACE \subseteq \IP$ 其实只需要给出某个 \PSPACE-complete 语言属于 $\IP$ 的证明即可. 根据\cref{TQBF} 我们知道 $\textsf{TQBF} \in \PSPACE$-complete, 因此只要证明 $\textsf{TQBF} \in \IP$ 就行了. 我们从简单一点的尝试出发. 
+
+\subsubsection{$\coNP \subseteq \IP$}
+由于 $\overline{\textsf{3SAT}} \in \coNP$-complete. 我们尝试证明 $\overline{\textsf{3SAT}} \in \IP$. 定义语言 $$\textsf{\#3SAT} = \{\langle \phi, K \rangle | \phi \text{ has exactly } k \text{ satisfiable assignments}\}$$ 则容易看出 $\overline{\textsf{3SAT}} \le_p \textsf{\#3SAT}$. 考虑证明 $\textsf{\#3SAT} \in \IP$.
+
+在这里我们使用\obj{代数化(arithmetization)}的技巧: 对于一个布尔表达式 $\phi$, 对其进行如下变形: \begin{align*}
+	\begin{split}
+		x_i \wedge x_j & \rightarrow x_ix_j \\
+		x_i \vee x_k & \rightarrow 1 - (1 - x_i)(1 - x_j) \\
+		\lnot x_i & \rightarrow 1 - x_i
+	\end{split}
+\end{align*}
+
+从而可以由 $\phi$ 构造出一个多元多项式 $P_{\phi}$. 假设 $\phi$ 是 3CNF 且有 $n$ 个变量和 $m$ 个从句, 则 $P_{\phi}$ 是关于 $x_1, x_2, \cdots, x_n$ 的 $n$ 元多项式, 且 $\deg P_{\phi} = d \le 3m$. 对于 $\phi$ 的一个赋值 $u \in \{0, 1\}^n$, 如果 $u$ 是可满足的, 则 $P_{\phi}(u) = 1$, 否则 $P_{\phi}(u) = 0$.
+
+于是问题变成了有一个多项式 $g$, 证明人需要向验证者证明 $$\sum_{b_1 \in \{0, 1\}}\sum_{b_2 \in \{0, 1\}}\cdots \sum_{b_n \in \{0, 1\}}g(b_1, b_2, \cdots, b_n) = K$$
+
+两人可以先约定取素数 $p \in (2^n, 2^{2n}]$ (或者证明人取定 $p$, 验证者使用多项式时间确定性/随机算法验证 $p$ 是素数), 之后所有问题将在 $\mathbb F_p$ 下讨论.
+
+考虑如下的验证协议(\obj{Sumcheck Protocol}): \begin{itemize}
+	\item 如果 $n = 1$, 则验证者直接计算 $g(1) + g(0)$ 并与 $K$ 比较, 相等则 accept, 不等则 reject.
+ \item 否则, 验证者要求证明人给出不超过 $d$ 次多项式 $$h(x_1) = \sum_{b_2 \in \{0, 1\}}\cdots \sum_{b_n \in \{0, 1\}}g(x_1, b_2, \cdots, b_n)$$ 然后计算 $h(1) + h(0)$ 并与 $K$ 比较, 不等则 reject, 否则在 $\mathbb F_p$ 中随机取 $a$, 与证明人递归验证 $$\sum_{b_2 \in \{0, 1\}}\sum_{b_3 \in \{0, 1\}}\cdots \sum_{b_n \in \{0, 1\}}g(a, b_2, b_3, \cdots, b_n) = h(a)$$
+\end{itemize}
+
+如果证明人给出的 $g$ 和 $K$ 是符合要求的, 那么根据协议验证者一定会接受. 如果证明人在撒谎, 那么验证者会以至少 $\left(1 - \frac dp \right)^{n-1}$ 的概率拒绝, 这是由于不超过 $d$ 次非零多项式在 $\mathbb F_p$ 下有至多 $d$ 个根, 而由于证明人在每轮交互中都必须给出假的 $h(x_1)$ (否则 $h(0) + h(1) \neq K$ 就直接露馅了), 有至少 $1 - \frac dp$ 的概率会被验证者要求继续证明一个错误的命题, 归纳可知有至少 $\left(1 - \frac dp \right)^{n-1}$ 的概率会被拒绝.
+
+\subsubsection{$\PSPACE \subseteq \IP$}
+现在我们证明 $\textsf{TQBF} \in \IP$. 沿用之前的思路, 对于 QBF $\Psi = \forall x_1\exists x_2\forall x_3 \cdots \exists x_n \phi(x_1, x_2, x_3, \cdots, x_n)$, 有 $$\Psi \in \textsf{TQBF} \Leftrightarrow \prod_{b_1 \in \{0, 1\}} \sum_{b_1 \in \{0, 1\}} \prod_{b_3 \in \{0, 1\}} \cdots \sum_{b_n \in \{0, 1\}} P_{\phi}(x_1, x_2, x_3, \cdots, x_n) \neq 0$$
+
+一个自然的想法是如法炮制 Sumcheck Protocol, 但问题在于 $h(x_1)$ 的次数可能会因 $\prod$ 而达到关于 $n$ 指数级, 从而无法在多项式时间内交由验证者验证.
+
+不过可以注意到由于我们只对 $x_i$ 取 $\{0, 1\}$, 从而 $x^k \equiv x$ 对任意 $k \ge 1$ 成立. 定义如下三种算子: \begin{align*}
+	\begin{split}
+		L_i(p)(x_1, \cdots, x_n) &= x_i \cdot p(x_1, \cdots, x_{i-1}, 1, x_{i+1}, \cdots, x_n) +(1 - x_i) \cdot p(x_1, \cdots, x_{i-1}, 0, x_{i+1}, \cdots, x_n) \\
+		\forall_i(p)(x_1, \cdots, x_n) &= p(x_1, \cdots, x_{i-1}, 1, x_{i+1}, \cdots, x_n) \cdot p(x_1, \cdots, x_{i-1}, 0, x_{i+1}, \cdots, x_n) \\
+		\exists_i(p)(x_1, \cdots, x_n) &= p(x_1, \cdots, x_{i-1}, 1, x_{i+1}, \cdots, x_n) + p(x_1, \cdots, x_{i-1}, 0, x_{i+1}, \cdots, x_n) \\
+	\end{split}
+\end{align*}
+从而 $\Psi \in \textsf{TQBF}$ 的等价条件也可写为 $$\forall_1L_1\exists_2L_1L_2\forall_3L_1L_2L_3\cdots \exists_n L_1L_2\cdots L_n P_{\phi}(x_1, \cdots, x_n) = K \neq 0$$
+且等号左边任意后缀表达的多元多项式次数都不超过 $\min\{2n,3m\}$.
+
+考虑这样的问题: 对于一段包含 $Q_{i+1}, \cdots, Q_n \ (Q \in \{\forall, \exists\})$ 量词的后缀, 其本质上应该是一个关于 $x_1, \cdots, x_i$ 的多元多项式 $g(x_1, \cdots, x_i)$, 给定 $x_1, \cdots, x_i$ 的取值 $a_1, \cdots, a_i$ , 我们希望证明 $g(a_1, \cdots, a_i) = K$.
+
+考虑这段后缀中最左边的算子 $\mathcal O$: \begin{itemize}
+	\item 如果 $\mathcal O = \forall_i$, 在已经给定的 $x_1, \cdots, x_{i-1}$ 取值 $a_1, \cdots, a_{i-1}$ 下, 验证者要求证明人给出多项式 $h(x_i) = g(a_1, \cdots, a_{i-1}, x_i)$, 然后计算 $h(0) \cdot h(1)$ 并与 $K$ 比较, 不等则 reject, 否则随机选取 $x_i$ 的取值 $a_i$, 验证下一段后缀.
+ \item 如果 $\mathcal O = \exists_i$, 在已经给定的 $x_1, \cdots, x_{i-1}$ 取值 $a_1, \cdots, a_{i-1}$ 下, 验证者要求证明人给出多项式 $h(x_i) = g(a_1, \cdots, a_{i-1}, x_i)$, 然后计算 $h(0) + h(1)$ 并与 $K$ 比较, 不等则 reject, 否则随机选取 $x_i$ 的取值 $a_i$, 验证下一段后缀.
+ \item 如果 $\mathcal O = L_j$, 在已经给定的 $x_1, \cdots, x_i$ (其中 $j \le i$)取值 $a_1, \cdots, a_i$ 下, 验证者要求证明人给出多项式 $h(x_j) = g(a_1, \cdots, a_{j-1}, x_j, a_{j+1}, \cdots, a_{i})$, 然后计算 $a_jh(0) + (1 - a_j)h(1)$ 与 $K$ 比较, 不等则 reject, 否则\obj{重新}随机选取 $x_j$ 的取值 $a_j'$, 验证下一段后缀.
+\end{itemize}
+
+如果证明人是诚实的, 那么验证者一定会接受. 否则验证者有至少 $\left(1 - \frac dp\right)^{n(n+3)/2}$ 的概率拒绝. 
+
 \end{document}
+
+「」

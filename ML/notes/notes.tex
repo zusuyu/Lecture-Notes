@@ -807,6 +807,7 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 \begin{definition}[$(\alpha, \beta)$-精确]
 	称随机算法 $A$ 对于统计查询 $Q$ 满足 $(\alpha, \beta)$-精确, 如果对于任意 $D \in \mathcal X^n$, $$\P{|A(D) - Q(D)| \ge \alpha} \le \beta$$
 \end{definition}
+\subsection{Laplace Mechanism}
 \begin{definition}[拉普拉斯分布]
 	随机变量 $X$ 服从参数为 $\mu, \sigma$ 的拉普拉斯分布(记作 $X \sim \text{Lap}(\mu, \sigma)$), 其密度函数为 $$f_X(x) = \frac{1}{2\sigma}\exp\left(\frac{|x-\mu|}{\sigma}\right)$$
 \end{definition}
@@ -831,10 +832,39 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 		\item $k\varepsilon$-差分隐私: 注意到 noise 是 i.i.d. 的, 故联合分布密度等于各自相乘, 由 $f_{A_i(D)}(x_i) \le \e^{\varepsilon}f_{A_i(D')}(x_i)$ 可以很容易得到 $f_{A_i(D)}(\vec x) \le \e^{k\varepsilon} f_{A_i(D')}(\vec x)$.
 	    \item $(\alpha, k\beta)$-精确: 使用 Union Bound 即可.
 	\end{itemize}
+\end{proof}
+\begin{corollary}
+	对于多组查询 $Q = (Q_1, \cdots, Q_k)$, Laplace Mechanism 满足 $\frac{k}{n\sigma}$-差分隐私以及 $(\sigma\ln\frac{k}{\beta}, \beta)$-精确.
+\end{corollary}
+
+注意到在多组查询的 Laplace Mechanism 下, 如果要求 $\varepsilon = O(1), \alpha = o(1)$, $\beta$ 是常数, 则不得不有 $k = o\left(\frac{n}{\ln n}\right)$. 换句话说, 隐私泄露 $\varepsilon$ 是关于查询次数 $k$ 线性的, 从某种程度上说, 这是不能接受的.
+
+接下来我们将介绍一种 highly-nontrivial 的机制设计, 使得可以在保证隐私与精确的前提下做到 $k >> n$ 的查询次数.
+
+\subsection{BLR Mechanism}
+
+不妨假设样本空间是有限大的, 即 $|\mathcal X| = N$. 此外沿用之前的一些记号, $k$ 表示查询次数, $n = |D|$ 表示单个数据集大小, $\varepsilon$ 表示隐私性, $(\alpha, \beta)$ 表示精确性. 额外记 $\sigma = \frac{2}{n\varepsilon}$.
+
+该机制采用的随机算法 $\mathcal A$ 不再返回一个 $\mathbb R^d$ 向量, 取而代之的是返回 $\mathcal X^m$ 即 $m$ 个样本, 其中 $m = \frac{2\log(2k)}{\alpha^2}$. 对于 $D \in \mathcal X^n$, $\mathcal A(D)$ 返回 $\hat{D} \in \mathcal X^m$ 的概率 $\P{\mathcal A(D) = \hat{D}}$ 正比于 $\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)$, 其中 $u$ 是\obj{效用函数(utility function)}, 用于衡量「在输入 $D$ 时返回 $\hat{D}$ 有多好」, 在这里定义为 $$u(D, \hat{D}) = -\max_{i=1}^{k}|Q_i(D) - Q_i(\hat{D})|$$ 其中 $Q_i$ 表示第 $i$ 个统计查询.
+
+\begin{theorem}
+	BLR Mechanism 满足 $\varepsilon$-差分隐私以及 $(\alpha, \beta)$-精确, 其中 $$\alpha =$$
+\end{theorem}
+\begin{proof}
+	记 $\Delta u = \max_{D, D', \hat{D}}|u(D, \hat{D}) - u(D', \hat{D})|$, 可以观察到 $\Delta u \le \frac1n$.
+
+	考虑 \begin{align*}
+		\begin{split}
+			\P{\mathcal A(D) = \hat{D}} &= \frac{\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)}{\sum_{\hat{D}}\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)} \\
+			\P{\mathcal A(D') = \hat{D}} &= \frac{\exp\left(\frac{u(D', \hat{D})}{\sigma}\right)}{\sum_{\hat{D}}\exp\left(\frac{u(D', \hat{D})}{\sigma}\right)}
+		\end{split}
+	\end{align*}
+	从而得到 $$\frac{\P{\mathcal A(D) = \hat{D}}}{\P{\mathcal A(D') = \hat{D}}} \le \exp\left(\frac{2\Delta u}{\sigma}\right) \le \exp\left(\frac{2}{n\sigma}\right) = \e^{\varepsilon}$$
+
+	至于 $(\alpha, \beta)$-精确, 事实上在 $\mathcal A$ 的返回值不是实数后我们还没有定义 $(\alpha, \beta)$-精确到底是什么, 所以在这里重新定义一下: 称 $\mathcal A$ 满足 $(\alpha, \beta)$-精确, 如果 $$\P{u(D, \mathcal A(D)) \le \max_{\hat{D}}u(D, \hat{D}) - \alpha} \le \beta$$
+
 	
 \end{proof}
-
-
 
 \end{document}
 
