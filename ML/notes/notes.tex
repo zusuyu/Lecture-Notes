@@ -225,7 +225,7 @@
 	对于某个确定的 $f \in \mathcal F$, 注意到 $err_S(f) = \frac1n \sum_{i=1}^n[y_i \neq f(x_i)]$, $\E{y_i \neq f(x_i)} = err_D(f)$, 故根据 Chernoff Bound 有 $\P{err_D(f) - err_S(f) \ge \varepsilon} \le \e^{-2n\varepsilon^2}$. 再结合 Union Bound 即得结论.
 \end{proof}
 \begin{theorem}[VC Theorem]
-	对于 VC-dimension (会在接下来定义)为 $d$ 的 hypothesis space $\mathcal F$, 从数据集 $D$ 中随机采样大小为 $n$ 的训练集 $S$, 则 $$\P{\sup_{f \in \mathcal F}|err_D(f) - err_S(f)| \ge \varepsilon} \le 2\left(\frac{2\e n}{d}\right)^d\e^{-cn\varepsilon^2}$$其中 $c$ 是常数. 或者等价地, 有至少 $1 - \delta$ 的概率, 对所有 $f \in \mathcal F$ 有 $$err_D(f) \le err_S(f) + O\left(\sqrt{\frac{d\ln n - \ln \delta}{n}}\right)$$
+	对于 VC-dimension (会在接下来定义)为 $d$ 的 hypothesis space $\mathcal F$, 从数据集 $D$ 中随机采样大小为 $n$ 的训练集 $S$, 则 $$\P{\sup_{f \in \mathcal F}|err_D(f) - err_S(f)| \ge \varepsilon} \le 4\left(\frac{2\e n}{d}\right)^d\e^{-n\varepsilon^2/8}$$ 或者等价地, 有至少 $1 - \delta$ 的概率, 对所有 $f \in \mathcal F$ 有 $$err_D(f) \le err_S(f) + O\left(\sqrt{\frac{d\ln n + \ln (1/\delta)}{n}}\right)$$
 	\label{VC-theorem}
 \end{theorem}
 
@@ -264,6 +264,21 @@ $$\mathbb P_{S \sim D^{2n}}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}
 
 从而我们得到了 $$\mathbb P_{S \sim D^{2n}}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon\right] \le 2\e^{-\frac{n\varepsilon^2}{2}}\mathbb E_{S \sim D^{2n}}\left[N^{\Phi}(z_1, \cdots, z_{2n})\right]$$
 
+于是我们只需要限制 \obj{Growth Function} $N^{\Phi}(n) = \max_{S \sim D^n}N^{\Phi}(z_1, \cdots, z_n)$ 即可. 除去 $N^{\Phi}(n) \equiv 2^n$ 这种平凡的情况(这种情况意味着这种场景是 somehow not learnable 的), 我们指出 $N^{\Phi}(n)$ 是多项式增长的.
+
+\begin{lemma}
+	假设 $N^{\Phi}(d + 1) < 2^{d+1}$ 成立, 则对于任意 $n \ge d + 1$, 都有 $N^{\Phi}(n) \le \sum\limits_{k=0}^{d}\binom nk$.
+\end{lemma}
+\begin{proof}
+	$N^{\Phi}(d + 1) < 2^{d+1}$ 说明存在一种 $w \in \{0, 1\}^{d+1}$ 无法被 $\Phi$ 表示, 我们将其称为 \obj{forbidden pattern}. 对于 $n \ge d + 1$, 考虑指标集 $\mathcal I = \{i_1, i_2, \cdots, i_{d+1}\} \subseteq [n]$, 用 $w_{\mathcal I} \in \{0, 1, *\}^n$ 表示在 $\mathcal I$ 指标上填 $w$, 其余位置填通配符 $*$ 得到的 $n$ 位 $01$ 串模式. 用 $E(w_{\mathcal I})$ 表示能被 $w_{\mathcal I}$ 模式匹配的 $n$ 位 $01$ 串集合, 我们需要做的是限制 $\left|\bigcup_{\mathcal I}E(w_{\mathcal I})\right|$ 的上界(从而限制其补集的下界).
+
+	如果 $w = 0^{d+1}$, 那么这个问题是好办的, 因为相当于 $\bigcup_{\mathcal I}E(w_{\mathcal I})$ 中包含了所有有至少 $d+1$ 个 $0$ 的 $01$ 串, 答案就恰好是 $\sum\limits_{k = d+1}^{n}\binom{n}{k}$. 如果 $w \neq 0^{d+1}$, 直观来看 $\bigcup_{\mathcal I}E(w_{\mathcal I})$ 的大小不会减小, 因此结论依然成立. 详细证明则是对于每个 $i \in [n]$, 把所有 $w_{\mathcal I}$ 在这一位上的 $1$ 变成 $0$, 验证并不会使集合大小变大.
+\end{proof}
+\begin{corollary}
+	考虑 $\sum\limits_{k=0}^d \binom nk \le \left(\frac{\e n}{d}\right)^d = O(n^d)$, 我们最终得到了$$\mathbb P_{S \sim D^n}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_{z \sim D}[\phi(z)]\right| \ge \varepsilon\right] \le 4\left(\frac{2\e n}{d}\right)^d\e^{-\frac{n\varepsilon^2}{8}}$$
+
+	其中 $d = \max\{n | N^{\Phi}(n) = 2^n\}$ 被定义为 hypothesis space $\mathcal F$ 的 VC dimension.
+\end{corollary}
 
 \newpage
 \section{Lagrange Duality}
@@ -313,22 +328,73 @@ Game theory is the study of mathematical models of strategic interactions among 
 
 \newpage
 \section{Boosting}
+
+Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个更准确的 classifier.
+
+以下算法中, $\gamma$-weak learning algorithm 表示其可以对于任意输入的带权训练集 $D$, 都能给出一个 classifier, 能在至少 $\frac{1 + \gamma}{2}$ 的数据上得到正确的结果.
+
 \begin{algorithm}
 	\caption{AdaBoost}
 	\begin{algorithmic}[1]
-		\Require training set $S = \{(x_1, y_1), \cdots, (x_n, y_n)\}$, weak learning algorithm $\mathcal A$
+		\Require training set $S = \{(x_1, y_1), \cdots, (x_n, y_n)\}$, $\gamma$-weak learning algorithm $\mathcal A$
 		\State $D_1(i) \gets \frac1n, \forall i \in [n]$.
 		\For{$t = 1 \to T$}
 			\State Use $\mathcal A$ to learn a classifier $h_t$ based on $D_t$.
 			\State $\varepsilon_t \gets \sum\limits_{i=1}^{n}D_t(i)\mathbbm 1[y_i \neq h_t(x_i)]$
-			\State $\gamma_t \gets 1 - 2\varepsilon_t$
+			\State $\gamma_t \gets 1 - 2\varepsilon_t$ \Comment{$\gamma_t \ge \gamma$}
 			\State $\alpha_t \gets \frac12 \ln\frac{1 + \gamma_t}{1 - \gamma_t}$
-			\State $Z_t \gets 2(\varepsilon_t (1 - \varepsilon_t))^2$
+			\State $Z_t \gets \sum_i D_t(i)\exp(-y_i\alpha_th_t(x_i)) \left(= 2\sqrt{\varepsilon_t (1 - \varepsilon_t)}\right)$
 			\State $D_{t + 1}(i) \gets \frac{1}{Z_t}D_t(i)\exp(-y_i\alpha_th_t(x_i))$
 		\EndFor
-		\State \Return a classifier $F$, $F(x) = \text{sgn}\left(\sum\limits_{t=1}^{T}\alpha_th_t(x)\right)$
+		\State \Return a classifier $F$, $F(x) = \text{sgn}\left(\sum\limits_{t=1}^{T}\alpha_th_t(x)\right) = \text{sgn}(f(x))$
 	\end{algorithmic}
 \end{algorithm}
+
+我们陈述以下命题:
+\begin{enumerate}
+	\item $\alpha_t = \arg\min\limits_{\alpha}Z_t = \arg\min\limits_{\alpha} \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i))$.
+	\item $\prod\limits_{t=1}^{T}Z_t = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_i\sum\limits_{t=1}^{T}\alpha_t h_t(x_i)\right) = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)$.
+	\item $\sum\limits_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] = \frac12$. (与证明最终结果无关, 在此是为了指明每一轮中训练得到的 $h_t$ 的优化方向是 orthogonal 的.)
+	\item $\mathbb P_{(x_i, y_i) \sim S} \left[F(x_i) \neq y_i\right] \le (1 - \gamma^2)^{T/2}$.
+\end{enumerate}
+
+注意到 $\mathbb P_{(x_i, y_i) \sim S} \left[F(x_i) \neq y_i\right]$ 的最小非零结果应为 $\frac1n$, 故我们只需要限制 $(1 - \gamma^2)^{T/2} < \frac1n$, 即 $T = \Omega(\log n)$, 就能将 error 降为 $0$.
+
+\begin{enumerate}
+	\item Recall that $\varepsilon_t = \sum\limits_{i=1}^{n}D_t(i)\mathbb I[y_i \neq h_t(x_i)]$, by applying \obj{AM–GM inequality} we have
+	$$Z_t = \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i)) = \varepsilon_t \exp(\alpha) + (1 - \varepsilon)\exp(-\alpha) \ge 2\sqrt{\varepsilon_t(1 - \varepsilon_t)}$$
+	where the equality holds if and only if $$\varepsilon_t \e^{\alpha} = (1 - \varepsilon_t)\e^{-\alpha} \Leftrightarrow \alpha = \frac12 \ln\frac{1 - \varepsilon_t}{\varepsilon_t} = \frac12 \ln\frac{1 + \gamma_t}{1 - \gamma_t} = \alpha_t$$
+	where $\gamma_t = 1 - 2\varepsilon$ in the assignment of $\alpha_t$. This suggests that $\alpha_t = \arg\min\limits_{\alpha} Z_t$ as desired.
+
+	\item Notice that $D_{t+1}(i) = \frac{D_t(i)\exp(-\alpha_t y_i h_t(x_i))}{Z_t}$, by iteratively substitute the term of $D_t(i)$ in the expression of $Z_T$ ($Z_T = \sum_{i=1}^{n}D_T(i)\exp(-\alpha_T y_i h_T(x_i))$), we can eventually obtain the following equality. \begin{equation*}
+		\begin{split}
+			\prod_{t=1}^{T}Z_t &= \prod_{t=1}^{T-1}Z_t \sum_{i=1}^{n}D_T(i)\exp(-\alpha_T y_i h_T(x_i))\\
+			&= \prod_{t=1}^{T-2}Z_t \sum_{i=1}^{n}D_{T-1}(i)\exp(-\alpha_T y_i h_T(x_i) -\alpha_{T-1} y_i h_{T-1}(x_i))\\
+			&= \cdots\\
+			&= \sum\limits_{i=1}^{n}D_0(i)\exp\left(-y_i\sum\limits_{t=1}^{T}\alpha_t h_t(x_i)\right)\\
+			&= \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)
+		\end{split}
+	\end{equation*}
+	
+	\item \begin{equation*}
+		\begin{split}
+			\sum_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] &= \sum_{i=1}^{n}\frac{D_{t}(i)\exp(-\alpha_t y_i h_t(x_i))}{Z_t}\mathbb I[y_i \neq h_t(x_i)]\\
+			&= \frac{\sum\limits_{i=1}^{n}D_{t}(i)\exp(\alpha_t)\mathbb I[y_i \neq h_t(x_i)]}{\sum\limits_{i=1}^{n}D_{t}(i)\exp(\alpha_t)\mathbb I[y_i \neq h_t(x_i)] + \sum\limits_{i=1}^{n}D_{t}(i)\exp(-\alpha_t)\mathbb I[y_i = h_t(x_i)]}\\
+			&= \frac{\varepsilon_t \e^{\alpha_t}}{\varepsilon_t \e^{\alpha_t} + (1 - \varepsilon_t)\e^{-\alpha_t}}
+		\end{split}
+	\end{equation*}
+
+	Since $\alpha_t$ is chosen so that $\varepsilon_t \e^{\alpha_t} = (1 - \varepsilon_t)\e^{-\alpha_t}$, we can prove that $\sum\limits_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] = \frac12$.
+
+	\item \begin{align*}
+		\begin{split}
+			\mathbb P_{(x_i, y_i)\sim S}[F(x_i) \neq y_i] &= \frac1n \sum_{i=1}^n \mathbbm 1[y_if(x_i) \le 0] \le \frac1n \sum_{i=1}^{n} \exp(-y_if(x_i)) = \prod_{t=1}^T Z_t \\
+			&= \prod_{t=1}^T 2\sqrt{\varepsilon_t(1 - \varepsilon_t)} 
+			= \prod_{t=1}^T \sqrt{1 - \gamma_t^2} 
+			\le (1 - \gamma^2)^{T/2}
+		\end{split}
+	\end{align*}
+\end{enumerate}
 
 
 
@@ -855,13 +921,20 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 
 	考虑 \begin{align*}
 		\begin{split}
-			\P{\mathcal A(D) = \hat{D}} &= \frac{\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)}{\sum_{\hat{D}}\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)} \\
+			\P{\mathcal A(D) = \hat{D}} &= \frac{\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)}{\sum_{\hat{D}}\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)}\\
 			\P{\mathcal A(D') = \hat{D}} &= \frac{\exp\left(\frac{u(D', \hat{D})}{\sigma}\right)}{\sum_{\hat{D}}\exp\left(\frac{u(D', \hat{D})}{\sigma}\right)}
 		\end{split}
 	\end{align*}
-	从而得到 $$\frac{\P{\mathcal A(D) = \hat{D}}}{\P{\mathcal A(D') = \hat{D}}} \le \exp\left(\frac{2\Delta u}{\sigma}\right) \le \exp\left(\frac{2}{n\sigma}\right) = \e^{\varepsilon}$$
+	从而得到 \begin{align*}
+		\begin{split}
+			\frac{\P{\mathcal A(D) = \hat{D}}}{\P{\mathcal A(D') = \hat{D}}} &\le \frac{\sum_{\hat{D}}\exp\left(\frac{u(D', \hat{D})}{\sigma}\right)}{\sum_{\hat{D}}\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)}\exp\left(\frac{u(D, \hat{D}) - u(D', \hat{D})}{\sigma}\right) \\
+			&\le \frac{\sum_{\hat{D}}\exp\left(\frac{\Delta u}{\sigma}\right)\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)}{\sum_{\hat{D}}\exp\left(\frac{u(D, \hat{D})}{\sigma}\right)}\exp\left(\frac{\Delta u}{\sigma}\right) \\
+			&\le \exp\left(\frac{2\Delta u}{\sigma}\right) \le \e^{\varepsilon}
+		\end{split}
+	\end{align*}
+	
 
-	至于 $(\alpha, \beta)$-精确, 事实上在 $\mathcal A$ 的返回值不是实数后我们还没有定义 $(\alpha, \beta)$-精确到底是什么, 所以在这里重新定义一下: 称 $\mathcal A$ 满足 $(\alpha, \beta)$-精确, 如果 $$\P{u(D, \mathcal A(D)) \le \max_{\hat{D}}u(D, \hat{D}) - \alpha} \le \beta$$
+	至于 $(\alpha, \beta)$-精确, 事实上在 $\mathcal A$ 的返回值不是实数后我们还没有定义 $(\alpha, \beta)$-精确到底是什么, 所以在这里重新定义一下: 称 $\mathcal A$ 满足 $(\alpha, \beta)$-精确, 如果 $$\P{u(D, \mathcal A(D)) \le \max_{D, \hat{D}}u(D, \hat{D}) - \alpha} \le \beta$$
 
 	
 \end{proof}
