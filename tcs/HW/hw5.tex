@@ -1,7 +1,6 @@
 \documentclass[8pt]{article}
 \usepackage[UTF8]{ctex}
 \usepackage[a4paper]{geometry}
-%\setCJKmainfont[ItalicFont=Noto Serif CJK SC Bold, BoldFont=Noto Serif CJK SC Black]{Noto Serif CJK SC}
 
 \usepackage{amsthm,amsmath,amssymb}
 \usepackage{graphicx}
@@ -24,19 +23,15 @@
 \usepackage[format=hang,font=small,textfont=it]{caption}
 \usepackage[nottoc]{tocbibind}
 
-
 \usepackage{algorithm}
 \usepackage{algorithmicx}
-\usepackage[noend]{algpseudocode}
+\usepackage{algpseudocode}
 \usepackage{amssymb}
 \usepackage{extarrows}
 \usepackage{qcircuit}
 \usepackage{fancyhdr}
 \usepackage{cleveref}
 \usepackage{totpages}
-
-
-
 \usepackage{pgf}
 \usepackage{tikz}
 \usetikzlibrary{arrows,automata}
@@ -130,9 +125,6 @@
 考虑 $k$ 比特布尔函数只有 $2^{2^k}$ 个, 可以使用前述方法将这些函数对应的线路全部预构造出来. 修改 \textbf{1} 中描述的递归构造方法, 在递归到 $n = k$ 时停止递归, 转而直接利用预构造得到的结果. 这种构造方法的电路规模为 $2^{2^k} \cdot 10 \cdot 2^k + 10 \cdot 2^{n-k}$, 取 $k = \log n - 1$, 电路规模为 $$10\left(2^{n-k} + 2^{2^k+k}\right) = 10 \left(\frac{2^{n+1}}{n} + 2^{n/2+\log n-1}\right) \le 1000\cdot \frac{2^n}{n}$$.
 
 \section{}
-\subsection*{Statement}
-证明对于任意 $k > 0$, 都存在语言 $L \in \textbf{PH}$ 其电路复杂性为 $\Omega(n^k)$, 即 $L \notin \textbf{SIZE}(f(n))$ 对任意 $f(n) = o(n^k)$ 成立.
-\subsection*{Solution}
 我们知道对于任意 $l$, 存在无法被规模为 $\frac{2^l}{10l}$ 的线路所计算的 $l$ 比特布尔函数, 而任意 $l$ 比特布尔函数都可以被规模为 $10l2^l$ 的线路所计算. 取 $l = k(\log n + \log\log n)$, 考虑语言
 \begin{equation*}
 	\begin{split}

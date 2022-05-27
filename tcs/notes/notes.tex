@@ -1591,6 +1591,62 @@ $\IP \subseteq \PSPACE$ 这个方向相对是平凡的, 反过来我们想要证
 
 如果证明人是诚实的, 那么验证者一定会接受. 否则验证者有至少 $\left(1 - \frac dp\right)^{n(n+3)/2}$ 的概率拒绝. 
 
+\subsection{Public Coin}
+\def\AM{\textbf{AM}}
+\begin{definition}[\AM]
+	对于偶数 $k \ge 0$, 定义复杂度类 $\AM[k]$ 为 $\IP[k]$ 的子集, 其中额外限制验证者发送给证明人的信息必须是纯随机比特, 且验证者不能再产生其他的随机比特.
+
+	记 $\AM = \AM[2]$. \AM 中使用到的证明方式被称作 \obj{public coin proof}, 或称为 \obj{Arthur-Merlin proof}, 这也是 \AM 名称的由来.
+\end{definition}
+\begin{theorem}
+	$\textsf{GNI} \in \AM[2]$.
+\end{theorem}
+\begin{proof}
+	考虑集合 $$S = \{\langle H, \pi \rangle | H \cong G_1, H \cong G_2, \pi \in \text{aut}(H)\}$$
+
+	其中 $\text{aut}(H)$ 表示图 $H$ 的自同构群. 当 $G_1 \cong G_2$ 时, $|S| = n!$, 当 $G_1 \not\cong G_2$ 时, $|S| = 2n!$.
+
+	因此验证 $\langle G_1, G_2 \rangle \in \textsf{GNI}$ 等价于辨别上述集合大小到底是 $n!$ 还是 $2n!$.
+
+	考虑使用这样的一种工具: \obj{pairwise independent hash functions set}. 具体的, 称一族 $\{0, 1\}^n \to \{0, 1\}^k$ 的函数 $\mathcal H_{n, k}$ 是 pairwise independent 的, 如果对于任意 $x, x' \in \{0, 1\}^n, y, y' \in \{0, 1\}^k, x \neq x', y \neq y'$, 都有 $$\mathbb P_{h \in \mathcal H_{n, k}} [h(x) = y \wedge h(x') = y'] = 2^{-2k}$$
+
+	\textit{值得一提的是这种函数族的构造是容易的. 取 $\mathcal H_{n, n} = \{h_{a, b} | a, b \in \text{GF}(2^n)\}$, 其中 $h_{a, b}(x) = ax + b$, 不难验证这样的 $\mathcal H_{n, n}$ 是 pairwise independent 的. 将每个 $h_{a, b}$ 的输出截断至 $k$ 比特, 得到的 $\mathcal H_{n, k}$ 也是 pairwise independent 的.}
+
+	我们提出如下的 \obj{Set Lower Bound Protocol}:
+	\begin{itemize}
+		\item 对于集合 $S \subseteq \{0, 1\}^m$ 和整数 $K$, 目标是在“验证者只能发送随机比特”的前提下构造交互证明协议, 使得当 $|S| \ge K$ 时验证者以较高的概率接受, 当 $|S| \le \frac{K}{2}$ 时验证者以较低的概率接受, 两者间要存在明显 gap.
+	    \item 协议如下: 取 $k$ 满足 $K \in (2^{k-2}, 2^{k-1}]$, 验证者从一个满足 pairwise independent 的函数族 $\mathcal H_{m, k}$ 中随机选取一个 $h$, 再随机选取 $y \in \{0, 1\}^k$ 一并发送给证明人.
+        \item 证明人找出满足 $x \in S, h(x) = y$ 的 $x$, 连同 $x \in S$ 的 certificate 一并发送给验证者.
+        \item 验证者验证 $x \in S$ 以及 $h(x) = y$, 若满足则接受, 否则拒绝.
+	\end{itemize}
+	\begin{lemma}
+		令 $p^* = K / 2^k$. 当 $|S| \ge K$ 时, 验证者接受的概率至少为 $\frac34 p^*$, 而当 $|S| \le \frac{K}{2}$ 时, 验证者接受的概率不超过 $\frac12 p^*$.
+	\end{lemma}
+	\begin{proof}
+		形式化地写出验证者接受的概率, 就是 $$\mathbb P_{h \in \mathcal H_{m, k}, y \in \{0, 1\}^k} [\exists x \in S, h(x) = y]$$
+
+		可以注意到上述概率是关于 $S$ 的大小单调的, 因此我们只证明在 $|S| = K$ 以及 $|S| = \frac K2$ 处的结论.
+		
+		后者可以简单地使用 Union Bound 证明: 当 $|S| = \frac{K}{2}$ 时,  $$\mathbb P_{h \in \mathcal H_{m, k}, y \in \{0, 1\}^k} [\exists x \in S, h(x) = y] \le \sum_{x \in S} \mathbb P_{h \in \mathcal H_{m, k}, y \in \{0, 1\}^k} [h(x) = y] = |S| \cdot \frac{1}{2^k} = \frac12 p^*$$
+
+		至于前者, 考虑固定某个 $y \in \{0, 1\}^*$, 证明 $$\mathbb P_{h \in \mathcal H_{m, k}} [\exists x \in S, h(x) = y]$$
+
+		记 $E_x$ 表示 $h(x) = y$ 这一事件, 于是需要限制下界的东西变成了 $\mathbb P_{h \in \mathcal H_{m, k}} \left[\bigcup_{x \in S} E_x\right]$, 基于\obj{容斥原理}可以给出如下的下界: 
+		\begin{align*}
+			\begin{split}
+				\mathbb P_{h \in \mathcal H_{m, k}} \left[\bigcup_{x \in S} E_x\right] &\ge \sum_{x \in S}\mathbb P[E_x] - \frac12\sum_{x, x' \in S, x \neq x'}\mathbb P[E_x \cap E_{x'}] \\&= \frac{|S|}{2^k} - \frac12 \cdot \frac{|S|(|S| - 1)}{2^{2k}} \\&= p^*\left(1 - \frac12 \cdot \frac{K-1}{2^k}\right) \\&\ge \frac34 p^*
+			\end{split}
+		\end{align*}
+	\end{proof}
+
+	基于这样的 Set Lower Bound Protocol, 我们只需要把这项协议运行常数轮, 并比较接受轮次占比与 $\frac58 p^*$ 的大小关系. 根据 Concentration Bound (比如 Chernoff Bound), 可以把正确的概率调整至不低于 $2/3$. 注意到这些协议是并行的, 因此交互轮数依然是 $2$.
+\end{proof}
+
+类似(?)地, 也可以证明这样的结论(证明摆了): \begin{theorem}[Goldwasser-Sipser 87]
+	对于任意多项式时间可计算函数 $k: \mathbb N \to \mathbb N$, 有 $$\IP[k] \subseteq \AM[k+2]$$
+\end{theorem}
+
+
 \end{document}
 
 「」
