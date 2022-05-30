@@ -1,0 +1,223 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{bbm}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{example}{例}
+\newtheorem{claim}{声明}
+\newtheorem{remark}{注}
+\newtheorem{thesis}{论点}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Cov#1{\text{Cov}\left({#1}\right)}
+
+
+\title{\heiti\zihao{2} 概率统计(A)课程作业: 假设检验}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{概率统计(A)}
+	\chead{2022 Spring}
+	\rhead{假设检验}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{}
+\begin{enumerate}
+	\item \begin{align*}
+		\alpha &= \P{\text{reject }H_0 | H_0} = \P{\overline{X} \ge 0.5 | \theta = 0.4} = 0.4^3 + 3 \times 0.4^2 \times (1 - 0.4) = 0.352 \\
+		\beta &= \P{\text{accept }H_0 | H_1} = \P{\overline{X} < 0.5 | \theta = 0.5} = (1 - 0.5)^3 + 3 \times (1 - 0.5)^2 \times 0.5 = 0.5 \\
+	\end{align*}
+	显著性水平即为第 I 类错误发生的概率, 即 $\alpha = 0.352$.
+	\item $$p = \P{Z \ge \frac23 | H_0} = \P{\overline{X} \ge \frac23 | \theta = 0.4} = 0.4^3 + 3 \times 0.4^2 \times (1 - 0.4) = 0.352$$
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item 记 $\mu_0 = 30$. 当 $\sigma = 1.1$ 已知时, 取统计量 $Z = \frac{\overline{X} - \mu_0}{\sigma / \sqrt n}$, 计算其样本取值为 $z_0 = 0.727$.
+	
+	对于原假设 $H_0: \mu \le \mu_0$, 根据 Neyman-Pearson 原则, 检验的拒绝域为 $$W = \left\{Z = \frac{\overline{X} - \mu_0}{\sigma / \sqrt n} \ge z_{\alpha}\right\}$$
+
+	由于 $z_{0.05} = 1.645$, 故样本取值不在拒绝域内, 接受原假设.
+
+	\item 对于原假设 $H_0: \mu \ge \mu_0$, 根据 Neyman-Pearson 原则, 检验的拒绝域为 $$W = \left\{Z = \frac{\overline{X} - \mu_0}{\sigma / \sqrt n} \le -z_{\alpha}\right\}$$
+
+	同样, 样本取值不在拒绝域内, 接受原假设.
+	
+	\item 当 $\sigma$ 未知时, 取统计量 $T = \frac{\overline{X} - \mu_0}{\sqrt{S^2 / n}}$, 其样本取值为 $t_0 = 0.713$.
+ 
+	对于原假设 $H_0: \mu \le \mu_0$, 根据 Neyman-Pearson 原则, 检验的拒绝域为 $$W = \left\{T = \frac{\overline{X} - \mu_0}{\sqrt{S^2 / n}} \ge t_{\alpha}(n - 1)\right\}$$
+
+	由于 $t_{0.05}(5) = 2.015$, 故样本取值不在拒绝域内, 接受原假设.
+\end{enumerate}
+
+\section{}
+\begin{enumerate}
+	\item 注意到当原假设 $H_0$ 成立时, 统计量 $T = \frac{(n-1)S^2}{\sigma_0^2}\sim \chi^2(n-1)$, 故 \begin{align*}
+		\alpha \ge \P{\text{reject }H_0 | H_0} = \P{T \le C | H_0} = F_{n-1}(C)
+	\end{align*}
+	因此 $C \le F_{n-1}^{-1}(\alpha)$.
+	\item 当原假设 $H_0$ 成立时, 统计量 $T = \sum_i \frac{(X_i - \mu)^2}{\sigma_0^2} \sim \chi^2(n)$, 故 \begin{align*}
+		\alpha \ge \P{\text{reject }H_0 | H_0} = \P{T \le C | H_0} = F_{n}(C)
+	\end{align*}
+	因此 $C \le F_{n}^{-1}(\alpha)$.
+\end{enumerate}
+
+\section{}
+$Y$ 的分布函数为 $$F_Y(y) = \begin{cases}
+	0, & y < 0 \\
+	\left(\frac{x}{\theta}\right)^n, & 0 \le y < \theta \\
+	1, & y \ge \theta
+\end{cases}$$
+
+于是 $$\alpha \ge \P{\text{reject }H_0 | H_0} = \P{Y > \frac{\theta_0}{a} \vee Y < \frac{\theta_0}{b} | \theta = \theta_0} = 1 - F_Y\left(\frac{\theta}{a}\right) + F_Y\left(\frac{\theta}{b}\right) = 1 - \frac{1}{a^n} + \frac{1}{b^n}$$
+
+当 $\alpha > 1 - \frac{1}{a^n}$ 时, 有 $b \ge \sqrt[n]{\frac{1}{\alpha - 1 + \frac{1}{a^n}}}$, 即 $b$ 的最小值为 $\sqrt[n]{\frac{1}{\alpha - 1 + \frac{1}{a^n}}}$. 当 $\alpha \le 1 - \frac{1}{a^n}$ 时, 不存在满足条件的 $b$.
+
+\section{}
+
+$T = \frac{\overline{X} - \overline{Y}}{\sqrt{S_1^2 / n_1 + S_2^2 / n_2}}$ 的样本取值为 $1.639728$.
+
+当原假设 $H_0$ 成立时, 该统计量服从近似 $t$ 分布, 近似自由度为 $k = \frac{(t_1 + t_2)^2}{t_1^2 / (n_1 - 1) + t_2^2 / (n_2 - 1)}$, 其样本取值为 $17.371796$. 拒绝域为 $W = \{T | T > C\}$, 则有(记自由度为 $k$ 的 $t$ 分布的分布函数为 $G_k(\cdot)$) $$\alpha \ge \P{T > C | T \sim t(k)} = 1 - G_k(C)$$
+从而 $C \ge G_k^{-1}(1 - \alpha)$.
+
+当 $\alpha$ 分别取 $0.05$ 和 $0.01$ 时, 可分别计算 $G_k^{-1}(0.95) = 1.737467, G_k^{-1}(0.99) = 2.561309$, $T$ 的样本取值均不落在拒绝域内, 因此结论均为接受原假设.
+
+\section{}
+\def\LRT{\text{LRT}}
+\begin{enumerate}
+	\item \begin{align*}
+		L(x_1, \cdots, x_n, \mu = 0) &= \P{x_1, \cdots, x_n | \mu = 0} = \prod_{i=1}^{n}\P{x_i | \mu = 0} = \frac{1}{(2\pi)^{n/2}}\exp\left(-\sum_{i=1}^{n}x_i^2 / 2\right) \\
+		L(x_1, \cdots, x_n, \mu = 2) &= \P{x_1, \cdots, x_n | \mu = 2} = \prod_{i=1}^{n}\P{x_i | \mu = 2} = \frac{1}{(2\pi)^{n/2}}\exp\left(-\sum_{i=1}^{n}(x_i - 2)^2 / 2\right) \\
+		\lambda(\mathbf X) &= \frac{L(X_1, \cdots, X_n, \mu = 2)}{L(X_1, \cdots, X_n, \mu = 0)} = \exp\left(2\sum_{i=1}^{n}X_i - 2n\right)
+	\end{align*}
+	\item  \begin{align*}
+		\begin{split}
+			\alpha \ge \P{\text{reject }H_0 | H_0} &= \P{\exp\left(2\sum_{i=1}^{n}X_i - 2n\right) \ge \lambda_{\LRT} \bigg| X_i \sim \text{i.i.d. }\mathcal N(0, 1)} \\
+			&= \P{S \ge \frac{\ln \lambda_{\LRT}}{2} + n \bigg| S \sim \mathcal N(0, n)} \\
+			&= \P{T \ge \frac{\ln \lambda_{\LRT}}{2n} + 1 \bigg| T \sim \mathcal N(0, 1)} \\
+			&= 1 - \Phi\left(\frac{\ln \lambda_{\LRT}}{2n} + 1\right) \\ \lambda_{\LRT} &\ge \exp\left(2n(\Phi^{-1}(1 - \alpha) - 1)\right)
+		\end{split}
+	\end{align*}
+	\item \begin{equation}
+		L(\mathbf x, 2)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)] \ge \lambda_{\LRT}L(\mathbf x, 0)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]
+		\label{eq}
+	\end{equation}
+	当 $\lambda(\textbf x) = \frac{L(\mathbf x, 2)}{L(\mathbf x, 0)} \ge \lambda_{\LRT}$ 时, $\textbf x \in W_{\LRT}$, 故 $\phi_{\LRT}(\mathbf x) = 1$, 则 $\phi_{\LRT}(\mathbf x) - \phi(\mathbf x) \ge 0$, 从而 \cref{eq} 成立.
+	
+	当 $\lambda(\textbf x) < \lambda_{\LRT}$ 时, $\textbf x \notin W_{\LRT}$, 故 $\phi_{\LRT}(\mathbf x) = 0$, 则 $\phi_{\LRT}(\mathbf x) - \phi(\mathbf x) \le 0$, 从而 \cref{eq} 也成立.
+
+	\item 注意到 $\beta_{\LRT} = \P{\mathbf X \in W_{\LRT} | H_1}$ 为备选假设 $H_1$ 成立时, 原假设被拒绝的概率, 可以写为 $$\beta_{\LRT} = \int_{\mathbf x}L(x, 2) \phi_{\LRT}(\mathbf x)\text d\mathbf x$$ 类似的也有 $$\beta = \int_{\mathbf x}L(x, 2) \phi(\mathbf x)\text d\mathbf x$$ 考虑拒绝域 $W$ 的显著水平为 $\alpha$, 即 $$\int_{\mathbf x}L(x, 0)\phi(\mathbf x)\text d\mathbf x \le \alpha$$ 而通过取最小的 $\lambda_{\LRT}$ 可以实现 $$\int_{\mathbf x}L(x, 0)\phi_{\LRT}(\mathbf x)\text d\mathbf x = \alpha$$ 因故, 有 \begin{align*}
+		\begin{split}
+			\beta_{\LRT} - \beta &= \int_{\mathbf x}L(x, 2)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]\text d \mathbf x \\
+			&\ge \lambda_{\LRT}\int_{\mathbf x}L(x, 0)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]\text d \mathbf x \\
+			&\ge \lambda_{\LRT}(\alpha - \alpha) \\
+			&= 0
+		\end{split}
+	\end{align*}
+
+\end{enumerate}
+
+\end{document}
+
