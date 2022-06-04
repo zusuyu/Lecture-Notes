@@ -196,10 +196,11 @@ $T = \frac{\overline{X} - \overline{Y}}{\sqrt{S_1^2 / n_1 + S_2^2 / n_2}}$ 的�
 		\begin{split}
 			\alpha \ge \P{\text{reject }H_0 | H_0} &= \P{\exp\left(2\sum_{i=1}^{n}X_i - 2n\right) \ge \lambda_{\LRT} \bigg| X_i \sim \text{i.i.d. }\mathcal N(0, 1)} \\
 			&= \P{S \ge \frac{\ln \lambda_{\LRT}}{2} + n \bigg| S \sim \mathcal N(0, n)} \\
-			&= \P{T \ge \frac{\ln \lambda_{\LRT}}{2n} + 1 \bigg| T \sim \mathcal N(0, 1)} \\
-			&= 1 - \Phi\left(\frac{\ln \lambda_{\LRT}}{2n} + 1\right) \\ \lambda_{\LRT} &\ge \exp\left(2n(\Phi^{-1}(1 - \alpha) - 1)\right)
+			&= \P{T \ge \frac{\ln \lambda_{\LRT}}{2\sqrt n} + \sqrt n \bigg| T \sim \mathcal N(0, 1)} \\
+			&= 1 - \Phi\left(\frac{\ln \lambda_{\LRT}}{2\sqrt n} + \sqrt n\right) \\ \lambda_{\LRT} &\ge \exp\left(2\sqrt n\Phi^{-1}(1 - \alpha) - 2n\right)
 		\end{split}
 	\end{align*}
+	即当显著水平为 $\alpha = 0.05$ 时, $\lambda_{\LRT}$ 的最小值为 $\exp\left(2\sqrt n\Phi^{-1}(0.95) - 2n\right)$.
 	\item \begin{equation}
 		L(\mathbf x, 2)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)] \ge \lambda_{\LRT}L(\mathbf x, 0)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]
 		\label{eq}
@@ -208,10 +209,10 @@ $T = \frac{\overline{X} - \overline{Y}}{\sqrt{S_1^2 / n_1 + S_2^2 / n_2}}$ 的�
 	
 	当 $\lambda(\textbf x) < \lambda_{\LRT}$ 时, $\textbf x \notin W_{\LRT}$, 故 $\phi_{\LRT}(\mathbf x) = 0$, 则 $\phi_{\LRT}(\mathbf x) - \phi(\mathbf x) \le 0$, 从而 \cref{eq} 也成立.
 
-	\item 注意到 $\beta_{\LRT} = \P{\mathbf X \in W_{\LRT} | H_1}$ 为备选假设 $H_1$ 成立时, 原假设被拒绝的概率, 可以写为 $$\beta_{\LRT} = \int_{\mathbf x}L(x, 2) \phi_{\LRT}(\mathbf x)\text d\mathbf x$$ 类似的也有 $$\beta = \int_{\mathbf x}L(x, 2) \phi(\mathbf x)\text d\mathbf x$$ 考虑拒绝域 $W$ 的显著水平为 $\alpha$, 即 $$\int_{\mathbf x}L(x, 0)\phi(\mathbf x)\text d\mathbf x \le \alpha$$ 而通过取最小的 $\lambda_{\LRT}$ 可以实现 $$\int_{\mathbf x}L(x, 0)\phi_{\LRT}(\mathbf x)\text d\mathbf x = \alpha$$ 因故, 有 \begin{align*}
+	\item 注意到 $\beta_{\LRT} = \P{\mathbf X \in W_{\LRT} | H_1}$ 为备选假设 $H_1$ 成立时, 原假设被拒绝的概率, 可以写为 $$\beta_{\LRT} = \int_{\mathbf x}L(\mathbf x, 2) \phi_{\LRT}(\mathbf x)\text d\mathbf x$$ 类似的也有 $$\beta = \int_{\mathbf x}L(\mathbf x, 2) \phi(\mathbf x)\text d\mathbf x$$ 考虑拒绝域 $W$ 的显著水平为 $\alpha$, 即 $$\int_{\mathbf x}L(\mathbf x, 0)\phi(\mathbf x)\text d\mathbf x \le \alpha$$ 而通过取最小的 $\lambda_{\LRT}$ 可以实现 $$\int_{\mathbf x}L(\mathbf x, 0)\phi_{\LRT}(\mathbf x)\text d\mathbf x = \alpha$$ 因故, 有 \begin{align*}
 		\begin{split}
-			\beta_{\LRT} - \beta &= \int_{\mathbf x}L(x, 2)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]\text d \mathbf x \\
-			&\ge \lambda_{\LRT}\int_{\mathbf x}L(x, 0)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]\text d \mathbf x \\
+			\beta_{\LRT} - \beta &= \int_{\mathbf x}L(\mathbf x, 2)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]\text d \mathbf x \\
+			&\ge \lambda_{\LRT}\int_{\mathbf x}L(\mathbf x, 0)[\phi_{\LRT}(\mathbf x) - \phi(\mathbf x)]\text d \mathbf x \\
 			&\ge \lambda_{\LRT}(\alpha - \alpha) \\
 			&= 0
 		\end{split}
