@@ -1398,9 +1398,9 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 	$\BPP \subseteq $ \PPOLY.
 \end{theorem}
 \begin{proof}
-	任取 $L \in \BPP$, 由\cref{robustness} 知存在一台多项式时间图灵机 $M: \{0, 1\}^n \times \{0, 1\}^{m(n)} \to \{0, 1\}$ 满足 $\forall x \in \{0, 1\}^n$, $$\mathbb P_{r \in \{0, 1\}^{m(n)}}[M(x, r) \neq L(x)] \le 2^{-n-1}$$ 那么一定存在某个 $r_n \in \{0, 1\}^{m(n)}$ 对于所有 $x \in \{0, 1\}^n$ 都满足 $M(x, r_n) = L(x)$, 这是因为"存在 $x$ 使 $M(x, r) \neq L(x)$"的 $r$ 的数量只有不超过 $2^n \cdot \frac{2^m}{2^{n+1}} = 2^{m-1}$ 个.
+	任取 $L \in \BPP$, 由\cref{robustness} 知存在一台多项式时间图灵机 $M: \{0, 1\}^n \times \{0, 1\}^{m(n)} \to \{0, 1\}$ 满足 $\forall x \in \{0, 1\}^n$, $$\mathbb P_{r \in \{0, 1\}^{m(n)}}[M(x, r) \neq L(x)] \le 2^{-n-1}$$ 那么一定存在某个 $r_n \in \{0, 1\}^{m(n)}$ 对于所有 $x \in \{0, 1\}^n$ 都满足 $M(x, r_n) = L(x)$, 这是因为“存在 $x$ 使 $M(x, r) \neq L(x)$”的 $r$ 的数量只有不超过 $2^n \cdot \frac{2^m}{2^{n+1}} = 2^{m-1}$ 个.
 
-	于是 $x \{0, 1\}^n \in L \Leftrightarrow \exists r_n, M(x, r_n) = 1$. 根据 Turing Machines that Take Advice (\cref{take_advise}) 的模型, 我们得到了 $L \in $ \PPOLY.
+	于是存在一列多项式规模的字符串 $\{r_n\}_{n \in \mathbb N}$, 使得 $x \in L \Leftrightarrow M(x, r_{|x|}) = 1$. 根据 Turing Machines that Take Advice (\cref{take_advise}) 的模型, 我们得到了 $L \in $ \PPOLY.
 \end{proof}
 \begin{theorem}
 	$\BPP \subseteq \Sigma_2^p \cap \Pi_2^p$.
@@ -1430,7 +1430,7 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \def\RL{\textbf{RL}}
 
 \begin{definition}[\BPL, \RL]
-	称语言 $L \in \BPL$, 如果存在 $O(\log n)$ 空间的 PTM $M$ 使得 $\mathbb P[M(x) = L(x)] \ge 2/3$. 称语言 $L \in \RL$, 如果存在 $O(\log n)$ 空间的 PTM $M$ 使得 $x \in L \Rightarrow \mathbb P[M(x)=1] \ge 2/3, x \notin L \Rightarrow \mathbb P[M(x) = 0] = 1$.
+	称语言 $L \in \BPL$, 如果存在多项式时间停机, 对数空间的 PTM $M$ 使得 $\mathbb P[M(x) = L(x)] \ge 2/3$. 称语言 $L \in \RL$, 如果存在多项式时间停机, 对数空间的 PTM $M$ 使得 $x \in L \Rightarrow \mathbb P[M(x)=1] \ge 2/3, x \notin L \Rightarrow \mathbb P[M(x) = 0] = 1$.
 \end{definition}
 \begin{proposition}
 	$\RL \subseteq \NL \subseteq \P$, 因为存在 certificate.
@@ -1441,6 +1441,15 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \begin{proof}
 	任取 $L \in \BPL$, 存在 $O(\log n)$ 空间的 PTM $M$ 使得 $\mathbb P[M(x) = L(x)] \ge 2/3$. 对于输入 $x$, 考虑 configuration graph $G_{M, x}$, 其有 $\text{poly}(n)$ 个点, 每条转移边都有 $0/0.5/1$ 的转移概率, 可以写成一个转移矩阵 $A$. 利用矩阵乘法可以计算出 $t$ 步的转移概率(即 $A^t_{i, j}$ 表示从点 $i$ 出发走 $t$ 步, 走到点 $j$ 的概率), 其中 $t = \text{poly}(n)$ 为 $M$ 的运行时间. 此时 $x \in L \Leftrightarrow A^t_{q_{\text{start}}, q_{\text{accept}}} \ge 2/3$, 故只需要多项式时间地将 $A^t$ 算出即可.
 \end{proof}
+\begin{remark}[Wei Bao]
+	注意在 \RL 的定义中限制了其停机时间上限为多项式. 如果去掉这一限制, 那么该语言类就会变成 \NL.
+
+	具体地, 考虑 $L \in \NL$, 对于任意 $x \in L$ 都存在多项式规模 $u$ 使得 $M(x, u) = 1$. 构造 PTM $M'$ 为随机生成一个 $u$, 检验 $M(x, u)$, 如果在指数次\footnote{精细选取之, 使接受概率至少为$2/3$.}随机内得到了至少一次 $M(x, u) = 1$ 就 accept, 否则就 reject. 
+
+	细节地, 受对数空间所限无法实现指数次的计数(因为这需要多项式的空间). 取而代之地, 考虑每次随机生成 $u$ 之前先进行多项式次随机 0/1 采样, 若结果全为 0 就直接停机(即直接 reject). 这种做法可以在对数空间内实现“每次以 $1 / \exp$ 的概率停机”.
+
+
+\end{remark}
 
 \newpage
 \section{交互式证明}

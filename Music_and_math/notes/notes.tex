@@ -1,0 +1,365 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=True,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{bbm}
+
+\fvset{showspaces=True}
+\SaveVerb{verbspace}! !
+\newcommand{\aspace}{\UseVerb{verbspace}}%
+\usepackage{cleveref}
+
+\usepackage{pgf}
+\usepackage{totpages}
+\usepackage{tikz}  
+\usetikzlibrary{arrows,automata}
+
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{引理}[section]
+\newtheorem{definition}{定义}[section]
+\newtheorem{proposition}{命题}[section]
+\newtheorem{corollary}{推论}[section]
+\newtheorem{example}{例}[section]
+\newtheorem{claim}{声明}[section]
+\newtheorem{remark}{注}[section]
+\newtheorem{thesis}{论点}[section]
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\rep#1{\llcorner{#1}\lrcorner}
+\def\e{\mathrm{e}}
+
+\def\A{\textrm{A}}
+\def\B{\textrm{B}}
+\def\C{\textrm{C}}
+\def\D{\textrm{D}}
+\def\E{\textrm{E}}
+\def\F{\textrm{F}}
+\def\G{\textrm{G}}
+
+
+\title{\heiti\zihao{1} 音乐与数学\ 课程笔记}
+\author{\kaishu\zihao{-3} 酥雨\\zusuyu@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{音乐与数学\ 课程笔记}
+	\chead{\today}
+	\rhead{M\&M notes}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{proposition}{命题}{命题}
+\crefname{remark}{注}{注}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+\tableofcontents
+\newpage
+
+\section{音乐基础知识}
+\obj{声音(sound)}是由振动产生的, 振动的弦引起周围空气的疏密变化, 就形成了\obj{声波}. 声波是\obj{纵波(longitudinal wave)}. 声音有四个\obj{物理属性}, 分别是\obj{音高(pitch)}, \obj{力度(dynamics)}, \obj{时值(duration)}和\obj{音色(timbre)}.
+
+\obj{音乐会音高(concert pitch)}为 440Hz, 也就是中央 C 上方的 A 对应的频率.
+
+声学中用\obj{声压水平(sound pressure level, SPL)}来度量声音的强弱, 定义为 $$L_p = 20\log_{10}\frac{p}{p_0}$$ 其中 $p_0 = 20\mu$Pa 为听觉下限阈值, $p$ 为实际声压. 声压水平 $L_p$ 的单位是\obj{分贝(decibel, dB)}.
+
+\obj{频谱图(spectrogram)}和\obj{泛音列(overtone series, harmonic series)}可以用来表示声音的音色. 这里涉及到傅里叶分析, 就不深究了.
+
+~\\
+
+声音可以分为\obj{乐音(musical tone)}和\obj{噪音(noise)}. 注意\textbf{部分}打击乐器属于噪音, 区别在于是否有固定音高.
+
+全体有固定音高的乐音构成一个集合, 称为\obj{乐音体系}, 其中元素称为\obj{音级(scale step)}. 把所有音级从低到高排列得到\obj{音级列}, 其中相邻元素相差一个\obj{半音(semitone)}, 就是钢琴键盘上任意两个相邻键的的音差.
+
+我们给每个音级起一个名字, 称为\obj{音名(pitch name)}. 基础音名只有 7 个 C, D, E, F, G, A, B, 可以通过加下标来得到相差\obj{八度(octave)}的新的音名. 接下来我们不加区分地使用音名与音级两个概念.
+
+标准钢琴键盘一共有 \obj{88 个琴键}, 音级为 $\A_0$ 到 $\C_8$. ($3 + 7 \times 12 + 1 = 88$.) 中央 C 是 $\C_4$.
+
+~\\
+\obj{固定唱名法}中唱名与音级一一对应, 即 do = C, re = D, mi = E, fa = F, sol = G, la = A, si = B.
+
+\obj{首调唱名法}中 do 可以对应任意一个音级, 但需要保证相邻唱名之间分别相差 2, 2, 1, 2, 2, 2, 1 个半音.
+
+~\\
+
+\obj{拍号(time signature)} 中 $m / n$ 表示以 $n$ 分音符为一拍, 每小节 $m$ 拍.
+
+区分全音符, 二分音符, 四分音符, 八分因素和十六分音符. 前二者是空心圆而后三者是实心, 从二分音符开始带竖线, 八分音符有一个尾巴, 十六分音符有两个. 以及注意音符是 $dp$ 不是 $bq$.
+
+\obj{高音谱号}下, 二线位置是 $\G_4$, $\C_4$ 位于下加一线.
+
+\obj{低音谱号}下, 四线位置是 $\F_3$, $\C_4$ 位于上加一线.
+
+\obj{低音谱号}下, $\C_4$ 位于三线.
+
+~\\
+
+\obj{音程(interval)}是两个音级之间的距离. 音程有两个参数: 度数, 半音数. 度数简单来说就是五线谱上的距离(包含首尾, 相差多少线和间), 半音数需要结合音级一个一个数.
+
+
+\section{弦的振动}
+\begin{theorem}[梅森定律]
+	$$f_1 = \frac{1}{2L}\sqrt{\frac{T}{\rho}}$$ 弦的振动频率与其长度成反比, 与其张力的平方成正比, 与其线密度的平方成反比.
+\end{theorem}
+弦的第 $n \ (n \in \mathbb N^*)$ 个\obj{振动模态(mode of vibration)}的振动频率为 $f_n = \frac{n}{2L}\sqrt{\frac{T}{\rho}}$, $\{f_1, f_2, f_3, \cdots \}$ 称为\obj{固有频率(natural frequencies)}, $f_1$ 称为\obj{基频(fundamental frequency)}, 对应的声音称为\obj{基音(fundamental note)}, 而 $f_k \ (k \ge 2)$ 对应的声音称为\obj{泛音(overtone)}, 其中 $f_k$ 对应的称为 \obj{第 $\ k-1$ 泛音}.
+
+取 $f = f_1$, 则固有频率序列为 $$f, 2f, 3f, 4f, 5f, \cdots$$ 称为\obj{泛音列(overtone series, harmonic series)}.
+
+
+\section{乐律}
+
+\obj{律学(temperament)}研究这样的问题: 乐音体系这个有限集合中的元素是怎么确定的? $\C, \sharp\C, \cdots, \A, \sharp\A, \B$ 这些音名对应什么音高?
+
+我们知道八度音程的频率比是 1:2, 所以其实只需要研究同一个八度内的相对频率比. 换句话说, 不同的律法给出了不同的频率序列 $a = (a_1, a_2, \cdots, a_{12})$, 满足 $1 = a_1 < a_2 < \cdots < a_{12} < 2$.
+
+\subsection{三分损益(五度相生)}
+
+\def\tt#1#2{\frac{3^{#1}}{2^{#2}}}
+
+$$a = \left\{1, \tt{7}{11}, \tt{2}{3}, \tt{9}{14}, \tt{4}{6}, \tt{11}{17}, \tt{6}{9}, \frac32, \tt{8}{12}, \tt{3}{4}, \tt{10}{15}, \tt{5}{7}\right\}$$
+
+按照毕达哥拉斯的理论, 纯五度是 3:2 频率比, 而 $\gcd(7, 12) = 1$ (纯五度是 7 个半音), 所以从 $\C$ 的频率 1 出发, 每次乘 $\frac32$ 得到其上方纯五度的音级对应频率, 如果结果超过 $2$ 就再除以 $2$ 下降八度, 最终就得到了上面这个玩意儿. 从分子中 $3$ 的个数也可以推断出频率计算的先后顺序.
+
+最后一个计算出频率的音是 F, 频率是 $\tt{11}{17}$, 进一步乘 $\frac23$ 除以 $2$ 得到 $\tt{12}{19} \approx 1.013643$, 这个略大于 $1$ 的常数被称为 \obj{毕达哥拉斯音差}. (因为这成为了 C 的另一个频率.)
+
+管仲的那套理论也可以得到相同的结果, 但太麻烦了我不太想看, 于是便删繁就简了.
+
+\subsection{纯律}
+只给了 C, D, E, F, G, A, B 这七个音级的音高.
+
+$$a' = \left\{1, \frac98, \frac54, \frac43, \frac32, \frac53, \frac{15}8\right\}$$
+
+motivation 大概是追求最简整数比之类的.
+
+一个缺点是 D-A 纯五度不纯, $\frac53 : \frac98 = \frac{40}{27} \neq \frac32$, 两者之差 $\frac{40}{27} : \frac32 = \frac{81}{80} = 1.0125$ 称为\obj{谐调音差}.
+
+另一个缺点是有两种不同的大二度的频率比: C-D, F-G, A-B 的频率比是 $9/8$, 而 D-E, G-A 的是 $10/9$.
+
+\subsection{中庸律}
+
+仍然是只给出了七个音级的音高.
+
+$$a' = \left\{ 1, \frac{5^{0.5}}{2}, \frac54, \frac{2}{5^{0.25}}, 5^{0.25}, \frac{5^{0.75}}{2}, \frac{5^{1.25}}{4} \right\}$$
+
+motivation 大概是设定全音频率比 $\alpha$ 和半音频率比 $\beta$, 要求 $\alpha^5\beta^2 = 2$, 且 $\beta^2 \approx \alpha$. 最终选定了 $\alpha = \frac{\sqrt{5}}{2}, \beta = \frac{8}{5\sqrt[4]5}$. 也有说法是说 $\alpha$ 的取法来自于纯律中两种大二度频率比的几何平均 $\sqrt{\frac98 \cdot \frac{10}9}$.
+
+\subsection{(十二)平均律}
+这个就简单了. $$a_i = 2^{(i-1) / 12}, i = 1, 2, \cdots, 12$$
+
+\subsection{音分}
+
+\obj{音分(cents)}是音程的精确度量. 两个频率分别为 $f_1, f_2 \ (f_1 < f_2)$ 的音级之间的音分数 $c$ 为 $$c = 1200\log_2\frac{f_2}{f_1}$$
+
+比如说, (十二)平均律下, 相邻音级之间的音分数是 $1200\log_2\left(2^{1/12}\right) = 100$.
+
+
+\section{调式, 音阶与和弦}
+
+\subsection{调式与音阶}
+
+\obj{调试(mode)}是一种特殊的乐音体系, 为若干音级围绕一个具有稳定感的中心音级(主音), 按照一定的音程关系组织在一起形成的.
+
+(调式)\obj{音阶(scale)}就是把一个调式中的音级从低到高排列得到的音级序列.
+\subsubsection{自然大调}
+大大小大大大小. (相邻二度音程分别是什么, 下同)
+\begin{center}
+	\begin{tabular}{c|c|c|c|c|c|c}
+		I & II & III & IV & V & VI & VII \\
+		\hline
+		主音 & 上主音 & 中音 & 下属音 & 属音 & 下中音 & 导音
+	\end{tabular}
+\end{center}
+这些名称似乎是只针对于自然大调的, 可不敢乱用.
+
+$$\flat \C, \flat \G, \flat \D, \flat \A, \flat \E, \flat \B, \F, \C, \G, \D, \A, \E, \B, \sharp \F, \sharp \C$$
+
+上面这一列自然大调, 在 C 的右边从左往右依次多一个升号, 在 C 的左边从右往左依次多一个降号.
+
+$\B$ 和 $\flat \C$, $\sharp\F$ 和 $\flat\G$, $\sharp C$ 和 $\flat D$, 各音级完全是相同的, 只是在五线谱上被标记了不同的唱名. 这样的两个调被称为\obj{等音调}. 15 个自然大调中只有以上三对等音调.(就是在上面那一列中相差 12 位的.)
+
+\subsubsection{自然小调}
+大小大大小大大.
+
+以 A 为主音的自然小调的音阶完全由基本音级构成, 与 C 自然大调相同. 以 A 上方纯五度, E 为主音的自然小调, 音阶中只包含一个升号 $\sharp\F$, 这与 G 自然大调相同. 类似的, 以 A 下方纯五度, D 为主音的自然小调, 音阶中只包含一个降号 $\flat\B$, 这与 F 自然大调相同.
+
+调号相同的自然大小调 pair 被称为\obj{关系大小调}, 主音相同的自然大小调 pair 被称为\obj{平行大小调}. 简单来讲, 自然大调对应的关系小调就是把字母序号减 2 模 7再改成小写, 平行小调就是直接改成小写.
+
+\subsubsection{和声小调}
+大小大大小增大.
+\subsubsection{旋律小调}
+大小大大大大小.
+
+\subsection{和弦}
+\obj{和弦(chord)}是三个及以上不同音高的乐音按照一定音程关系结合起来的.
+
+三和弦有大三和弦, 小三和弦, 增三和弦, 减三和弦四种, 分别是大小, 小大, 大大, 小小.
+
+七和弦有七种. 没有连续三个大二度的七和弦, 因为这样的话根音和七音就差了恰好十二个半音, 听上去就是纯八度, 从而使七和弦退化为三和弦.
+
+和弦可以\obj{转位}. 三和弦有三种转位(包含原位和弦), 七和弦有四种.
+
+\subsection{调式中的和弦}
+调式中和弦的标注方法: 罗马数字的大小写与上标表示和弦的音程, 下标表示转位.
+
+
+\section{旋律与对称}
+
+\obj{音类(pitch class)}是所有音阶关于"相差八度"的等价关系构成的等价类. 一共有 12 个音类. 把这 12 个音类顺序排成一个圆得到\obj{音类圆周}.
+
+$$\mathcal{PC} = \{\overline{\C}, \overline{\sharp\C}, \overline{\D}, \cdots, \overline{\A}, \overline{\sharp\A}, \overline{\B}\}$$
+
+\subsection{旋律的移调变换}
+
+$$T_n(\overline{x}) = \overline{x + n}, \quad \forall \overline{x} \in \mathcal{PC}$$
+
+移调变换分为\obj{严格移调}和\obj{调性移调}, 前者是严格按照半音数移调, 但难以保证移调后的音级仍在调式音阶中. 后者就是前者加以细微修改, 保证移调后的音级仍在调式音阶中.
+
+\subsection{旋律的逆行与倒影}
+
+记 $I$ 为关于中央 C 的倒影. 有 $I^2 = T_0, T_n * I = I * T_{-n}$.
+
+记 $R$ 为逆行, 有 $R^2 = T_0, R * T_i = T_i * R, R * I = I * R$.
+
+$$\mathcal M = \langle T, I, R \rangle = \langle T, I \rangle \times \langle R \rangle \cong D_{24} \times \mathbb Z_2$$ 是移调变换群的结构.
+
+\subsection{十二音技术}
+
+任取一个首零的(因为可以根据这个排列来定义对称关系) 12 阶排列作为\obj{初始音列} $P_0$, 定义 $P_n = n + P_0 \ (1 \le n < 12), I_n = n - P_n \ (0 \le n < 12)$, $RP_n, RI_n$ 为两者的 reverse, 从而得到了 48 种音列.
+
+可以写出一个 $12 \times 12$ 的矩阵, 从四个方向可以读出恰好上述 48 种音列. 称这个矩阵为\obj{音列矩阵(tone row matrix)}.
+
+以初始音阶 $p$ 生成的音列矩阵, 第 $i$ 行第 $j$ 列 $(0 \le i, j < 12)$ 上的数是 $- p_i + p_j \bmod 12$.
+
+\subsection{音列计数}
+
+事实上上述生成的 48 种音列可能退化成 24 种, 比如取 $P_0 = \{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}$ 时, 有 $I_k = RP_{k+1}, RI_k = P_{k+1}$.
+
+但至少有 24 种, 因为 $P_k, I_k$ 一定是互不相同的.
+
+所以就要么是 48 种, 要么是 24 种. 24 种说明存在 $k$, 要么 $P_0 = RI_k$, 要么 $P_0 = RP_k$, 且这些情况是不交的. 前者等价于 $0 + a_{11} = a_1 + a_{10} = \cdots = a_5 + a_6 = k$, 后者等价于 $0 - a_{11} = a_1 - a_{10} = \cdots = a_5 - a_6 = a_6 - a_5 = \cdots = a_{11} - 0 = k$, 故要求 $k = 6$.
+
+考虑全体音阶共有 $12!$ 种, (按照能够出现在同一个音列矩阵中)等价类内包含 24 种音阶的音阶 $6 \times 12!! + 12!! = 322560$ 个, 因此另外还有 $12! - 322560 = 478679040$ 个, 等价类包含 48 个音阶的音阶.
+
+
+\section{节奏}
+\obj{节奏奇性}指不包含对径的起拍点的节奏型.
+
+节奏型的\obj{影子}指把起拍点替换成原节奏型相邻起拍点的中点, 得到的新节奏性.
+
+\obj{距离序列}就是相邻起拍点的差.
+
+\obj{轮廓}是距离序列相邻两项的大小关系, $0 / + / -$. \obj{轮廓同构}用于描述其轮廓可以通过循环位移变得相同的节奏型.
+
+\begin{theorem}[Burnside]
+	$G$ 是集合 $X$ 上的置换群, 其轨道数 $t$ 满足 $$t = \frac{1}{|G|}\sum_{g \in G}|\text{fix}(g)|$$
+\end{theorem}
+
+\section{音网}
+和弦的\obj{距离向量}是一个六元组 $\delta = (d_1, d_2, d_3, d_4, d_5, d_6)$, 其中 $d_i$ 表示有多少对音级相差 $i$ 个半音. 在音类圆周上, 等价于有多少对顶点的距离为 $i$. 对于 $n$ 和弦, 其距离向量满足 $\sum_{i=1}^6 d_i = \frac{n(n-1)}{2}$.
+
+\obj{全音程和弦}是距离向量为 $\delta = (1,1,1,1,1,1)$ 的和弦, 例如 $\{\B, \C, \D, \sharp\F\}$ 和 $\{\C, \sharp\C, \E, \sharp\F\}$. 通过移调与倒影变换作用下, 本质不同的全音程和弦只有以上两种.
+
+$\{\sharp\C, \sharp\D, \sharp\F, \sharp\G, \sharp\A\}$ 是一种\obj{五声音阶}. \obj{全音音阶}就是在音类圆周上隔一个取一个, \obj{半音音阶}就是取所有十二个音级.
+
+\obj{自然大调音阶}的距离向量是 $\delta = (2, 5, 4, 3, 6, 1)$, 一共有 12 种. \obj{五度圆周}可以给出自然大调音阶的另一种生成方式.
+
+\obj{平均不和谐度} $D = 8p_1 + 4p_2 + 2p_3 + 2p_4 + p_5 + 6p_6$.
+
+假设在十二平均律下, 只讨论 24 种大小三和弦. 有三种三和弦的变换: \obj{平行变换} $P$, \obj{关系变换} $R$, \obj{导音变换} $L$. 变换都保留了原本的两个音级而修改了另外一个, 在音类圆周上可以给出一个基于三角形对称的几何解释.
+
+三种变换都是对合的(平方等于单位变换). 可以证明的是 $RLPRLP = \text{Id}$, 从而可以写成一张以三和弦为顶点的六边形网状结构, 称为\obj{音网}.
+
+音网有如下几个性质: \begin{itemize}
+	\item 每个六边形的六个顶点代表的三和弦, 都有恰好一个公共音级, 这个音级等于六边形右上角大三和弦的根音.
+ \item 称一个六边形的标号为上述的公共音级. 存在公共边的六边形, 其标号音级之间构成协和音程. 具体的, 一个六边形与其上, 下, 右上, 左下, 左上, 右下方的六边形分别构成纯四, 纯五, 大三, 小六, 小三, 大六度音程, 只有这些音程(再加上纯八度)是协和音程, 而其余音程都是不协和音程.
+ \item 可以以某种特定形状在音网上定位出五声音阶与大小音阶.
+ \item 把音网用对偶形式(以六边形为点, 相邻六边形之间连边形成一张新图)建立, 可以得到一个音类环面.
+\end{itemize}
+
+\end{document}
+
