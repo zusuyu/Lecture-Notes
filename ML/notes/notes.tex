@@ -952,5 +952,71 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 	剩下的开摆了.
 \end{proof}
 
+\newpage
+\section{Reinforcement Learning}
+定义一些记号
+\begin{itemize}
+	\item $\mathcal S$: state space
+    \item $\mathcal A$: actione space
+    \item $S_t \in \mathcal S, A_t \in \mathcal A, R_t \in \mathbb R$: state, action, and rewrad at time $t$
+    \item $P_{s, s'}^{a} = \mathbb P(S_{t+1} = s' | S_t = s, A_t = a)$: transition probability
+    \item $R(s, a) = \mathbb E[R_{t+1} | S_t = s, A_t = a]$: reward function
+    \item $\gamma \in (0, 1)$: discount factor
+    \item $\pi: \mathcal S \to \Delta(\mathcal A)$: policy, where $\Delta(\mathcal A)$ denotes the space of probability distribution over $\mathcal A$
+    \item $v^{\pi}(s) = \mathbb E\left[\sum\limits_{k \ge 0}\gamma^kR_{t+k} \bigg| S_t = s\right]$: (state) value function, where probability is over \num{i} the policy $\pi$, \num{2} the transition probability $P_{s, s'}^a$.
+\end{itemize}
+\begin{proposition}[Bellman Expectation Equation]
+	$$v^{\pi}(s) = \mathbb E_{a \sim \pi(s)}\left[R(s, a) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^av^{\pi}(s')\right]$$
+\end{proposition}
+考虑在固定 policy $\pi$ 下的 Bellman Expectation Operator $\Phi: \mathbb R^{N} \to \mathbb R^{N}$, 满足 $$\Phi(\mathbf v)(s) = \mathbb E_{a \sim \pi(s)}\left[R(s, a) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^a\mathbf v(s')\right]$$
+则可以证明 $\Phi$ 是一个无穷范数下的 $\gamma$-压缩映射(contraction mapping).
+
+这说明随便找一个 $\mathbf v_0 \in \mathbb R^N$, 不断对它做 $\Phi$ 这个 operator, 它都会收敛到唯一的不动点, 这个点就是 $\pi$ 的 value function $v^{\pi}$.
+
+\subsection{Finding Optimal Policy}
+
+\begin{definition}[Bellman Operator]
+	无关 policy $\pi$, 定义 Bellman Operator $\Phi^*: \mathbb R^{N} \to \mathbb R^{N}$, 满足 $$\Phi(\mathbf v)(s) = \max_{a \in \mathcal A}\left[R(s, a) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^a\mathbf v(s')\right]$$
+\end{definition}
+\begin{theorem}
+	Bellman Operator $\Phi^*$ 是无穷范数下的 $\gamma$-压缩映射.
+\end{theorem}
+\begin{proof}
+	考虑 $\mathbf u, \mathbf v \in \mathbb R^N$, 记 \begin{align*}
+		a_{\mathbf u} &= \arg\max_a\left[R(s, a) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^a\mathbf u(s')\right] \\
+		a_{\mathbf v} &= \arg\max_a\left[R(s, a) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^a\mathbf v(s')\right] \\
+	\end{align*}
+	此时有(不妨设$\Phi^*(\mathbf v)(s) \ge \Phi^*(\mathbf u)(s)$) \begin{align*}
+		\Phi^*(\mathbf v)(s) - \Phi^*(\mathbf u)(s) &= \left[R(s, a_{\mathbf v}) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^{a_{\mathbf v}}\mathbf v(s')\right] - \left[R(s, a_{\mathbf u}) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^{a_{\mathbf u}}\mathbf u(s')\right] \\
+		&\le \left[R(s, a_{\mathbf v}) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^{a_{\mathbf v}}\mathbf v(s')\right] - \left[R(s, a_{\mathbf v}) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^{a_{\mathbf v}}\mathbf u(s')\right] \\
+		&= \gamma\sum_{s' \in \mathcal S}P_{s, s'}^{a_{\mathbf v}}(\mathbf v(s') - \mathbf u(s')) \\
+		&\le \gamma\sum_{s' \in \mathcal S}P_{s, s'}^{a_{\mathbf v}}\|\mathbf v - \mathbf u\|_{\infty} \\
+		&= \gamma \|\mathbf v - \mathbf u\|_{\infty}
+	\end{align*}
+	从而也有 $\|\Phi^*(\mathbf v) - \Phi^*(\mathbf u)\|_{\infty} \le \gamma \|\mathbf v - \mathbf u\|_{\infty}$
+\end{proof}
+\begin{theorem}
+	对于任意的 policy $\pi_0$, 记 $v^{\pi_0}$ 为其 value function, 则 $\Phi^*(v^{\pi_0})(s) \ge v^{\pi_0}(s)$ 对任意 $s \in \mathcal S$ 成立.
+\end{theorem}
+\begin{proof}
+	\begin{align*}
+		v^{\pi_0}(s) &= \mathbb E_{a \sim \pi_0(s)}\left[R(s, a) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^av^{\pi_0}(s')\right] \\
+		\Phi^*(v^{\pi_0})(s) &= \max_{a \in \mathcal A}\left[R(s, a) + \gamma\sum_{s' \in \mathcal S}P_{s, s'}^av^{\pi_0}(s')\right]
+	\end{align*}
+	一目了然了属于是.
+\end{proof}
+
+现在有一个问题: 我们有一个 policy $\pi_0$, 我们可以对 $\pi_0$ 的 value function $v^{\pi_0}$ 作用 $\Phi^*$ 得到 $\Phi^*(v^{\pi_0})$, 但是 $\Phi^*(v^{\pi_0})$ 可能不是任何一个 policy 的 value function.
+
+可以从两个层面入手: 首先, 考虑 $\Phi^*$ 的唯一不动点 $\mathbf v^*$, 它必然是某个 optimal policy $\pi^*$ 的 value function, 因为只要取 $\pi^*(s) = \arg\max\limits_{a \in \mathcal A}\left[R(s, a) + \gamma\sum\limits_{s' \in \mathcal S}P_{s, s'}^a\mathbf v^*(s')\right]$ 即可.
+
+其次, 对于任意的 $\mathbf v \in \mathbb R^N$, 我们都可以定义关于 $\mathbf v$ 的 greedy policy $\pi$, $\pi(s) = \arg\max\limits_{a \in \mathcal A}\left[R(s, a) + \gamma\sum\limits_{s' \in \mathcal S}P_{s, s'}^a\mathbf v(s')\right]$.
+
+现在, 我们从初始 policy $\pi_0$ 出发, 记 $\mathbf v_0 = v^{\pi_0}$ 为 $\pi_0$ 的 value function, 迭代计算 $\mathbf v_{k+1} = \Phi^*(\mathbf v_k)$, 再记 $\pi_k$ 为 $\mathbf v_k$ 诱导的 greedy policy, $v^{\pi_k}$ 为 $\pi_k$ 的 value function.
+
+\begin{theorem}
+	$\|v^{\pi_k} - \mathbf v^*\|_{\infty} \le \frac{\gamma}{1 - \gamma}\|\mathbf v_k - \mathbf v^*\|_{\infty}$.
+\end{theorem}
+
 \end{document}
 

@@ -1,0 +1,183 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} 计算理论导论 \ 第七次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{计算理论导论}
+	\chead{2022 Spring}
+	\rhead{第七次作业}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\def\IP{\textbf{IP}}
+\def\IPP{\textbf{IP'}}
+\def\PSPACE{\textbf{PSPACE}}
+
+\section{}
+我们知道 $\IP = \PSPACE$. 在 $\PSPACE \subseteq \IP$ 的证明中, 我们构造了一种基于多项式求值的, 用于证明 $\textsf{TQBF} \in \IP$ 的验证协议, 这种协议对于正确的实例 $\Psi \in \textsf{TQBF}$ 一定会接受, 即具有 perfect completeness. 也就是说, 我们证明的实际上是 $\PSPACE \subseteq \IPP$.
+
+注意到又有 $\IPP \subseteq \IP \subseteq \PSPACE$, 因此 $\IP = \IPP$.
+
+\def\MIP{\textbf{MIP}}
+\def\NEXP{\textbf{NEXP}}
+
+\section{}
+任取 $L \in \MIP$, 存在多项式时间图灵机(verifier) $V_1, V_2$ 使得 \begin{align*}
+	\begin{split}
+		x &\in L \Rightarrow \exists P_1, P_2, \mathbb P_r[\textsf{out}(V_1, V_2, P_1, P_2, x, r) = 1] \ge \frac23 \\
+		x &\notin L \Rightarrow \forall P_1, P_2, \mathbb P_r[\textsf{out}(V_1, V_2, P_1, P_2, x, r) = 1] \le \frac13
+	\end{split}
+\end{align*}
+其中 $\textsf{out}(V_1, V_2, P_1, P_2, x, r)$ 表示 verifier $V_1, V_2$ 与 multiprover $P_1, P_2$ 基于输入 $x$ 与随机串 $r$ 进行交互验证的输出结果.
+
+考虑构造 NDTM $M$, 其先利用 nondeterminism \obj{搜索}出两个 prover 图灵机 $P_1, P_2$, 再依次\obj{枚举}随机串 $r$ 的所有可能, 然后确定性地计算 $\textsf{out}(V_1, V_2, P_1, P_2, x, r)$, 并统计其中等于 $1$ 的占比, 如果这个占比超过 $\frac23$ 就接受. 换言之, $M$ 接受 $x$ 当且仅当存在 $P_1, P_2$ 使得 $\mathbb P_r[\textsf{out}(V_1, V_2, P_1, P_2, x, r) = 1] \ge \frac23$, 故 $L = L(M)$.
+
+由于 $P_1, P_2$ 本身都是 $\{0, 1\}^{p(|x|)} \to \{0, 1\}^{q(|x|)}$ 的函数, $p, q$ 是多项式, 因此 $P_1, P_2$ 可以用 $q(|x|) \cdot 2^{p(|x|)}$ 位二进制串来表示, 即关于输入规模指数级. $r$ 的规模也是多项式, 因此枚举 $r$ 所花费的时间也是指数级的.
+
+因此 $M$ 的运行时间是关于输入规模指数级, 故 $L = L(M) \in \NEXP$.
+
+\def\AM{\textbf{AM}}
+\def\BPNP{\textbf{BP}\cdot\textbf{NP}}
+\def\NP{\textbf{NP}}
+\section{}
+
+\begin{itemize}
+	\item $\AM[2] \subseteq \BPNP$.
+	
+	任取 $L \in \AM[2]$, 存在多项式时间 verifier $V$, 其在交互证明过程中先向 prover 发送随机串 $r$, 得到对方反馈 $a = P(x, r)$ 后, 输出交互证明结果 $V(x, r, a)$, 满足 \begin{align*}
+		\begin{split}
+			x &\in L \Rightarrow \exists P, \mathbb P_r[V(x, r, P(x, r)) = 1] \ge \frac23 \\
+			x &\notin L \Rightarrow \forall P, \mathbb P_r[V(x, r, P(x, r)) = 1] \le \frac13 \\
+		\end{split}
+	\end{align*}
+	考虑语言 $L' = \{(x, r) | \exists a, V(x, r, a) = 1\} \in \NP$, 从而有多项式时间规约 $f$ 满足 $(x, r) \in L' \Leftrightarrow \phi_{x, r} = f(x, r) \in \textsf{3SAT}$. 注意到 $V(x, r, P(x, r)) = 1 \Rightarrow \phi_{x, r} \in \textsf{3SAT}$, 从而可以进一步得到 \begin{align*}
+		\begin{split}
+			\exists P, \mathbb P_r[V(x, r, P(x, r)) = 1] \ge \frac23 & \Rightarrow \mathbb P_r[\phi_{x, r} \in \textsf{3SAT}] \ge \frac23\\
+			\forall P, \mathbb P_r[V(x, r, P(x, r)) = 1] \le \frac13 & \Rightarrow \mathbb P_r[\phi_{x, r} \in \textsf{3SAT}] \le \frac13\\
+		\end{split}
+	\end{align*}
+	即 $L \le_r \textsf{3SAT}$, 说明 $L \in \BPNP$.
+
+	\item $\BPNP \subseteq \AM[2]$.
+	
+	任取 $L \in \BPNP$, 存在多项式时间可计算函数 $f$, 记 $\phi_{x, r} = f(x, r)$, 则有 \begin{align*}
+		\begin{split}
+			x &\in L \Rightarrow \mathbb P_r[\phi_{x, r} \in \textsf{3SAT}] \ge \frac23 \\
+			x &\notin L \Rightarrow \mathbb P_r[\phi_{x, r} \in \textsf{3SAT}] \le \frac13 \\
+		\end{split}
+	\end{align*} 可以设计如下的交互式证明协议: verifier 发送随机串 $r$, prover 根据 $f$ 计算出 $\phi_{x, r}$ 并返回其一组可满足赋值 $u$, verifier 检验 $u$ 的满足性并输出结果.
+
+	不难验证这个协议可以用于识别语言 $L$. 因此 $L \in \AM[2]$.
+
+\end{itemize}
+
+\end{document}
