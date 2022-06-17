@@ -105,7 +105,7 @@
 
 \usepackage{totpages}
 \begin{document}
-
+\fontsize{12.2}{0}
 
 \fancypagestyle{plain}{
 	\fancyhf{}
@@ -120,7 +120,7 @@
 \crefname{lemma}{引理}{引理}
 \crefname{figure}{图}{图}
 \crefname{table}{表}{表}	
-\maketitle
+%\maketitle
 
 \section{概率部分}
 \begin{definition}[二项分布]
@@ -129,6 +129,9 @@
 \begin{definition}[Poisson 分布]
 	$X \sim \pi(\lambda), \P{X = k} = \e^{-\lambda}\frac{\lambda^k}{k!}, \E{X} = \lambda, \Var{X} = \lambda$.
 \end{definition}
+\begin{remark}
+	$X \sim \pi(\lambda_1), Y \sim \pi(\lambda_2) \Rightarrow X + Y \sim \pi(\lambda_1 + \lambda_2)$.
+\end{remark}
 \begin{lemma}
 	$X_n \sim \mathcal B(n, p_n), \lim\limits_{n \to \infty}np_n = \lambda \Rightarrow \lim\limits_{n \to \infty} \P{X_n = k} = \e^{-\lambda}\frac{\lambda^k}{k!}$.
 \end{lemma}
@@ -316,8 +319,20 @@ $$\lim\limits_{n \to \infty}F_{X_n}(x) = F_X(x)$$
 \textit{记 $S_E^j = \sum_{i=1}^{n_j} (X_{ij} - \mu_j)^2$, 则可以利用前面正交变换证明 $\overline{X}$ 与 $S^2$ 独立的方法证明 $\mu_j$ 与 $S_E^j$ 独立. 而 $S_E = \sum_j S_E^j$, $S_A$ 完全由 $\mu_j$ 决定, 故两者独立.}
 
 \begin{theorem}[Cochran]
-	设 $\mathbf X = (X_1, \cdots, X_n)^{\text T}$, 其中 $X_1, \cdots, X_n \sim \text{i.i.d. } \mathcal N(0, 1)$. 对称矩阵 $A_1, \cdots, A_k$ 满足 $$\mathbf X^{\text T}\mathbf X = \sum_{i=1}^{k} \mathbf X^{\text T}A_i\mathbf X$$ 记 $\text{rank}(A_i) = r_i$, 则 $\mathbf X^{\text T}A_i\mathbf X \sim \chi^2(r_i)$ 且相互独立当且仅当 $\sum_{i=1}^{k} r_i = n$. 
+	设 $\mathbf X = (X_1, \cdots, X_n)^{\text T}$, 其中 $X_1, \cdots, X_n \sim \text{i.i.d. } \mathcal N(0, 1)$. 对称矩阵 $A_1, \cdots, A_k$ 满足 $$\mathbf X^{\text T}\mathbf X = \sum_{i=1}^{k} \mathbf X^{\text T}A_i\mathbf X$$ 记 $\text{rank}(A_i) = r_i$, 则以下两个条件等价: \begin{itemize}
+		\item $\mathbf X^{\text T}A_i\mathbf X \sim \chi^2(r_i)$ 且相互独立, 每个 $A_i$ 都是投影矩阵(特征值为 0 和 1).
+		\item $\sum_{i=1}^{k} r_i = n$. 
+	\end{itemize}
 \end{theorem}
+\begin{proof}
+	一个方向是显然的. 
+
+	另一个方向先由二次型分解得 $$\mathbf X^{\text T}A_i\mathbf X = \sum_{j=1}^{r_i}\lambda_{ij}\left(c_{ij}^{\text T}\mathbf X\right)^2$$ 其中 $c_{ij} \in \mathbb R^n, \lambda_{ij} = \pm 1$. 把 $c_{ij}^{\text T}$ 横着叠起来得到方阵 $C$, 则 $$\mathbf X^{\text T}\mathbf X = \mathbf X^{\text T}C^{\text T}\text{diag}(\lambda_{11}, \cdots, \lambda_{kr_k})C\mathbf X$$
+	\begin{lemma}
+		$\mathbf X \sim \mathcal N(\mathbf 0, I_n)$, 则对于对称矩阵 $Q, Q'$, 如果 $\mathbf X^{\text T}Q\mathbf X$ 与 $\mathbf X^{\text T}Q'\mathbf X$ 服从相同分布, 则 $Q, Q'$ 特征值相同.
+	\end{lemma}
+	由引理知 $C^{\text T}\text{diag}(\lambda_{11}, \cdots, \lambda_{kr_k})C = I_n$, 故 $\lambda_{ij} = 1$, $C$ 是正交矩阵. 记 $\mathbf Y = C\mathbf X$, 则 $\mathbf Y \sim \mathcal N(\mathbf 0, I_n)$, 于是 $\mathbf X^{\text T}A_i\mathbf X = \sum_{j=1}^{r_i}Y_{ij}^2 \sim \chi^2(r_i)$ 且相互独立. 进一步地, $\mathbf X^{\text T}A_i\mathbf X = \mathbf X^{\text T}C^{\text T}I_{r_i}C\mathbf X$, 故 $A_i$ 的特征值为 $1, 0$, 是投影矩阵.
+\end{proof}
 
 \subsection{回归分析}
 一元回归模型: $$y_i = \alpha + \beta x_i + \varepsilon_i, \quad \varepsilon_i \sim \mathcal N(0, \sigma^2), \sigma^2\mbox{未知}$$

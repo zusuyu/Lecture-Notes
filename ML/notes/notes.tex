@@ -100,7 +100,7 @@
 \def\le{\leqslant}
 \def\ge{\geqslant}
 \def\im{\text{im }}
-\def\P#1{\mathbb{P}\left[{#1}\right]}
+\def\P#1{\mathbb{P}\left({#1}\right)}
 \def\E#1{\mathbb{E}\left[{#1}\right]}
 \def\Var#1{\text{Var}\left[{#1}\right]}
 \def\rep#1{\llcorner{#1}\lrcorner}
@@ -235,7 +235,7 @@
 为了接下来的叙述方便, 我们引入一些记号:
 \begin{itemize}
 	\item 对于分类器 $f \in \mathcal F$ 以及数据点 $z = (x, y) \sim D$, 定义 $\phi_f(z) = \mathbbm 1[y \neq f(x)]$, 即每个 $\phi_f$ 是一个“长度为$|D|$” 的 $01$ 串, $1$ 表示 $f$ 会在这一位对应的数据点上出错.
-	\item 定义 $\Phi_{\mathcal F} = \{\phi_f | f \in \mathcal F\}$. 由于以下不会超过一个 hypothesis space, 故省略角标简记为 $\Phi$.
+	\item 定义 $\Phi_{\mathcal F} = \{\phi_f | f \in \mathcal F\}$. 由于以下不会出现超过一个 hypothesis space, 故省略下标简记为 $\Phi$.
 \end{itemize}
 
 如此一来, 对于$S = \{z_1 = (x_1, y_1), \cdots, z_n = (x_n, y_n)\}$, 两种错误率 $err_S(f)$ 和 $err_D(f)$ 就分别等价于 $\frac1n \sum\limits_{i=1}^{n}\phi_f(z_i)$ 和 $\mathbb E_{z \sim D}\phi_f(z)$, 而我们需要限制的概率也变成了 $$\mathbb P_{S \sim D^n}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \mathbb E_{z \sim D}[\phi(z)]\right| \ge \varepsilon\right]$$
@@ -249,7 +249,7 @@
 
 $$\mathbb P_{S \sim D^{2n}}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon\right] = \mathbb E_{S \sim D^n} \left[\mathbb P_{\sigma}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right]\right]$$
 
-这么做的意义是什么? 意义是可以先只考虑内层的 $\mathbb P_{\sigma}$ 而不管 $S \sim D^n$ 的选取. 看似强行取的随机排列 $\sigma$ 是为了内层可以被 bound, 不然 $\mathbbm 1\left[\left|\frac1n\sum_{i=1}^{n}\phi(z_i) - \frac1n\sum_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon \right]$ 还不太方便处理.
+这么做的意义是什么? 意义是可以先只考虑内层的 $\mathbb P_{\sigma}$ 而不管 $S \sim D^n$ 的选取. 看似强行取的随机排列 $\sigma$ 是为了内层可以被 bound, 不然 $\mathbbm 1\left[\left|\frac1n\sum\limits_{i=1}^{n}\phi(z_i) - \frac1n\sum\limits_{i=n+1}^{2n}\phi(z_i)\right| \ge \varepsilon \right]$ 还不太方便处理.
 
 记 $N^{\Phi}(z_1, \cdots, z_n)$ 表示 $\#\{(\phi(z_1), \cdots, \phi(z_n)) | \phi \in \Phi\}$, 即 $\Phi$ 中的所有 $01$ 串在数据点 $z_1, \cdots, z_n$ 上有多少种不同的. 从这个角度想, 其实 $\sup_{\phi \in \Phi}$ 只是在对有限项求 $\max$, 故根据 Union Bound 可以得到 $$\mathbb P_{\sigma}\left[\sup_{\phi \in \Phi}\left|\frac1n\sum_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right] \le N^{\Phi}(z_1, \cdots, z_{2n})\mathbb P_{\sigma}\left[\left|\frac1n\sum_{i=1}^{n}\phi(z_{\sigma(i)}) - \frac1n\sum_{i=n+1}^{2n}\phi(z_{\sigma(i)})\right| \ge \varepsilon\right]$$
 
@@ -326,9 +326,104 @@ Game theory is the study of mathematical models of strategic interactions among 
 	\label{minimax}
 \end{theorem}
 
+\begin{theorem}[Sion's Minimax Theorem]
+	$\mathcal X$ 是一个紧的凸集, $\mathcal Y$ 是一个凸集, $f: \mathcal X \times \mathcal Y \to \mathbb R$ 是连续函数, 且对任意 $x \in \mathcal X$, $f(x, \cdot)$ 是 $\mathcal Y$ 上的凹函数, 对任意 $y \in \mathcal Y$, $f(\cdot, y)$ 是 $\mathcal X$ 上的凸函数, 则 $$\min_{x \in \mathcal X} \max_{y \in \mathcal Y}f(x, y) = \max_{y \in \mathcal Y} \min_{x \in \mathcal X}f(x, y)$$
+	\label{Sion}
+\end{theorem}
+
 \newpage
 \section{Lagrange Duality, Linear Seperation, SVM and more}
-开摆了.
+
+\subsection{Lagrange Duality}
+
+考虑一种如下形式的优化问题 \begin{align*}
+	(P)\ \min\limits_{ x} & \quad f( x) \\
+	\text{s.t.} & \quad g_i( x) \le 0 \ (i \in [m]) \\
+	& \quad h_i( x) = 0 \ (i \in [n])
+\end{align*}
+
+其中 $f, g_i$ 是下凸函数, $h_i$ 是线性函数.
+
+利用拉格朗日乘数法来解这个优化问题. 具体的, 定义拉格朗日乘子 $$L(x, \lambda, \mu) = f( x) + \sum_{i=1}^m\lambda_ig_i(x) + \sum_{j=1}^n\mu_jh_j(x)$$
+
+一方面, 原问题等价于 $\min\limits_{x}\max\limits_{\lambda \ge 0, \mu}L(x, \lambda, \mu)$; 另一方面, 考虑 $L(x, \lambda, \mu)$ 对于 $x$ 是凸函数, 对于 $\lambda, \mu$ 是线性函数, 故也是凹函数, 从而根据 Sion's Minimax Theorem(\cref{Sion})可知 $$\min\limits_{x}\max\limits_{\lambda \ge 0, \mu}L(x, \lambda, \mu) = \max\limits_{\lambda \ge 0, \mu}\min\limits_{x}L(x, \lambda, \mu)$$
+
+对于 $\min\limits_{x}L(x, \lambda, \mu)$, 可以利用 $\frac{\partial L}{\partial x} = 0$ 解得 $x = \varphi(\lambda, \mu)$, 从而得到了原问题的对偶问题 \begin{align*}
+	(D) \ \max_{\lambda, \mu} & \quad L(\varphi(\lambda, \mu), \lambda, \mu) \\
+	\text{s.t.} & \quad \lambda_i \ge 0 \ (i \in [m])
+\end{align*}
+
+\begin{definition}[KKT condition]
+	称 $x^*, \lambda^*, \mu^*$ 满足 KKT condition, 如果它们满足 \begin{itemize}
+		\item Stationarity: $\nabla_x L|_{x^*, \lambda^*, \mu^*} = 0$.
+		\item Primal Feasibility: $g_i(x^*) \le 0 \ (i \in [m]), h_i(x^*) = 0 \ (i \in [n])$.
+		\item Dual feasibility: $\lambda^*_i \ge 0 \ (i \in [m])$.
+		\item Complementary Slackness: $\lambda^*_ig_i(x^*) = 0 \ (i \in [m])$.
+	\end{itemize}
+\end{definition}
+\begin{theorem}
+	$x^*, \lambda^*, \mu^*$ 是原问题 $P$ 与对偶问题 $D$ 的解, 当且仅当它们满足 KKT condition.
+\end{theorem}
+
+\subsection{Linear Seperation}
+
+$\mathbb R^d$ 上线性分类器的 hypothesis space 可以写为 $$\mathcal F = \{f(\mathbf x) = \mathbf w^{\text T}\mathbf x + b | \mathbf w \in \mathbb R^d, b \in \mathbb R\}$$
+
+对于一个数据集 $S = \{(\mathbf x_1, y_1), \cdots, (\mathbf x_n, y_n)\}\in (\mathbb R^d \times \{\pm 1\})^n$, 我们希望知道 $S$ 是不是线性可分的, 即是否存在一个 $f \in \mathcal F$ 使 $\sum\limits_{i=1}^n\mathbbm 1[f(x_i) \neq y_i] = 0$. 这可以用线性规划来解决: \begin{align*}
+	\max_{\mathbf w, b, t} & \quad t \\
+	\text{s.t. } & \quad y_i(\mathbf w^{\text T}\mathbf x_i + b) \ge t \ (i \in [n])
+\end{align*}
+
+我们进一步地希望找到一个 $f$ 来最大化 margin, 即实现 \begin{align*}
+	\max_{\mathbf w, b, t} & \quad t \\
+	\text{s.t. } & \quad y_i(\mathbf w^{\text T}\mathbf x_i + b) \ge t \ (i \in [n]) \\
+	& \quad \|\mathbf w\|_2 = 1
+\end{align*}
+
+虽然这个规划问题不好解, 但是可以证明与如下规划问题等价. \begin{align*}
+	\min_{\mathbf w, b} & \quad \frac12\|\mathbf w\|_2^2 \\
+	\text{s.t.} & \quad y_i(\mathbf w^{\text T}\mathbf x_i + b) \ge 1 \ (i \in [n])
+\end{align*}
+
+\subsection{Support Vector Machine}
+
+\def\x{\mathbf x}
+\def\w{\mathbf w}
+
+上一个规划问题的拉格朗日乘子为 $$L(\w, b, \lambda) = \frac12 \|\w\|_2^2 + \sum_{i=1}^n \lambda_i(1 - y_i(\w^{\text T}\x_i + b))$$
+
+根据 KKT condition, 其最优解 $\w^*, b^*, \lambda^*$ 应当满足 \begin{align*}
+	\w^* &= \sum_{i=1}^n \lambda^*_i y_i \x_i \\	
+	0 &= \lambda^*_i (y_i({\w^*}^{\text T}\x_i + b^*) - 1) \ (i \in [n])
+\end{align*}
+
+最优解中的 $w^*$ 是 $y_i\x_i$ 的线性组合, 具体的, 它是满足 $y_i({\w^*}^{\text T}\x_i + b^*) - 1 = 0$ 的 $y_i\x_i$ 的线性组合, 也就是说, 只有在 margin 上的数据点才会影响到 $w^*$, 而这些点(这些 $y_i\x_i$)也被称为\obj{支持向量(support vector)}.
+
+\subsection{Soft Margin SVM}
+
+实际上很多情况下数据集 $S$ 都不是线性可分的, 因此可以适当放宽条件. 把原问题改写成 \begin{align*}
+	\min_{\mathbf w, b, \varepsilon} & \quad \frac12\|\mathbf w\|_2^2 + C\sum_{i=1}^n\varepsilon_i\\
+	\text{s.t.} & \quad y_i(\mathbf w^{\text T}\mathbf x_i + b) \ge 1 - \varepsilon_i\ (i \in [n]) \\
+	& \quad \varepsilon_i \ge 0 \ (i \in [n])
+\end{align*}
+
+其对偶形式为 \begin{align*}
+	\min_\lambda & \quad \frac12 \sum_{i=1}^n\sum_{j=1}^n \lambda_i\lambda_j\x_i^{\text T}\x_j - \sum_{i=1}^n \lambda_i \\
+	\text{s.t.} & \quad \sum_{i=1}^n\lambda_iy_i = 0 \\
+	& \quad 0 \le \lambda_i \le C \ (i \in [n])
+\end{align*}
+
+也可以换一种角度考虑 Soft Margin SVM. 定义三种 loss function: \begin{itemize}
+	\item 01 loss: $\ell_{01}(x) =\mathbbm 1[x \le 0]$.
+	\item hinge loss: $\ell_{\text{hinge}}(x) = \max\{1 - x, 0\}$.
+	\item exponential loss: $\ell_{\text{exp}}(x) = \e^{-x}$.
+\end{itemize}
+
+不难发现 $\ell_{01}(x) \le \ell_{\text{hinge}}(x) \le \ell_{\text{exp}}(x)$. SVM 做的事情是找一个 $f$ 使 $\sum\limits_{i=1}^n \ell_{\text{hinge}}(y_if(\x_i)) = 0$, 而 Soft Margin SVM 做的事情则是找一个 $f$ 最小化 $\sum\limits_{i=1}^n \ell_{\text{hinge}}(y_if(\x_i))$.
+
+\let\w\undefinded
+\let\x\undefinded
+
 \newpage
 \section{Boosting}
 
@@ -404,7 +499,7 @@ Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个
 \begin{theorem}[PAC-Bayesian Theorem]
 	对于给定的 prior distribution of classifiers $\mathcal P$, 从数据集 $D$ 中随机抽取大小为 $n$ 的训练集 $S$, 有至少 $1 - \delta$ 的概率, 对于任意 distribution of classifiers $\mathcal Q$ 有如下不等式成立
 	$$\mathbb E_{h \sim \mathcal Q}[err_D(h)] \le \mathbb E_{h \sim \mathcal Q}[err_S(h)] + \sqrt{\frac{D_{KL}(\mathcal Q \| \mathcal P) + \log(3 / \delta)}{n}}$$
-	其中 $err_{X}(f)$ 表示 classifier $f$ 在数据集 $X$ 上的错误率, 即 $\mathbb P_{(x, y) \in X}[y \neq f(x)]$, $D_{KL}(\mathcal Q \| \mathcal P) = \mathbb E_{h \sim \mathcal Q}\left[\ln \frac{\mathcal Q_h}{\mathcal P_h}\right]$ 为概率分布 $\mathcal Q$ 与 $\mathcal P$ 的 KL 散度.
+	其中 $err_{X}(f)$ 表示 classifier $f$ 在数据集 $X$ 上的错误率, 即 $\mathbb P_{(x, y) \in X}[y \neq f(x)]$, $D_{KL}(\mathcal Q \| \mathcal P) = \mathbb E_{h \sim \mathcal Q}\left[\ln \frac{\mathcal Q_h}{\mathcal P_h}\right]$ 为概率分布 $\mathcal Q$ 与 $\mathcal P$ 的 KL 散度(相对熵).
 	\label{PAC-Bayesian}
 \end{theorem}
 
@@ -856,7 +951,7 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 	不失一般性假设 $\mu_1 \le \min\{\mu_2, \cdots, \mu_k\}$, 对于任意 $\varepsilon > 0$, Thompson Sampling 得到的 regret 都满足 $$R_T \le (1 + \varepsilon)\sum_{\mu_a \neq \mu_1}\frac{\Delta_a\log T}{D(\mu_a \| \mu_1)} + O\left(\frac{k}{\varepsilon^2}\right) \le (1 + \varepsilon)\sum_{\mu_a \neq \mu_1}\frac{\log T}{2\Delta_a} + O\left(\frac{k}{\varepsilon^2}\right)$$
 \end{theorem}
 
-证明太长了, 就不讲了.
+wlw: 证明太长了, 就不讲了.
 
 \section{Differential Privacy}
 
@@ -1020,6 +1115,8 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 \begin{theorem}
 	$\|v^{\pi_k} - \mathbf v^*\|_{\infty} \le \frac{\gamma}{1 - \gamma}\|\mathbf v_k - \mathbf v^*\|_{\infty}$.
 \end{theorem}
+
+我本来觉得这个结论应该挺平凡的, 就想随便证一证填个坑. 结果, 嘿, 您猜怎么着, 我还真没给他证出来.
 
 \end{document}
 
