@@ -1,0 +1,348 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.9}
+\geometry{left=1.0cm, right=1.0cm, top=1.5cm, bottom=1.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{bbm}
+
+\usepackage{tikz}  
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{example}[theorem]{例}
+\newtheorem{claim}[theorem]{声明}
+\newtheorem{remark}[theorem]{注}
+\newtheorem{thesis}[theorem]{论点}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\P#1{\mathbb{P}\left({#1}\right)}
+\def\e{\mathrm{e}}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Cov#1{\text{Cov}\left({#1}\right)}
+
+
+\title{\heiti\zihao{2} 概率统计(A): Final Cheatsheet}
+\author{\kaishu\zihao{-3} Anonymous}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\usepackage{totpages}
+\begin{document}
+
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{概率统计(A)}
+	\chead{2022 Spring}
+	\rhead{Final Cheatsheet}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section{概率部分}
+\begin{definition}[二项分布]
+	$X \sim \mathcal B(n, p), \P{X = k} = \binom nk p^k (1-p)^{n-k}, \E{X} = np, \Var{X} = np(1-p)$.
+\end{definition}
+\begin{definition}[Poisson 分布]
+	$X \sim \pi(\lambda), \P{X = k} = \e^{-\lambda}\frac{\lambda^k}{k!}, \E{X} = \lambda, \Var{X} = \lambda$.
+\end{definition}
+\begin{lemma}
+	$X_n \sim \mathcal B(n, p_n), \lim\limits_{n \to \infty}np_n = \lambda \Rightarrow \lim\limits_{n \to \infty} \P{X_n = k} = \e^{-\lambda}\frac{\lambda^k}{k!}$.
+\end{lemma}
+\begin{definition}[负二项分布]
+	$X \sim \text{NB}(r, p), \P{X = k} = \binom{k + r - 1}{r - 1}p^r(1-p)^{k}, \E{X} = \frac{r(1-p)}{p}, \Var{X} = \frac{r(1-p)}{p^2}$.
+\end{definition}
+\begin{definition}[均匀分布]
+	$X \sim \mathcal U(a, b), f(x) = \frac{1}{b-a}\mathbbm 1[a \le x < b], \E{X} = \frac{a + b}{2}, \Var{X} = \frac{(b - a)^2}{12}$.
+\end{definition}
+\begin{definition}[指数分布]
+	$X \sim \text{Exp}(\lambda), f(x) = \lambda \e^{-\lambda x} \mathbbm 1[x \ge 0], \E{X} = \frac1\lambda, \Var{X} = \frac1{\lambda^2}$.
+\end{definition}
+\begin{definition}[Gamma 分布]
+	$X \sim \Gamma(\alpha, \lambda), f(x) = \frac{x^{\alpha - 1}\lambda^{\alpha}\e^{-\lambda x}}{\Gamma(a)}\mathbbm 1[x \ge 0], \E{X} = \frac{\alpha}{\lambda}, \Var{X} = \frac{\alpha}{\beta^2}$.
+\end{definition}
+\begin{definition}[正态分布]
+	$X \sim \mathcal N(\mu, \sigma^2), f(x) = \frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x - \mu)^2}{2\sigma^2}}, \E{X} = \mu, \Var{X} = \sigma^2$.
+\end{definition}
+\begin{proposition}[密度变换]
+	$f(y)\text dy = f(x)\text dx \Rightarrow f(y) = f(x) \cdot \frac{\text dx}{\text dy}$. 类似地, $f(\mathbf y) = f(\mathbf x)|J(\mathbf y)| = f(\mathbf x)|\cdot\frac{\partial x}{\partial y}|$.
+\end{proposition}
+\begin{definition}[协方差与相关系数]
+	$\Cov{X}{Y} = \E{(X - \E{X})(Y - \E{Y})}, \rho_{XY} = \Cov{X}{Y} / \sqrt{\Var{X}\Var{Y}}$.
+\end{definition}
+\begin{definition}[二元正态分布与多元正态分布] $X, Y \sim \mathcal N(\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \rho)$, 
+	$$f(x, y) = \frac{\e^{\frac{-1}{2(1-\rho^2)}\left[\frac{(x-\mu_1)^2}{\sigma_1^2} - 2\rho\frac{(x-\mu_1)(y-\mu_2)}{\sigma_1\sigma_2} + \frac{(y-\mu_2)^2}{\sigma_2^2}\right]}}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}}$$
+	$\mathbf X \sim \mathcal N(\mathbf a, B)$, $$f(\mathbf x) = \frac{\e^{-\frac12(\mathbf x - \mathbf a)^{\text T}B^{-1}(\mathbf x - \mathbf a)}}{(2\pi)^{n/2}|B|^{1/2}}$$
+\end{definition}
+
+\begin{definition}[特征函数]
+	随机变量 $X$ 的特征函数为 $\psi_X(t) = \E{\e^{itX}}$.
+
+	例如, $X \sim \pi(\lambda)$ 时, $\psi_X(t) = \e^{\lambda(\e^{it} - 1)}$, $X \sim \mathcal N(\mu, \sigma^2)$ 时, $\psi_X(t) = \e^{i\mu t - \sigma^2t^2/2}$.
+\end{definition}
+
+\begin{theorem}[唯一性定理]
+	随机变量的分布函数由特征函数唯一确定.
+\end{theorem}
+
+\subsection{大数定律}
+对于随机变量 $X_1, X_2, \cdots, X_n$, 记 $\mu_n = \frac1n\sum\limits_{i=1}^{n}\E{X_i}$(如果存在的话), 且满足如下条件之一:
+\begin{itemize}
+	\item (Chebyshev) $\{X_i\}$ pairwise independent, 且方差有界, 即存在 $C$ 使任意 $X_i$ 满足 $\Var{X_i} \le C$.
+	\item (Markov) $\lim\limits_{n \to \infty}\frac{1}{n^2}\Var{\sum\limits_{i=1}^{n}X_i} = 0$.
+	\item (Khinchin) $\{X_i\}$ i.i.d. , 期望存在.
+\end{itemize}
+则对于任意 $\varepsilon > 0$, 如下极限式成立 $$\lim_{n \to \infty}\P{\left|\frac{\sum_{i=1}^{n}X_i}{n} - \mu_n\right| \le \varepsilon} = 1$$
+
+
+\subsection{随机变量的收敛性}
+\begin{definition}[依概率收敛]
+	对于一列随机变量 $X_1, X_2, \cdots, X_n, \cdots$, 如果对于 $\forall \varepsilon > 0$ 都有
+	$$\lim\limits_{n \to \infty} \P{|X_n - X| < \varepsilon} = 1$$
+	则称随机变量序列 $\{X_n\}$ \obj{依概率收敛}到 $X$, 记作 $\lim\limits_{n \to \infty} X_n \overset{P}{=} X$.
+	
+	记 $A_n(\varepsilon) = \{|X_n - X| \ge \varepsilon\}$, 则 $\{X_n\}$ 依概率收敛到 $X$ 当且仅当 $\forall \varepsilon, \lim\limits_{n \to \infty}\P{A_n(\varepsilon)} = 0$.
+			
+\end{definition}
+\begin{definition}[几乎必然收敛]
+对于一列随机变量 $X_1, X_2, \cdots, X_n, \cdots$, 如果\footnote{这是啥意思?}
+$$\P{\lim\limits_{n \to \infty}X_n = X} = 1$$
+则称随机变量序列 $\{X_n\}$ \obj{几乎必然收敛}到 $X$, 记作 $\lim\limits_{n \to \infty} X_n \overset{a.s.}{=} X$.
+
+记 $A_n(\varepsilon) = \{|X_n - X| \ge \varepsilon\}$, 则 $\{X_n\}$ 几乎必然收敛到 $X$ 当且仅当 $\forall \varepsilon, \lim\limits_{n \to \infty}\P{\bigcup_{m\ge n}A_m(\varepsilon)} = 0$.
+
+几乎必然收敛是比依概率收敛要严格强的性质.
+\end{definition}
+\begin{definition}[依分布收敛]
+对于一列随机变量 $X_1, X_2, \cdots, X_n, \cdots$, 如果对于 $F_X(x)$ 的每个连续点 $x$, 都有
+$$\lim\limits_{n \to \infty}F_{X_n}(x) = F_X(x)$$
+则称随机变量序列 $\{X_n\}$ \obj{依分布收敛}到 $X$, 记作 $\lim\limits_{n \to \infty}X_n \overset{d}{\to} X$. 称分布函数序列 $\{F_{X_n}(x)\}$ \obj{弱收敛}到 $F_X(x)$.
+
+依概率收敛是比依分布收敛要严格强的性质. 但依分布收敛到常数也可以推出依概率收敛.
+\end{definition}
+\begin{theorem}[连续性定理]
+	随机变量序列 $\{X_n\}$ 依分布收敛到 $X$ (分布函数序列 $\{F_{X_n}(x)\}$ \obj{弱收敛}到 $F_X(x)$), 当且仅当 $\{\psi_{X_n}(t)\}$ 弱收敛到 $\psi_X(t)$.
+\end{theorem}
+
+\subsection{中心极限定理}
+\begin{theorem}[Lindeberg-L\'evy 定理]
+	$\{X_i\}$ 独立同分布, $\E{X_i} = \mu, \Var{X_i} = \sigma^2$, 记 $\tilde{S}_n = \frac{\sum_{i=1}^nX_i - \mu}{\sqrt n \sigma}$, 则有 $\lim\limits_{n \to \infty}\overset{d}{\to} Z \sim \mathcal N(0, 1)$ (依分布收敛到标准正态分布).
+
+	\textit{利用 $\tilde S_n$ 的特征函数, 证明其收敛到 $\e^{-t^2}$.}
+\end{theorem}
+
+\section{统计部分}
+\begin{definition}[样本均值, 方差]
+	$X$ 是总体, $(X_1, \cdots, X_n)$ 是取自总体的样本, 则 $\overline{X} = \sum_i X_i / n$, $S^2 = \sum_i (X_i - \overline{X})^2 / (n - 1)$, $\E{\overline{X}} = \E{X}$, $\E{S^2} = \Var{X}$.	
+\end{definition}
+\begin{definition}[$\chi^2$ 分布]
+	$X_i \sim \text{i.i.d. }\mathcal N(0, 1), X = \sum_i X_i^2, X \sim \chi^2(n)$, $$f(x) = \frac{(x/2)^{n/2-1}\e^{-x/2}}{2\Gamma(n/2)}\mathbbm1[x \ge 0]$$ $\E{X} = n, \Var{X} = 2n$. $\E{1 / X} = \frac{1}{n-2}$.
+\end{definition}
+\begin{remark}
+	$\chi^2(2) = \text{Exp}\left(\frac12\right)$.
+\end{remark}
+\begin{definition}[$t$ 分布]
+	$X \sim \mathcal N(0, 1), Y \sim \chi^2(n)$, 两者独立, 则 $T = \frac{X}{\sqrt{Y / n}} \sim t(n)$, $$f(x) = \frac{\Gamma((n+1)/2)}{\sqrt{n \pi}\Gamma(n/2)}(1 + x^2/n)^{-(n+1)/2}$$
+\end{definition}
+\begin{definition}[$F$ 分布]
+	$X \sim \chi^2(n_1), Y \sim \chi^2(n_2)$, 两者独立, 则 $F = \frac{X / n_1}{Y / n_2} \sim F(n_1, n_2)$.
+\end{definition}
+\begin{proposition}[一些统计量的分布]
+	设总体 $X \sim \mathcal N(\mu_1, \sigma_1^2)$, $Y \sim \mathcal N(\mu_2, \sigma_2^2)$, 对于样本 $(X_1, \cdots, X_{n_1}), (Y_1, \cdots, Y_{n_2})$, 记 $\overline{X}, \overline{Y}, S_X^2, S_Y^2$ 分别表示两者样本均值与样本方差.
+	\begin{itemize}
+		\item $\overline{X} \sim \mathcal N(\mu_1, \sigma_1^2 / n_1)$, 于是 $\frac{\overline{X} - \mu_1}{\sigma_1 / \sqrt{n_1}} \sim \mathcal N(0, 1)$. \textit{显然.}
+		\item $(n_1-1)S_X^2 / \sigma_1^2 \sim \chi^2(n_1-1)$, 且与 $\overline{X}$ 独立. \textit{证法是构造对 $\mathbf X = (X_1, \cdots, X_{n_1})$ 的正交变换 $A$ 满足 $$A = \begin{pmatrix}
+			\frac{1}{\sqrt n} & \frac{1}{\sqrt n} & \frac{1}{\sqrt n} & \cdots & \frac{1}{\sqrt n} & \frac{1}{\sqrt n} \\
+			\frac{1}{\sqrt 2} & -\frac{1}{\sqrt 2} & 0 & \cdots & 0 & 0 \\
+			\frac{1}{\sqrt{2 \times 3}} & \frac{1}{\sqrt{2 \times 3}} & -\frac{2}{\sqrt{2 \times 3}} & \cdots & 0 & 0 \\
+			\vdots & \vdots & \vdots & \ddots & \cdots & \cdots \\
+			\frac{1}{\sqrt{(n-1)n}} & \frac{1}{\sqrt{(n-1)n}} & \frac{1}{\sqrt{(n-1)n}} & \cdots & \frac{1}{\sqrt{(n-1)n}} & -\frac{n-1}{\sqrt{(n-1)n}} 
+		\end{pmatrix}$$ 则 $\mathbf Y = A\mathbf X$ 满足 $Y_1 = \overline{X} / \sqrt{n_1}, \sum_{i=2}^{n_1}Y_i = (n_1 - 1)S_X^2$.}
+		\item $\frac{\overline{X} - \mu_1}{\sqrt{S_X^2 / n_1}} \sim t(n-1)$. \textit{因为 $\frac{\overline{X} - \mu_1}{\sigma_1 / \sqrt{n_1}} \sim \mathcal N(0, 1)$, 而 $(n_1-1)S_X^2 / \sigma_1^2 \sim \chi^2(n-1)$, 且两者独立.}
+		\item $\frac{S_X^2 / \sigma_1^2}{S_Y^2 / \sigma_2^2} \sim F(n_1 - 1, n_2 - 1)$. \textit{显然.}
+		\item 当 $\sigma_1^2 = \sigma_2^2 = \sigma^2$ 但未知时, 记 $S_W^2 = \frac{\sum_i (X_i - \overline{X})^2 + \sum_j (Y_j - \overline{Y})^2}{n_1 + n_2 - 2} = \frac{(n_1 - 1)S_X^2 + (n_2 - 1)S_Y^2}{n_1 + n_2 - 2}$, 则 $\frac{(\overline{X} - \overline{Y}) - (\mu_1 - \mu_2)}{\sqrt{S_W^2(n_1^{-1} + n_2^{-1})}} \sim t(n_1 + n_2 - 2)$. \textit{注意到正态分布的线性变换仍是正态分布, 故 $\overline{X} - \overline{Y} \sim \mathcal N(\mu_1 - \mu_2, (n_1^{-1} + n_2^{-1})\sigma^2)$, 而 $\frac{(n_1 - 1)S_X^2}{\sigma^2} \sim \chi^2(n_1 - 1)$, $\frac{(n_2 - 1)S_Y^2}{\sigma^2} \sim \chi^2(n_2 - 1)$ 说明 $\frac{(n_1 + n_2 - 2)S_W^2}{\sigma^2} \sim \chi^2(n_1 + n_2 - 2)$, 结合独立性即得结论.}
+		\item 当 $\sigma_1^2 \neq \sigma_2^2$ 未知时, 对于统计量 $T = \frac{(\overline{X} - \overline{Y}) - (\mu_1 - \mu_2)}{\sqrt{\frac{S_X^2}{n_1} + \frac{S_Y^2}{n_2}}}$, 当样本容量充分大时认为 $T$ 服从标准正态分布 $\mathcal N(0, 1)$. 当样本容量小时, 认为 $T$ 服从 $t(k)$ 分布, 其中 $k = \min\{n_1 - 1, n_2 - 1\}$, 更精确的估计为 $k = \frac{(S_X^2/n_1 + S_Y^2 / n_2)^2}{(S_X^2/n_1)^2/(n_1-1) + (S_Y^2/n_2)^2/(n_2-1)}$.
+	\end{itemize}
+\end{proposition}
+
+\subsection{参数估计}
+参数估计就是根据总体 $X$ 的样本取值 $(X_1, \cdots, X_n)$ 来估计 $X$ 的分布参数 $\theta$.
+\begin{definition}[矩法]
+	利用样本 $k$ 阶矩 $A_k = \sum_i X_i^k / n$ 和 $k$ 阶中心距 $B_k = \sum_i (X_i - \overline{X})^k / n$, 先写出矩关于参数的表达式, 再反求出参数关于矩的表达式.
+\end{definition}
+\begin{definition}[极大似然法]
+	基于参数 $\theta$ 均匀分布的假设, $\arg\max_{\theta}\P{\theta | \mathbf X} = \arg\max_{\theta}\P{\mathbf X | \theta}$, 因此考虑最大化 $L(\theta) = \P{x_1, x_2, \cdots, x_n | \theta}$.
+\end{definition}
+\begin{definition}[无偏性, 渐进无偏性与相合性]
+	对参数 $\theta$ 的估计量 $\hat\theta(X_1, \cdots, X_n)$, 如果 $\E{\hat\theta} = \theta$, 则 $\hat\theta$ 是无偏的; 如果 $\lim\limits_{n \to \infty}\E{\hat\theta_n} = 0$, 则 $\hat\theta$ 是渐进无偏的; 如果 $\hat\theta_n$ 依概率收敛到 $\theta$, 即 $\lim\limits_{n \to \infty} \P{|\hat\theta_n - \theta| \ge \varepsilon} = 0$, 则 $\hat{\theta}$ 是相合的.
+\end{definition}
+\begin{definition}[有效性]
+	称无偏估计量 $\hat\theta_1$ 比 $\hat\theta_2$ 有效, 如果 $\Var{\hat\theta_1} \le \Var{\hat\theta_2}$ (作为 $X_1, \cdots, X_n$ 的函数)对一切 $\theta$ 成立, 且存在 $\theta_0$ 使不等号成立.
+\end{definition}
+\begin{theorem}[Cram\'er-Rao 不等式]
+	设总体 $X$ 的概率密度函数为 $f(x; \theta)$, 参数 $\theta$ 的取值域为 $\Theta = \{\theta | a < \theta < b\}$, $u(X_1, \cdots, X_n)$ 是对 $g(\theta)$ 的一个无偏估计, 满足 \num{1} $\{x | f(x; \theta) > 0\}$ 与 $\theta$ 无关, \num{2} $g'(\theta)$ 与 $\frac{\partial f(x; \theta)}{\partial \theta}$ 存在, 且对一切 $\theta \in \Theta$, \begin{align*}\frac{\partial}{\partial\theta}\int f(x;\theta)\text dx &= \int\frac{\partial}{\partial\theta} f(x;\theta)\text dx \\ \frac{\partial}{\partial\theta}\int u(x_1, \cdots, x_n)\prod_i f(x_i; \theta)\text dx_i &= \int\frac{\partial}{\partial\theta} u(x_1, \cdots, x_n)\prod_i f(x_i; \theta)\text dx_i\end{align*} 则无偏估计 $u$ 满足 $$\Var{u} \ge \frac{[g'(\theta)]^2}{n\E{\left(\frac{\partial \ln f(x; \theta)}{\partial \theta}\right)^2}}$$ 给出了无偏参数估计的方差下界.
+\end{theorem}
+\begin{definition}[有效估计, 渐进有效估计]
+	对 $\theta$ 的无偏估计 $\hat\theta$ 使 Cram\'er-Rao 不等式中等号成立, 则称 $\hat\theta$ 是 $\theta$ 的有效估计. 如果 $\lim\limits_{n \to \infty} \frac{1 / (nI(\theta))}{\Var{\hat\theta}} = 1$, 则称 $\hat\theta$ 是 $\theta$ 的渐进有效估计.
+\end{definition}
+\begin{definition}[置信区域, 置信区间]
+	对于待估的未知参数 $\theta$, 设 $W(X_1, \cdots, X_2) \subseteq \Theta$ 是基于样本 $(X_1, \cdots, X_n)$ 得到的 $\theta$ 取值范围, 若满足 $\P{\theta \in W(X_1, \cdots, X_n)} \ge 1 - \alpha$, 则称 $W$ 是 $\theta$ 的 $1 - \alpha$ 置信区域, 其中 $1 - \alpha$ 是置信度.
+
+	通常置信区域会形如一个区间, 称之为置信区间, 此时会使用区间上下界 $\hat{\theta}_L, \hat{\theta}_R$ 来刻画.
+\end{definition}
+\begin{definition}[枢轴量]
+	枢轴量是关于样本与待估参数的函数, 其分布不依赖于参数. 相对应的, 统计量只是样本的函数, 其分布可以依赖参数.
+\end{definition}
+可以使用枢轴量来构造置信区间. 具体的, 对于枢轴量 $G(X_1, \cdots, X_n, \theta)$, 根据其特定分布不难求出 $\P{a < G(X_1, \cdots, X_n, \theta) < b} \ge 1 - \alpha$ 的区间 $(a, b)$, 从而通过不等式变换得到 $\P{\hat\theta_L < \theta < \hat\theta_R} \ge 1 - \alpha$.
+
+\begin{center}
+	\includegraphics*[scale=0.65]{estimator.png}
+\end{center}
+
+\subsection{假设检验}
+假设检验就是对于给出的原假设 $H_0$ 和备择假设 $H_1$, 将样本取值空间划分成不交的两部分 $W, \overline{W}$, 在样本 $(x_1, \cdots, x_n) \in W$ 时拒绝原假设, 否则接受原假设. $W$ 被称为拒绝域.
+\begin{definition}[第 I, II 类错误]
+	第 I 类错误是拒绝掉真实的原假设, 第 II 类错误是接受错误的原假设. 用 $\alpha, \beta$ 分别表示两者错误率, 即 $$\alpha = \P{\text{reject }H_0 | H_0}, \quad \beta = \P{\text{accept } H_0 | H_1}$$
+\end{definition}
+\begin{definition}[Neyman-Pearson 原则, 显著性水平]
+首先控制第 I 类错误的概率不超过某个常数 $\alpha \in (0, 1)$, 再寻找检验, 使得第 II 类错误的概率尽可能小. 其中这里的参数 $\alpha$ 也被称作显著水平.
+\end{definition}
+\begin{definition}[(样本)p-value]
+	样本 $(X_1, \cdots, X_n)$ 的 p-value 指的是原假设成立时, 能取到比该样本更加极端样本的概率. 当原假设是复合假设(例如 $H_0: \mu \ge \mu_0$)时, p-value 取假设集合中概率的上确界, 即 $$p = \sup_{H \in \mathcal H}\P{X' \text{ is at least as extreme as } X | H}$$
+\end{definition}
+\subsection{方差分析}
+单因素方差分析的模型为: 在 $r$ 组不同条件下进行了总计 $n$ 次实验, 第 $j$ 组环境下进行了 $n_j$ 次, 记 $X_{ij}$ 为在第 $j$ 组条件下进行第 $i$ 次实验的结果, $\mu_j = \frac{1}{n_j}\sum_{i=1}^{n_j}X_{ij}$ 为第 $j$ 组平均, $\mu = \frac{1}{n}\sum_{j=1}^{r}n_j\mu_j$ 为总平均. 记 $\delta_j = \mu_j - \mu$, 则 $\sum_{j=1}^r n_j\delta_j = 0$, 且 $$X_{ij} = \mu + \delta_j + \varepsilon_{ij}, \quad \varepsilon_{ij} \sim \text{i.i.d. }\mathcal N(0, \sigma^2), \sigma^2\mbox{未知}$$
+\begin{definition}[偏差平方和]
+	\begin{align*}
+		\mbox{总偏差平方和} \qquad & S_T = \sum_{j=1}^r \sum_{i=1}^{n_j} (X_{ij} - \mu)^2 = \sum_{j=1}^r \sum_{i=1}^{n_j}X_{ij}^2 - n\mu^2 \\
+		\mbox{效应平方和} \qquad& S_A = \sum_{j=1}^r n_j(\mu_j - \mu)^2 = \sum_{j=1}^rn_j\mu_j^2 - n\mu^2 \\
+		\mbox{误差平方和} \qquad& S_E = \sum_{j=1}^r \sum_{i=1}^{n_j} (X_{ij} - \mu_j)^2 = \sum_{j=1}^r \sum_{i=1}^{n_j}X_{ij}^2 - \sum_{j=1}^rn_j\mu_j^2
+	\end{align*}
+\end{definition}
+\begin{proposition}
+	\begin{align*}
+		S_T &= S_A + S_E \\
+		\E{S_T} &= \sum_{j=1}^{r} n_j\delta_j^2 + (n - 1)\sigma^2 \\
+		\E{S_A} &= \sum_{j=1}^{r} n_j\delta_j^2 + (r - 1)\sigma^2 \\
+		\E{S_E} &= (n - r)\sigma^2
+	\end{align*}
+\end{proposition}
+
+注意到 $S_E / \sigma^2 \sim \chi^2(n - r)$. 当 $\delta_1 = \delta_2 = \cdots = \delta_r = 0$ 时, 容易发现 $S_T / \sigma^2 \sim \chi^2(n - 1)$ (因为 $S_T / (n-1)$ 是样本方差), 此外也可证明 $S_A / \sigma^2 \sim \chi^2(r - 1)$, 以及 $S_A, S_E$ 独立, 所以 $\frac{S_A / (r - 1)}{S_E / (n - r)} \sim F(r - 1, n - r)$, 可用于 $F$ 检验. 
+
+\textit{记 $S_E^j = \sum_{i=1}^{n_j} (X_{ij} - \mu_j)^2$, 则可以利用前面正交变换证明 $\overline{X}$ 与 $S^2$ 独立的方法证明 $\mu_j$ 与 $S_E^j$ 独立. 而 $S_E = \sum_j S_E^j$, $S_A$ 完全由 $\mu_j$ 决定, 故两者独立.}
+
+\begin{theorem}[Cochran]
+	设 $\mathbf X = (X_1, \cdots, X_n)^{\text T}$, 其中 $X_1, \cdots, X_n \sim \text{i.i.d. } \mathcal N(0, 1)$. 对称矩阵 $A_1, \cdots, A_k$ 满足 $$\mathbf X^{\text T}\mathbf X = \sum_{i=1}^{k} \mathbf X^{\text T}A_i\mathbf X$$ 记 $\text{rank}(A_i) = r_i$, 则 $\mathbf X^{\text T}A_i\mathbf X \sim \chi^2(r_i)$ 且相互独立当且仅当 $\sum_{i=1}^{k} r_i = n$. 
+\end{theorem}
+
+\subsection{回归分析}
+一元回归模型: $$y_i = \alpha + \beta x_i + \varepsilon_i, \quad \varepsilon_i \sim \mathcal N(0, \sigma^2), \sigma^2\mbox{未知}$$
+
+最小二乘法: 定义 $Q(\alpha, \beta) = \sum_i (y_i - \alpha - \beta x_i)^2$, 利用 $\frac{\partial Q}{\partial \alpha} = \frac{\partial Q}{\partial \beta} = 0$ 得到最小二乘估计 \begin{align*}
+	\hat\alpha &= \overline{y} - \overline{x}\hat\beta \\
+	\hat\beta &= s_{xy} / s_{xx} \\
+	s_{xy} &= \sum_i (x_i - \overline{x})(y_i - \overline{y}) \\
+	s_{xx} &= \sum_i (x_i - \overline{x})^2
+\end{align*}
+\begin{proposition}
+	\begin{align*}
+		\hat\beta &\sim \mathcal N\left(\beta, \frac{\sigma^2}{s_{xx}}\right) \\
+		\hat\alpha &\sim \mathcal N\left(\alpha, \left(\frac1n + \frac{\overline{x}^2}{s_{xx}}\right)\sigma^2\right)
+	\end{align*}
+\end{proposition}
+\begin{proposition}
+	记 $\hat{y}_i = \hat\alpha + \hat\beta x_i$, 定义残差 $$s^2 = \frac{1}{n-2}\sum_i(y_i - \hat y_i)^2 = \frac{s_{yy} - \hat\beta s_{xy}}{n-2}$$ 则 $\E{s^2} = \sigma$.
+\end{proposition}
+类似定义三种平方和: \begin{align*}
+	SST &= \sum_i (y_i - \overline{y})^2 \\
+	SSR &= \sum_i (\hat y_i - \overline{y})^2 \\
+	SSE &= \sum_i (y_i - \hat y_i)^2
+\end{align*}
+其中 $\frac{SSE}{\sigma^2} = \frac{(n-2)s^2}{\sigma^2} \sim \chi^2(n - 2)$, 而当 $\beta = 0$ 时, 可以证明 $\frac{SSR}{\sigma^2} = \frac{s_{yy}^2}{\sigma^2s_{xy}} \sim \chi^2(1)$ 且两者独立, 故 $\frac{SSR}{SSE / (n - 2)} \sim F(1, n - 2)$.
+
+\end{document}
+

@@ -85,15 +85,15 @@
 \DeclareMathOperator{\card}{card}
 
 \newtheorem{theorem}{定理}[section]
-\newtheorem{lemma}{引理}[section]
-\newtheorem{definition}{定义}[section]
-\newtheorem{proposition}{命题}[section]
-\newtheorem{corollary}{推论}[section]
-\newtheorem{example}{例}[section]
-\newtheorem{claim}{声明}[section]
-\newtheorem{remark}{注}[section]
-\newtheorem{thesis}{论点}[section]
-\newtheorem{Proof}{证明}
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{example}[theorem]{例}
+\newtheorem{claim}[theorem]{声明}
+\newtheorem{remark}[theorem]{注}
+\newtheorem{thesis}[theorem]{论点}
+%\newtheorem{Proof}{证明}
 
 \def\obj#1{\textbf{\uline{#1}}}
 \def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
@@ -135,7 +135,7 @@
 \tableofcontents
 \newpage
 
-\section{Inequalities}
+\section{Inequalities \& Concentration Bounds}
 \begin{theorem}[Markov Inequality]
 	如果非负随机变量 $X$ 期望存在, 则对于任意 $k > 0$,  $$\P{X \ge k} \le \frac{\E{X}}{k}$$
 	进一步地, 如果 $r$ 阶矩 $\E{X^r}$ 存在, 则对于任意 $k > 0$, $$\P{X \ge k} \le \min_{j \le r}\frac{\E{X^j}}{k^j}$$
@@ -149,6 +149,9 @@
 \begin{theorem}[Chernoff Inequality]
 	$$\P{X \ge k} \le \inf_{t > 0}\e^{-tk}M_X(t)$$
 \end{theorem}
+
+接下来我们提出三个逐渐增强的定理, 从而最终证明 Chernoff Bound.
+
 \begin{theorem}
 	$X_1, X_2, \cdots, X_n \sim \text{ i.i.d. } \mathcal B(1, p)$, 对于任意 $\varepsilon > 0$, $$\P{\frac1n\sum_{i=1}^nX_i - p \ge \varepsilon} \le \e^{-nD_B(p + \varepsilon \| p)}$$
 	其中 $D_B(p \| q)$ 是两个 Bernoulli distribution $P = (p, 1 - p), Q = (q, 1 - q)$ 之间的相对熵.

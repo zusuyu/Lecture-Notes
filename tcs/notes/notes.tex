@@ -1552,17 +1552,17 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 $\IP \subseteq \PSPACE$ 这个方向相对是平凡的, 反过来我们想要证明 $\PSPACE \subseteq \IP$ 其实只需要给出某个 \PSPACE-complete 语言属于 $\IP$ 的证明即可. 根据\cref{TQBF} 我们知道 $\textsf{TQBF} \in \PSPACE$-complete, 因此只要证明 $\textsf{TQBF} \in \IP$ 就行了. 我们从简单一点的尝试出发. 
 
 \subsubsection{$\coNP \subseteq \IP$}
-由于 $\overline{\textsf{3SAT}} \in \coNP$-complete. 我们尝试证明 $\overline{\textsf{3SAT}} \in \IP$. 定义语言 $$\textsf{\#3SAT} = \{\langle \phi, K \rangle | \phi \text{ has exactly } k \text{ satisfiable assignments}\}$$ 则容易看出 $\overline{\textsf{3SAT}} \le_p \textsf{\#3SAT}$. 考虑证明 $\textsf{\#3SAT} \in \IP$.
+由于 $\overline{\textsf{SAT}} \in \coNP$-complete. 我们尝试证明 $\overline{\textsf{3SAT}} \in \IP$. 定义语言 $$\textsf{\#SAT} = \{\langle \phi, K \rangle | \phi \text{ has exactly } k \text{ satisfiable assignments}\}$$ 则容易看出 $\overline{\textsf{SAT}} \le_p \textsf{\#SAT}$. 考虑证明 $\textsf{\#SAT} \in \IP$.
 
 在这里我们使用\obj{代数化(arithmetization)}的技巧: 对于一个布尔表达式 $\phi$, 对其进行如下变形: \begin{align*}
 	\begin{split}
 		x_i \wedge x_j & \rightarrow x_ix_j \\
-		x_i \vee x_k & \rightarrow 1 - (1 - x_i)(1 - x_j) \\
+		x_i \vee x_j & \rightarrow 1 - (1 - x_i)(1 - x_j) \\
 		\lnot x_i & \rightarrow 1 - x_i
 	\end{split}
 \end{align*}
 
-从而可以由 $\phi$ 构造出一个多元多项式 $P_{\phi}$. 假设 $\phi$ 是 3CNF 且有 $n$ 个变量和 $m$ 个从句, 则 $P_{\phi}$ 是关于 $x_1, x_2, \cdots, x_n$ 的 $n$ 元多项式, 且 $\deg P_{\phi} = d \le 3m$. 对于 $\phi$ 的一个赋值 $u \in \{0, 1\}^n$, 如果 $u$ 是可满足的, 则 $P_{\phi}(u) = 1$, 否则 $P_{\phi}(u) = 0$.
+从而可以由 $\phi$ 构造出一个多元多项式 $P_{\phi}$. 假设 $\phi$ 是 CNF 且有 $n$ 个变量和 $m$ 个从句, 则 $P_{\phi}$ 是关于 $x_1, x_2, \cdots, x_n$ 的 $n$ 元多项式, 且 $\deg P_{\phi} = d$ 关于输入是多项式规模. 对于 $\phi$ 的一个赋值 $u \in \{0, 1\}^n$, 如果 $u$ 是可满足的, 则 $P_{\phi}(u) = 1$, 否则 $P_{\phi}(u) = 0$.
 
 于是问题变成了有一个多项式 $g$, 证明人需要向验证者证明 $$\sum_{b_1 \in \{0, 1\}}\sum_{b_2 \in \{0, 1\}}\cdots \sum_{b_n \in \{0, 1\}}g(b_1, b_2, \cdots, b_n) = K$$
 
@@ -1588,7 +1588,7 @@ $\IP \subseteq \PSPACE$ 这个方向相对是平凡的, 反过来我们想要证
 	\end{split}
 \end{align*}
 从而 $\Psi \in \textsf{TQBF}$ 的等价条件也可写为 $$\forall_1L_1\exists_2L_1L_2\forall_3L_1L_2L_3\cdots \exists_n L_1L_2\cdots L_n P_{\phi}(x_1, \cdots, x_n) = K \neq 0$$
-且等号左边任意后缀表达的多元多项式次数都不超过 $\min\{2n,3m\}$.
+且等号左边任意后缀表达的多元多项式次数都是关于原输入规模的多项式.
 
 考虑这样的问题: 对于一段包含 $Q_{i+1}, \cdots, Q_n \ (Q \in \{\forall, \exists\})$ 量词的后缀, 其本质上应该是一个关于 $x_1, \cdots, x_i$ 的多元多项式 $g(x_1, \cdots, x_i)$, 给定 $x_1, \cdots, x_i$ 的取值 $a_1, \cdots, a_i$ , 我们希望证明 $g(a_1, \cdots, a_i) = K$.
 
