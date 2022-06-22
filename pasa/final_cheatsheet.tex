@@ -219,7 +219,7 @@ $$\lim\limits_{n \to \infty}F_{X_n}(x) = F_X(x)$$
 
 \section{统计部分}
 \begin{definition}[样本均值, 方差]
-	$X$ 是总体, $(X_1, \cdots, X_n)$ 是取自总体的样本, 则 $\overline{X} = \sum_i X_i / n$, $S^2 = \sum_i (X_i - \overline{X})^2 / (n - 1)$, $\E{\overline{X}} = \E{X}$, $\E{S^2} = \Var{X}$.	
+	$X$ 是总体, $(X_1, \cdots, X_n)$ 是取自总体的样本, 则 $\overline{X} = \sum_i X_i / n$, $S^2 = \sum_i (X_i - \overline{X})^2 / (n - 1)$, $\E{\overline{X}} = \E{X}$, $\E{S^2} = \Var{X}, \E{\overline{X}^2} = \E{X}^2 + \frac1n \Var{X}$.
 \end{definition}
 \begin{definition}[$\chi^2$ 分布]
 	$X_i \sim \text{i.i.d. }\mathcal N(0, 1), X = \sum_i X_i^2, X \sim \chi^2(n)$, $$f(x) = \frac{(x/2)^{n/2-1}\e^{-x/2}}{2\Gamma(n/2)}\mathbbm1[x \ge 0]$$ $\E{X} = n, \Var{X} = 2n$. $\E{1 / X} = \frac{1}{n-2}$.

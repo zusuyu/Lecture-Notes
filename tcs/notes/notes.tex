@@ -183,7 +183,7 @@
 \section{正则语言}
 \subsection{有限自动机}
 \begin{definition}[Deterministic Finite Automaton, DFA]
-	(确定性)有限自动机是一个五元组$(Q, \Sigma, \delta, q_0, F)$, 其中
+	(确定性)有限状态自动机是一个五元组$(Q, \Sigma, \delta, q_0, F)$, 其中
 	\begin{itemize}
 		\item $Q$是称为\obj{状态}的有限集. 
 		\item $\Sigma$是称为\obj{字符集}的有限集. 
@@ -192,12 +192,12 @@
 		\item $F \subseteq Q$称为\obj{接受态(终止态)集合}. 
 	\end{itemize}
 
-	称字符串$w = w_1w_2\cdots w_m(w_i \in \Sigma)$可以被DFA $M = (Q, \Sigma, \delta, q_0, F)$接受, 如果存在状态序列$r_0, r_1, \cdots, r_m \in Q$满足\num{i}$r_0 = q_0$, \num{ii}$r_{i+1} = \delta(r_i, w_{i+1}) \ (\forall i = 0, 1, \cdots, m-1)$, \num{iii}$r_m \in F$. 
+	称字符串$w = w_1w_2\cdots w_m(w_i \in \Sigma)$可以被DFA $M = (Q, \Sigma, \delta, q_0, F)$识别(或称接受), 如果存在状态序列$r_0, r_1, \cdots, r_m \in Q$满足 \num{i} $r_0 = q_0$, \num{ii} $r_{i+1} = \delta(r_i, w_{i+1}) \ (\forall i = 0, 1, \cdots, m-1)$, \num{iii} $r_m \in F$. 
 
-	所有可被$M$识别的字符串$w$构成集合$A$, 则称$A$是 DFA $M$的语言(或者说 DFA $M$识别/接受$A$), 记为$L(M) = A$.
+	所有可被$M$识别的字符串$w$构成集合$A$, 称$A$是 DFA $M$的语言(或者说 DFA $M$识别$A$), 记为$L(M) = A$.
 \end{definition}
 \begin{definition}[正则语言]
-	正则语言就是能够被有限自动机识别的语言. 
+	正则语言就是能够被有限状态自动机识别的语言. 
 \end{definition}
 \begin{definition}[正则操作]
 	定义如下三种正则操作
@@ -215,12 +215,12 @@
 \end{theorem}
 由于只利用已有的有限自动机模型证明 concatenation 和 star 的封闭性是困难的, 我们引入“非确定性”. 
 \begin{definition}[Nondeterministic Finite Automaton, NFA]
-	非确定性有限自动机是一个五元组$(Q, \Sigma, \delta, q_0, F)$, 其中$\delta$不再是$Q \times \Sigma \to Q$的函数, 而是$Q \times \Sigma_{\varepsilon} \to \mathcal P(Q)$的, 其中$\mathcal P$表示幂集, $\Sigma_{\varepsilon}$表示$\Sigma \cup \{\varepsilon\}$. 
+	非确定性有限状态自动机是一个五元组$(Q, \Sigma, \delta, q_0, F)$, 其中$\delta$不再是$Q \times \Sigma \to Q$的函数, 而是$Q \times \Sigma_{\varepsilon} \to \mathcal P(Q)$的, 其中$\mathcal P$表示幂集, $\Sigma_{\varepsilon}$表示$\Sigma \cup \{\varepsilon\}$. 
 
 	相应的, 称字符串$w = w_1w_2\cdots w_m(w_i \in \Sigma)$可以被NFA $N = (Q, \Sigma, \delta, q_0, F)$接受, 如果$w$可以写成$w = y_1y_2\cdots y_{m'}(y_i \in \Sigma_{\varepsilon})$, 且存在状态序列$r_0, r_1, \cdots, r_{m'} \in Q$满足\num{i}$r_0 = q_0$, \num{ii}$r_{i+1} \in \delta(r_i, y_{i+1})$\ $(\forall i = 0, 1, \cdots, {m'}-1)$, \num{iii}$r_{m'} \in F$. 
 \end{definition}
 \begin{remark}
-	DFA的每个状态对每种字符都有恰好一条转移出边, 而相对的, NFA可能有零条、一条或者多条, 有几条出边就表示会创建出多少个独立的“后继进程”. 此外还存在$\varepsilon$的出边, 表示可以不输入任何字符创建进程. 
+	DFA的每个状态对每种字符都有恰好一条转移出边, 而相对的, NFA可能有零条、一条或者多条, 有几条出边就表示会创建出多少个独立的“后继进程”. 此外还存在$\varepsilon$出边, 表示可以不输入任何字符创建进程. 而一台 NFA 接受输入字符串 $w$, 当且仅当\obj{存在}一个进程最终运行到了接受态. 
 \end{remark}
 \begin{theorem}[NFA与DFA的等价性]
 	任何NFA都存在等效的DFA. 
@@ -237,45 +237,44 @@
 	\end{itemize}
 \end{proof}
 \begin{corollary}
-	一个语言是正则的当且仅当可以被一台非确定性有限自动机识别. 
+	一个语言是正则的当且仅当可以被一台非确定性有限状态自动机识别. 
 \end{corollary}
 \begin{theorem}
 	union, concatenation 和 star 在正则语言下都是封闭的. 
 \end{theorem}
-\begin{proof}
-	不多说了看图. 
+\begin{proof} 如图.
 
 	\begin{figure}[htbp]
 		\centering
 		\subfigure[proof for union]{
-			\includegraphics[scale=0.25]{pic/union.png}
+			\includegraphics[scale=0.23]{pic/union.png}
 		}
 		\quad
 		\subfigure[proof for concatenation]{
-			\includegraphics[scale=0.25]{pic/concat.png}
+			\includegraphics[scale=0.23]{pic/concat.png}
 		}
 		\quad
 			\subfigure[proof for star]{
-			\includegraphics[scale=0.25]{pic/star.png}
+			\includegraphics[scale=0.23]{pic/star.png}
 		}
 	\end{figure}
 \end{proof}
 \subsection{正则表达式}
 \begin{definition}[正则表达式]
-	称$R$是正则表达式, 如果$R$为
+	称$R$是正则表达式, 如果$R$为如下之一
 	\begin{itemize}
-		\item $\{a\}$, 其中$a$是字符集$\Sigma$中的某个元素
-		\item $\{\varepsilon\}$, 其中$\varepsilon$表示空串
-		\item $\varnothing$
-		\item $(R_1 \cup R_2)$, 其中$R_1, R_2$是某两个正则表达式
-		\item $(R_1 \circ R_2)$, 其中$R_1, R_2$是某两个正则表达式
-		\item $(R_1^*)$, 其中$R_1$是某个正则表达式
+		\item $\{a\}$, 其中$a$是字符集$\Sigma$中的某个元素,
+		\item $\{\varepsilon\}$, 其中$\varepsilon$表示空串,
+		\item $\varnothing$,
+		\item $(R_1 \cup R_2)$, 其中$R_1, R_2$是某两个正则表达式,
+		\item $(R_1 \circ R_2)$, 其中$R_1, R_2$是某两个正则表达式,
+		\item $(R_1^*)$, 其中$R_1$是某个正则表达式.
 	\end{itemize}
 \end{definition}
 \begin{example}
 	对于任意正则表达式$R$, $R \cup \varnothing = R \circ \varepsilon = R$, $R \circ \varnothing = \varnothing$, $\varnothing^* = \{\varepsilon\}$. 
 \end{example}
-\begin{theorem}[正则表达式与有限自动机的等价性]
+\begin{theorem}[正则表达式与DFA/NFA的等价性]
 	一个语言是正则的当且仅当它可以被一个正则表达式描述. 
 \end{theorem}
 \begin{proof}
@@ -283,13 +282,15 @@
 
 	“$\Rightarrow$”的证明中, 我们引入GNFA的定义(每条转移边上的label是一个正则表达式), 然后分别展示如何把DFA转化成GNFA以及如何根据GNFA构造正则表达式. 
 
+	\begin{definition}[Generalized Nondeterministic Finite Automaton, GNFA]
+		广义非确定性有限状态自动机是一个五元组$(Q, \Sigma, \delta, q_{\text{start}}, q_{\text{accept}})$, 其中$\delta$是$(Q \setminus \{q_{\text{accept}}\}) \times (Q \setminus \{q_{\text{start}}\}) \to \mathcal R$的转移函数, $\mathcal R$表示字符集$\Sigma$上的所有正则表达式. 注意不失一般性地要求了只有唯一的接受态, 以及$q_{\text{start}} \neq q_{\text{accept}}$. 
+	\end{definition}
+
 	DFA转GNFA是简单的——只需要额外加入两个状态表示$q_{\text{start}}$和$q_{\text{accept}}$即可. 
 
 	观察到一个GNFA有$k \ge 2$个状态. 如果$k=2$, 那么$q_{\text{start}}$到$q_{\text{accept}}$的转移边上的正则表达式就是该有限自动机对应的正则表达式. 如果$k > 2$, 那么考虑选出一个状态$q_{\text{rip}}$删除, 此时对于$q_i, q_j \in Q \setminus \{q_{\text{rip}}\}$, 如果$\delta(q_i,  q_{\text{rip}}) = R_1, \delta(q_{\text{rip}}, q_{\text{rip}}) = R_2, \delta(q_{\text{rip}}, q_j) = R_3, \delta(q_i, q_j) = R_4$, 则修改$\delta'(q_i, q_j) = (R_1)(R_2)^*(R_3) \cup (R_4)$. 归纳即可. 
 \end{proof}
-\begin{definition}[Generalized Nondeterministic Finite Automaton, GNFA]
-	广义非确定性有限自动机是一个五元组$(Q, \Sigma, \delta, q_{\text{start}}, q_{\text{accept}})$, 其中$\delta$是$(Q \setminus \{q_{\text{accept}}\}) \times (Q \setminus \{q_{\text{start}}\}) \to \mathcal R$的转移函数, $\mathcal R$表示字符集$\Sigma$上的所有正则表达式. 注意不失一般性地要求了只有唯一的接受态, 以及$q_{\text{start}} \neq q_{\text{accept}}$. 
-\end{definition}
+
 \subsection{Pumping Lemma}
 \begin{theorem}[Pumping Lemma for Regular Language]
 	如果$A$是正则语言, 那么存在一个数$p$ (称为\obj{pumping length}), 使得对于任意$A$中长度至少为$p$的字符串$s$, $s$都可分成三部分$s = xyz$满足
@@ -303,7 +304,7 @@
 	取 pumping length $p$ 为识别此正则语言的 DFA $M$的状态集大小$|Q|$. 对于任意长度至少为$p$的$s \in A$, 其经过的状态序列至少长为$p+1$. 根据\obj{鸽巢原理}, 存在一个状态$q$经过了至少两次, 于是把从$q_{\text{start}}$走到$q$的部分视作$x$, $q$回到自身的环视作$y$, 从$q$走到$q_{\text{accept}}$的部分视作$z$, 便构造出了划分. 
 \end{proof}
 \begin{remark}
-	利用 pumping lemma 可以证明某个语言$B$不是正则语言, 通用的方式是：先假设$B$是正则的, 导出 pumping length $p$的存在性, 然后根据这个$p$构造$s \in B$, 并验证其\obj{不能}被划分为$s = xyz$. 第三个条件$|xy| \le p$有时也是有用的. 
+	利用 pumping lemma 可以证明某个语言$B$不是正则语言, 通用的方式是：先假设$B$是正则的, 导出 pumping length $p$的存在性, 然后根据这个$p$构造$s' \in B$, 并验证其\obj{不能}被划分为$s' = xyz$. 第三个条件$|xy| \le p$有时也是有用的. 
 \end{remark}
 \begin{example}
 	$B = \{0^n1^n | n \ge 0\}$ 不是正则语言.
@@ -320,17 +321,10 @@
 	\textit{另一种证法是: 考虑 $C \cap 0^*1^* = B$, 正则语言在 intersection 下是封闭的, 所以$C$正则会导出$B$正则.}
 \end{proof}
 \begin{example}
-	$F = \{ww | w \in \{0, 1\}^*\}$ 不是正则语言.
-\end{example}
-\begin{proof}
-	考虑串 $0^p10^p1$, 注意到 $y$ 只能包含 $0$, 从而$xyyz \notin F$, 因此$F$不是正则语言.
-\end{proof}
-
-\begin{example}
 	$D = \{1^{n^2} | n \ge 0\}$ 不是正则语言.
 \end{example}
 \begin{proof}
-	考虑串 $1^{p^2}$. 由于 $|y| \le p$, 所以 $|xyyz| = p(p+1) < (p+1)^2$ 不可能是完全平方数, $xyyz \notin D$, 说明$D$不是正则语言.
+	考虑串 $1^{p^2}$. 由于 $|y| \le p$, 所以 $|xyyz| \le p(p+1) < (p+1)^2$ 不可能是完全平方数, $xyyz \notin D$, 说明$D$不是正则语言.
 \end{proof}
 \begin{example}
 	$E = \{0^i1^j | i > j\}$不是正则语言. 
@@ -338,31 +332,37 @@
 \begin{proof}
 	考虑串$0^{p+1}1^p$, $y$只能包含 $0$, 且$|y| > 0$, 因此$xz$中$0$的个数不超过 $1$的个数, $xz \notin E$, 说明 $E$ 不是正则语言.
 \end{proof}
+\begin{example}
+	$F = \{ww | w \in \{0, 1\}^*\}$ 不是正则语言.
+\end{example}
+\begin{proof}
+	考虑串 $0^p10^p1$, 注意到 $y$ 只能包含 $0$, 从而$xyyz \notin F$, 因此$F$不是正则语言.
+\end{proof}
 \newpage
 \section{上下文无关语言}
 \subsection{上下文无关文法}
 \begin{definition}[Context-Free Grammar/Language, CFG/CFL]
-	一个上下文无关文法是一个四元组$(V, \Sigma, R, S)$, 其中
+	一个上下文无关文法是一个四元组$G = (V, \Sigma, R, S)$, 其中
 	\begin{itemize}
 		\item $V$是称为\obj{变量}的有限集, 
 		\item $\Sigma$是称为\obj{终止符}的有限集, 与$V$不交, 
-		\item $R$是称为\obj{规则}的有限集, 是从$V$到$(V \cup \Sigma)^*$的映射, 
+		\item $R$是称为\obj{规则}的有限集, 是 $V \times (V \cup \Sigma)^*$ 的一个子集, $(v, s) \in R$ 表示可以把变量 $v$ 替换成字符串 $s$, 
 		\item $S \in V$称为\obj{起始变量}. 
 	\end{itemize}
 
-	上下文无关语言就是上下文无关文法导出/生成的语言, 即$\{w \in \Sigma^* | S \overset{*}{\Rightarrow} w\}$. 
+	由起始变量开始通过有限次规则替换得到的 $\Sigma^*$ 中字符串构成了上下文无关文法 $G = (V, \Sigma, R, S)$ 所识别的语言, 称为上下文无关语言, 记作 $L(G) = \{w \in \Sigma^* | G \overset{*}{\Rightarrow} w\}$.
 \end{definition}
 \begin{definition}[parse tree]
 	形如这样子的东西.
 	\begin{center}
-		\includegraphics*[scale=0.4]{pic/parse_tree.png}	
+		\includegraphics*[scale=0.3]{pic/parse_tree.png}	
 	\end{center}
 \end{definition}
 \begin{proposition}
-	CFG 的描述能力严格强于有限自动机(或者正则表达式). 
+	CFG 的描述能力严格强于有限状态自动机(或者正则表达式). 
 \end{proposition}
 \begin{proof}
-	对于任意的DFA, 都可以构造与其等价的CFG：对每个状态$q_i$构造一个变量$R_i$, 起始变量$R_0$对应起始态$q_0$, 如果$\delta(q_i, a) = q_j$, 就添加规则$R_i \to aR_j$, 而如果$q_i$是接受态, 就添加规则$R_i \to \varepsilon$. 
+	对于任意 DFA 都可以构造与其等价的CFG: 对每个状态$q_i$构造一个变量$v_i$, 起始变量$S$对应起始态$q_0$, 如果$\delta(q_i, a) = q_j$, 就添加规则$v_i \to av_j$, 而如果$q_i$是接受态, 就添加规则$v_i \to \varepsilon$. 
 
 	而显然存在可被 CFG 描述的非正则语言, 比如$\{0^n1^n | n \in \mathbb N\}$. 
 \end{proof}
@@ -378,7 +378,7 @@
 
 \subsection{下推自动机}
 
-我们希望能给有限自动机做一些加强, 使其能够达到与 CFG 相同的表达能力. 最终决定了为其添加栈结构, 于是得到了如下定义的“下推自动机”:
+我们希望能给有限状态自动机做一些加强, 使其能够达到与 CFG 相同的表达能力. 最终决定了为其添加栈结构, 于是得到了如下定义的“下推自动机”:
 
 \begin{definition}[Pushdown Automaton, PDA]
 	下推自动机是一个六元组$(Q, \Sigma, \Gamma, \delta, q_0, F)$, 其中
@@ -391,7 +391,7 @@
 		\item $F \subseteq Q$是接受态集合. 
 	\end{itemize}
 
-	其中$\Sigma_{\varepsilon}, \Gamma_{\varepsilon}$分别表示$\Sigma \cup \{\varepsilon\}, \Gamma \cup \{\varepsilon\}$. $(q', b) \in \delta(q, c, a)$ 表示在状态 $q$ 上被输入 $c$ 字符时, 会先从栈顶 pop 出字符 $a$, 再向栈顶 push 进字符 $b$, 最后转移到状态 $q'$. 幂集$\mathcal P$暗含了下推自动机是 nondeterministic 的. 
+	其中$\Sigma_{\varepsilon}, \Gamma_{\varepsilon}$分别表示$\Sigma \cup \{\varepsilon\}, \Gamma \cup \{\varepsilon\}$. $(q', b) \in \delta(q, c, a)$ 表示在状态 $q$ 上被输入 $c$ 字符且栈顶是 $a$ 字符时, 可以先从栈顶 pop 出 $a$ 字符, 再向栈顶 push 进 $b$ 字符, 最后转移到状态 $q'$. 幂集$\mathcal P$暗含了下推自动机是 nondeterministic 的. 
 
 	称字符串$w = w_1w_2\cdots w_m(w_i \in \Sigma_{\varepsilon})$可以被 PDA $M = (Q, \Sigma, \Gamma, \delta, q_0, F)$接受, 如果存在状态序列$r_0, r_1, \cdots, r_m \in Q$和字符串(栈)序列$s_0, s_1, \cdots, s_m \in \Gamma^*$, 满足
 	\begin{itemize}
@@ -425,7 +425,7 @@
 		\end{tikzpicture}
 	\end{center}
 
-	“$\Leftarrow$”: 需要根据 PDA 来构造 CFG. 不妨假设\footnote{需要简短地说明转化的可行性. 前两条只需要添加额外的结束状态和转移函数即可, 第三条需要在所有 both 和 neither 的转移中间插入中间状态.}该 PDA 有如下特性：\num{i}只有一个接受态$q_{\text{accept}}$, \num{ii}会在接受前清空栈, \num{iii}每次转移都会要么 push 要么 pop, 没有 both 和 neither 的情况. 构造变量$A_{pq}$表示所有能够使 PDA 从“状态$p$且栈空”转移到“状态$q$且栈空”的串组成的语言, 其中$A_{q_0q_{\text{accept}}}$是该 CFG 的起始变量. 按如下方式构造 CFG 的规则集合：
+	“$\Leftarrow$”: 需要根据 PDA 来构造 CFG. 不妨假设\footnote{需要简短地说明转化的可行性. 前两条只需要添加额外的结束状态和转移函数即可, 第三条需要在所有 both 和 neither 的转移中间插入中间状态.}该 PDA 有如下特性：\num{i} 只有一个接受态$q_{\text{accept}}$, \num{ii} 会在接受前清空栈, \num{iii} 每次转移要么 push 要么 pop, 没有 both 和 neither 的情况. 构造变量$A_{pq}$表示所有能够使 PDA 从“状态$p$且栈空”转移到“状态$q$且栈空”的串组成的语言, 其中$A_{q_0q_{\text{accept}}}$是该 CFG 的起始变量. 按如下方式构造 CFG 的规则集合：
 	\begin{itemize}
 		\item 对于任意$p, q, r, s \in Q, u \in \Gamma, a, b \in \Sigma_{\varepsilon}$, 如果$(r, u) \in \delta(p, a, \varepsilon), (q, \varepsilon) \in \delta(s, b, u)$, 就添加规则$A_{pq} \to a A_{rs} b$, 
 		\item 对于任意$p, q, r \in Q$, 添加规则$A_{pq} \to A_{pr}A_{rq}$, 
@@ -446,7 +446,7 @@
 	\end{itemize}
 \end{theorem}
 \begin{proof}
-	设$b$为规则中的最大“度数”, 即替换字符串的最大长度. 如果 parse tree 的树高是$h$(根的深度是 $0$), 那么生成的字符串长度至多为$b^h$. 
+	设$b$为规则中的最大“度数”, 即替换字符串的最大长度. 如果 parse tree 的树高是$h$ (根的深度是 $0$), 那么生成的字符串长度至多为$b^h$. 
 
 	取 pumping length $p$ 为$b^{|V|+1}$. 长度至少为$p$的串对应的 parse tree 树高至少为$|V| + 1$, 故存在一条“直链”上有至少$|V| + 1$个变量, 根据\obj{鸽巢原理}, 存在一个变量出现至少两次, 记为$R$, 那么对于$R$就可以无限复制或者把两次出现压缩成一次(如图). 
 
@@ -483,9 +483,9 @@
 \newpage
 \section{图灵机}
 
-图灵机是有限自动机的进一步加强(也严格强于下推自动机), 在状态集的基础上额外添加了外部存储设备——“纸带”. 一条纸带是一列无限长的存储单元(称为“格子”), 其中每个格子上只能存储有限的信息, 在单步计算中也只能读取/写入一个格子, 读取/写入的格子位置(称为“纸带头”)在相邻两步计算间也至多移动一格. 
+图灵机是有限状态自动机的进一步加强(也严格强于下推自动机), 在状态集的基础上额外添加了外部存储设备——“纸带”. 一条纸带是一列无限长的存储单元(称为“格子”), 其中每个格子上只能存储有限的信息, 在单步计算中也只能读取/写入一个格子, 读取/写入的格子位置(称为“纸带头”)在相邻两步计算间也至多移动一格. 
 
-通俗地来讲, 一台拥有 $k$ 条纸带的图灵机在一步计算中, 会首先查询其状态并分别在 $k$ 个纸带头位置读取 $k$ 个字符, 然后根据这些信息, 决定变换到什么状态, 将 $k$ 个纸带头处的字符改写成什么, 以及如何移动 $k$ 个纸带头(向左或右移动一格, 或者保持不动). 
+通俗地来讲, 一台拥有 $k$ 条纸带的图灵机在一步计算中, 会首先查询其状态(可类比 DFA/NFA)并分别在 $k$ 个纸带头位置读取 $k$ 个字符, 然后根据这些信息, 决定变换到什么状态, 将 $k$ 个纸带头处的字符改写成什么, 以及如何移动 $k$ 个纸带头(向左或右移动一格, 或者保持不动). 
 
 \begin{definition}[Deterministic Turing Machine, TM]
 	一台 $k$ 条纸带的 (确定性)图灵机是一个七元组 \\ $(Q, \Sigma, \Gamma, \delta, q_0, q_{\text{accept}}, q_{\text{reject}})$, 其中
@@ -498,7 +498,7 @@
 
 	初始时, 第一条纸带的第一个格子上标有 $\triangleright$ 字符, 表示输入串的开始, 随后紧接着是输入串 $w \in \Sigma^*$. 除了这 $|w| + 1$ 个格子外, 所有纸带的所有格子都被初始化为空格符 $\Box$.
 
-	一旦图灵机运行到 $q_{\text{accept}}$ 或者 $q_{\text{reject}}$ 状态时, 它就会\obj{停机}. 因此可以把一台图灵机看成一个 $\Sigma^* \to \{0, 1\}$ 的函数. 一般地, 对于图灵机 $M$ 和字符串 $x \in \Sigma^*$, 我们有 $M(x) \in \{0, 1\}$, 其中 $M(x) = 1$ 当且仅当对于输入 $x$, $M$ 会运行到$q_{\text{accept}}$, $M(x) = 0$ 当且仅当对于输入 $x$, $M$ 会运行到 $q_{\text{reject}}$ \obj{或者不停机}.
+	一旦图灵机运行到 $q_{\text{accept}}$ 或 $q_{\text{reject}}$ 状态, 它就会\obj{停机}. 因此可以把一台图灵机看成一个 $\Sigma^* \to \{0, 1\}$ 的函数. 一般地, 对于图灵机 $M$ 和字符串 $x \in \Sigma^*$, 我们有 $M(x) \in \{0, 1\}$, 其中 $M(x) = 1$ 当且仅当对于输入 $x$, $M$ 会运行到$q_{\text{accept}}$, $M(x) = 0$ 当且仅当对于输入 $x$, $M$ 会运行到 $q_{\text{reject}}$ \obj{或者不停机}.
 
 	\iffalse
 	图灵机的一个 \obj{configuration} 包含其状态, 所有纸带上的字符, 以及所有纸带头的位置. 称图灵机 $M$ 接受字符串 $w$, 如果存在一个 configuration 序列 $C_0, C_1, \cdots, C_t$ 满足 \num{i} $C_0$ 是起始 configuration, i.e.  \num{ii} 每个 $C_i$ 都在一步内跳转到 $C_{i+1}$, \num{iii} $C_t$ 是接受 configuration.
@@ -507,9 +507,9 @@
 	对于图灵机 $M$, 记 $L(M) = \{x \in \{0, 1\}^* | M(x) = 1\}$ 为 $M$ 所\obj{识别}的语言.
 \end{definition}
 \begin{remark}
-	图灵机还存在另一种设定: 并没有 $q_{\text{accept}}, q_{\text{reject}}$ 两个特殊状态, 取而代之的是单一的停机状态 $q_{\text{halt}}$, 同时最后一条纸带被用作“输出纸带”. 图灵机运行到 $q_{\text{halt}}$ 时停机, 此时输出纸带上的内容就是该图灵机的输出. 
+	图灵机还有另一种定义: 并没有 $q_{\text{accept}}, q_{\text{reject}}$ 两个特殊状态, 取而代之的是单一的停机状态 $q_{\text{halt}}$, 同时最后一条纸带被用作“输出纸带”. 图灵机运行到 $q_{\text{halt}}$ 时停机, 此时输出纸带上的内容就是该图灵机的输出. 
 
-	这种设定下的图灵机可以看作一个 $\Sigma^* \to \Sigma^*$ 的函数, 但不难验证其计算能力与原本设定下的是相同的. 之后为了省事可能会混淆使用两种设定, 不妨碍理解就好.
+	这种设定下的图灵机可以看作一个 $\Sigma^* \to \Sigma^*$ 的函数, 但不难验证其计算能力与原本设定下的是相同的. 之后为了省事可能会混淆使用两种设定.
 \end{remark}
 \begin{definition}[图灵可识别与图灵可判定]
 	称一个语言是\obj{图灵可识别(Turing-recognizable)}的, 如果存在一台图灵机可以识别它(i.e. 接受其中的每一个字符串). 称一台图灵机是一个 \obj{decider}, 如果它对于任何输入都不会无限循环. 称一个语言是\obj{图灵可判定(Turing-decidable)}的, 如果存在一台 decider 可以识别它.
@@ -577,7 +577,7 @@
 
 \newpage
 \section{不可判定语言}
-\begin{definition}[可识别/判定语言, recognizable/decidable Language]
+\begin{definition}[可识别/判定语言, Recognizable/Decidable Language]
 	可识别语言就是能够被一台图灵机识别的语言. 可判定语言就是能够被一台 decider 识别的语言.
 \end{definition}
 \begin{theorem}
@@ -587,7 +587,7 @@
 \begin{proof}
 	只需要考虑“语言”与“可识别语言”的基数. 前者的基数是 $2^{\aleph_0}$, 后者的基数不超过图灵机的基数(因为存在可识别语言到图灵机的单射), 而图灵机可以被有限长的字符串描述, 因此是可数的.
 \end{proof}
-\begin{definition}[可计算函数(Computable Function)]
+\begin{definition}[可计算函数, Computable Function]
 	可计算函数就是可以被一台图灵机计算的函数. 特别的, 考虑函数 $f: \{0, 1\}^* \to \{0, 1\}$, 则 $f$ 是可计算函数当且仅当 $L = \{x \in \{0, 1\}^*| f(x) = 1\}$ 是可判定语言.
 \end{definition}
 \begin{theorem}
@@ -698,7 +698,7 @@
 
 \subsection{\NP 完全性}
 \begin{definition}[多项式时间规约, \NP-hard 与 \NP-complete]
-	称语言$L \subseteq \{0, 1\}^*$可\obj{多项式时间(Karp)规约}到语言$L' \subseteq \{0, 1\}^*$(记作$L \le_p L'$), 如果存在一个多项式时间可计算函数$f: \{0, 1\}^* \to \{0, 1\}^*$使得对于任意$x \in \{0, 1\}^*$, $x \in L \Leftrightarrow f(x) \in L'$. 
+	称语言$L \subseteq \{0, 1\}^*$可\obj{多项式时间规约}到语言$L' \subseteq \{0, 1\}^*$, 如果存在一个多项式时间可计算函数$f: \{0, 1\}^* \to \{0, 1\}^*$使得对于任意$x \in \{0, 1\}^*$, $x \in L \Leftrightarrow f(x) \in L'$, 记作$L \le_p L'$. 
 
 	称$L' \in $ \NP-hard, 如果对于任意$L \in \NP$, $L \le_p L'$. \NP-complete $=$ \NP\ $\cap$ \NP-hard.  
 \end{definition}
@@ -740,7 +740,7 @@
 
 	然后考虑证明 $\textsf{SAT} \le_p \textsf{3SAT}$. 只需要注意到
 	$$\bigvee_{i=1}^{k}u_i \cong \left(z \vee \bigvee_{i=1}^{k-2}u_i\right) \wedge (\overline{z} \vee u_{k-1} \vee u_{k})$$
-	说明任意 CNF 都可以多项式时间规约到 3CNF. 所以 $\textsf{SAT} \le_p \textsf{3SAT}$.
+	说明任意 CNF 都有一个多项式规模的与之等价的 3CNF. 所以 $\textsf{SAT} \le_p \textsf{3SAT}$.
 \end{proof}
 \subsection{常见 \NP-complete 问题的规约}
 \begin{example}[独立集]
@@ -896,24 +896,32 @@
 	$$\NTIME(f(n)) \subsetneq \NTIME(g(n))$$
 \end{theorem}
 \begin{proof}
-	摆烂了不证了.
-	\iffalse
-	设函数 $h: \mathbb N \to \mathbb N$ 满足 $h(1) = 2, h(i + 1) = 2^{g(h(i))}$. 考虑如下非确定性图灵机 $D$:
+	照搬\cref{time_hierarchy_thm} 遇到的阻碍是, 由于尚未证明 $\NP = \coNP$, 所以没办法高效实现 NDTM 输出的翻转.
+
+	但想了一个法子: 并不直接翻转答案, 而是去翻转一个比自己指数小的输入问题的答案.
+
+	具体地, 设函数 $h: \mathbb N \to \mathbb N$ 满足 $h(1) = 2, h(i + 1) = 2^{g(h(i))}$. 考虑如下 NDTM $N$:
 	\begin{itemize}
-		\item 对于输入 $x$, 如果 $x \notin 1^*$, 直接拒绝. 否则, 设 $x = 1^n$, 求出 $i$ 满足 $h(i) < n \le h(i + 1)$.
-		\item 如果 $n \neq h(i + 1)$, 则用非确定性通用图灵机模拟 $M_i$($i$ 作为 binary representation 表示的非确定性图灵机) 在输入 $1^{n+1}$ 上运行 $f(n)$ 步, 并输出相同的结果.
-		\item 如果 $n = h(i + 1)$, 则用非确定性图灵机模拟 $M_i$ 在输入 $1^{h(i) + 1}$ 上运行 $f(h(i) + 1)$步, 输出相反的结果.
+		\item 对于输入 $x$, 如果 $x \notin 1^*$ 就直接拒绝. 设 $x = 1^n$, 求出 $i$ 满足 $h(i) < n \le h(i + 1)$.
+		\item 如果 $n < h(i + 1)$, 则用非确定性通用图灵机模拟 $M_i$($i$ 作为 binary representation 表示的 NDTM) 在输入 $1^{n+1}$ 上运行 $\sqrt{f(n+1)g(n)}$ 步, 若停机则输出相同结果, 否则默认输出 accept.
+		\item 如果 $n = h(i + 1)$, 则用非确定性通用图灵机模拟 $M_i$ 在输入 $1^{h(i) + 1}$ 上运行 $\sqrt{f(h(i)+1)g(h(i))}$步, 如果 $M_i$ 停机并 reject 则输出 accept, 否则($M_i$ accept 或不停机)输出 reject.
 	\end{itemize}
 
-	“输出相反的结果”需要指数的时间, 因为我们暂且认为 $\NP \neq \coNP$. 但好在输入规模是 $h(i) + 1$
-	\fi
+	实现后一种情况需要遍历 $2^{\sqrt{f(h(i)+1)g(h(i))}}$ 种分支, 但注意到输入规模是 $2^{g(h(i))}$, 而 $f(n+1) = o(g(n))$, 所以时间复杂度不超过 $g(n)$. 我们断言 $L(N) \in \NTIME(g(n))$.
+
+	通过反证说明 $L(N) \notin \NTIME(f(n))$. 如若不然, 存在运行时间为 $O(f(n))$ 的 NDTM $M$ 可以识别 $L(N)$, 因为每台图灵机都可以被无限个串表示, 我们取一足够大的 $i$, 满足 $M = M_i$, 且 $M_i$ 对于任意长度为 $n \ge h(i)$ 的输入都能够在 $\sqrt{f(n+1)g(n)}$ 步内停机, 即 $N$ 的描述中前一种情况下一定会输出 $M_i$ 的真实结果. 从而导致了: $$\begin{cases}
+		N(1^n) = M_i(1^{n+1}),  h(i) < n < h(i + 1) \\
+		N(1^{h(i + 1)}) = 1 - M_i(1^{h(i) + 1}), 
+	\end{cases}$$ 相当于绕了一大圈结果首尾不一致了, 遂产生了矛盾.
+
+
 \end{proof}
 
 \newpage
 \section{空间复杂性}
 \subsection{空间受限的计算}
 \begin{definition}[运行空间, \SPACE 与 \NSPACE]
-	对于$S: \mathbb N \to \mathbb N$和$L \subseteq \{0, 1\}^*$, 称$L \in \SPACE(S(n))$, 如果存在常数$c$以及可以决定$L$的图灵机$M$, 满足在对任意长度为$n$的输入的计算中, $M$只会访问到至多$c \cdot S(n)$个work tapes上(不包含input)的位置, 称$M$的运行空间为$O(S(n))$. 
+	对于$S: \mathbb N \to \mathbb N$和$L \subseteq \{0, 1\}^*$, 称$L \in \SPACE(S(n))$, 如果存在常数$c$以及可以识别$L$的 decider $M$, 满足在对任意长度为$n$的输入的计算中, $M$只会访问到至多$c \cdot S(n)$个work tapes上(不包含input)的位置, 称$M$的运行空间为$O(S(n))$. 
 
 	类似地可以定义$\NSPACE$, 要求在任何一种决策下用到的位置数量都不超过$c \cdot S(n)$. 
 \end{definition}
@@ -931,11 +939,11 @@
 \begin{proof}
 	前两个$\subseteq$都是平凡的, 只考虑证明最后一个. 
 
-	我们称一台(确定或非确定)图灵机$M$的一个\obj{configuration}包含 \num{i} work tape上的所有非空字符; \num{ii} 所有纸带的head位置; \num{iii} $M$所处的状态, 则对于确定的输入$x \in \{0, 1\}^*$, 一个configuration的后继configuration是 \num{a} 对于图灵机来说, 唯一确定的; \num{b} 对于非确定图灵机来说, 至多唯二确定的. 把configuration之间的转移看成一张有向图, 记作$G_{M, x}$. 不失一般性假设$M$只有一种configuration $C_{\text{accept}}$满足“输出$1$后停机”(可以让图灵机在停机前擦除所有中间记录), 这样$M(x) = 1$就等价于$G_{M, x}$中存在一条$C_{\text{start}}$到$C_{\text{accept}}$的路径. 
+	我们称一台(确定或非确定)图灵机$M$的一个\obj{configuration}包含 \num{i} work tape上的所有非空字符; \num{ii} 所有纸带的纸带头位置; \num{iii} $M$所处的状态, 则对于固定的输入$x \in \{0, 1\}^*$, 一个configuration的后继configuration是 \num{a} 对于图灵机来说, 唯一确定的; \num{b} 对于非确定图灵机来说, 至多唯二确定的. 把configuration之间的转移看成一张有向图, 记作$G_{M, x}$. 不失一般性假设$M$只有一种configuration $C_{\text{accept}}$满足“输出$1$后停机”(可以让图灵机在停机前擦除所有中间记录), 这样$M(x) = 1$就等价于$G_{M, x}$中存在一条$C_{\text{start}}$到$C_{\text{accept}}$的路径. 
 
 	陈述两个事实：
 	\begin{itemize}
-		\item 给定$M, x$, $G_{M, x}$中的每个节点用$O(S(n))$个比特来表示, 也即, $G_{M, x}$只有$2^{O(S(n))}$个节点. 
+		\item 给定空间复杂度为 $S(n)$ 的图灵机 $M$ 以及输入 $x$, $G_{M, x}$中的每个节点可以用$O(S(n))$个bit 来表示, 也即, $G_{M, x}$只有$2^{O(S(n))}$个节点. 
 		\item 对于任意两个configuration $C, C'$, 存在$O(S(n))$大小的CNF $\varphi_{M, x}$满足$\varphi_{M, x}(C, C') = 1$当且仅当$G_{M, x}$中$C$有边连向$C'$. 
 	\end{itemize}
 
@@ -975,7 +983,7 @@
 	$$\textsf{SPACE-TMSAT} = \{ \langle M, w, 1^n \rangle : \textrm{DTM } M \textrm{ accepts } w \textrm{ in space } n \}$$
 	这是一个 \PSPACE-complete 语言. 
 \end{example}
-\begin{definition}[Quantified Boolean formula, QBF]
+\begin{definition}[Quantified Boolean Formula, QBF]
 	一个 QBF 是形如 $Q_1x_1Q_2x_2 \cdots Q_nx_n \varphi(x_1, x_2, \cdots, x_n)$ 的公式, 其中$Q_i \in \{\forall, \exists\}$, $x_i$的取值是$\{0, 1\}$, $\varphi$是一个 plain(unquantified) boolean formula . 
 
 	上述定义专注于讨论\obj{前束范式}的 QBF , 因为非前束范式都可以转化成等价的前束范式. 一个 QBF 有真值 True 或 False . 
@@ -1005,25 +1013,29 @@
 	对于任意 space constructible 的函数 $S: \mathbb N \to \mathbb N$ 满足 $S(n) \ge \log n$, 有 $$\NSPACE(S(n)) \subseteq \SPACE(S(n)^2)$$
 \end{theorem}
 \begin{proof}
-	这个证明类似于\cref{TQBF} 的证明. 对于 $L \in \NSPACE(S(n))$, 考虑识别其的图灵机 $M$ 与输入 $x \in \{0, 1\}^*$, 则 configuration graph $G_{M, x}$ 有至多 $2^{m = O(S(n))}$ 个节点. 设计递归算法 $R(u, v, i)$ 判断是否存在 $G_{M, x}$ 中从 $u$ 到 $v$ 长度不超过 $2^m$ 的路径, 其通过枚举中间节点 $w$ 递归到 $R(u, w, i - 1)$ 与 $R(w, v, i - 1)$, 则 $R(*, *, m)$ 的空间复杂度是 $s(m) = s(m - 1) + O(m) = O(S(n)^2)$, 因此 $x \in L$ 可以由一台使用 $O(S(n)^2)$ 空间的 DTM $M'$ 来计算, 从而 $L \in \SPACE(S(n)^2)$.
+	这个证明类似于\cref{TQBF} 的证明. 对于 $L \in \NSPACE(S(n))$, 考虑识别其的图灵机 $M$ 与输入 $x \in \{0, 1\}^*$, 则 configuration graph $G_{M, x}$ 有至多 $2^{m = O(S(n))}$ 个节点. 设计递归算法 $R(u, v, i)$ 判断是否存在 $G_{M, x}$ 中从 $u$ 到 $v$ 长度不超过 $2^i$ 的路径, 其通过枚举中间节点 $w$ 递归到 $R(u, w, i - 1)$ 与 $R(w, v, i - 1)$. 计算 $R(*, *, m)$ 的空间复杂度是 $s(m) = s(m - 1) + O(m) = O(S(n)^2)$, 从而可以设计一台空间复杂度为 $O(S(n)^2)$ 的 DTM 来识别语言 $L$, 因此 $L \in \SPACE(S(n)^2)$.
 \end{proof}
 
 
 \subsection{\NL, \coNL 与 \NL 完全性}
 
 \begin{definition}[\NL 的另一种定义]
-	称语言 $L \in \NL$, 如果存在一台 DTM $M$ 和多项式 $p: \mathbb N \to \mathbb N$, 满足对于任意 $x \in \{0, 1\}^*$, $x \in L \Leftrightarrow \exists u \in \{0, 1\}^{p(|x|)}, \text{s.t. } M(x, u) = 1$, 其中 $u$ 被放在 $M$ 一条只能读一次的纸带上, 且 $M$ 只能使用到 $O(\log |x|)$ 个工作纸带空间.
+	称语言 $L \in \NL$, 如果存在一台 DTM $M$ 和多项式 $p: \mathbb N \to \mathbb N$, 满足对于任意 $x \in \{0, 1\}^*$, $x \in L \Leftrightarrow \exists u \in \{0, 1\}^{p(|x|)}, \text{s.t. } M(x, u) = 1$, 其中 $u$ 被放在 $M$ 一条\obj{只能读一次}的纸带上, 且 $M$ 只能使用到 $O(\log |x|)$ 个工作纸带空间.
 \end{definition}
 \begin{remark}
 	这种定义与 $\NL = \NSPACE(\log n)$ 的定义是等价的, 因为多项式长度的“只能读一次”的 certificate 可以对应于 NDTM 的选择序列.
 \end{remark}
+\begin{remark}
+	如果去掉“只能读一次”的限制, 那么定义出来的复杂度类等于 \NP.
+\end{remark}
 \begin{theorem}[Immerman-Szelepcsényi Theorem]
 	$\overline{\textsf{PATH}} \in \NL$.
+	\label{path_conl}
 \end{theorem}
 \begin{proof}
 	按照 \NL 的另一种定义方式, 只需要给出一种 $O(\log n)$ 空间验证算法 $A$(后称 verifier), 对任意一张 $n$ 个节点的图 $G$ 以及节点 $s, t$, 都存在一个多项式规模的 certificate $u$ 满足 $A(\langle G, s, t \rangle, u) = 1$ 当且仅当 $G$ 中不存在从 $s$ 到 $t$ 的路径.
 
-	对于 $i \in [n]$, 记 $C_i$ 表示在 $G$ 中从 $s$ 出发在 $i$ 步之内能到达的点的集合. 很容易证明 $v \in C_i$ 是可验证的: 只需要给出序列 $v_0v_1 \cdots v_k$, 这个序列显然是关于 $n$ 多项式规模的, 同时 verifier 只需要进行如下验证: \num{1} $v_0 = s$, \num{2} $G$ 中有一条边从 $v_{j-1}$ 到 $v_j$, \num{3} $v_k = v$, \num{4} $k \le i$. 
+	对于 $i \in [n]$, 记 $C_i$ 表示在 $G$ 中从 $s$ 出发在 $i$ 步之内能到达的点的集合. 易知 $v \in C_i$ 是可验证的: 给出序列 $v_0v_1 \cdots v_k$, 该序列规模是关于 $n$ 多项式的, 此时 verifier 只需要进行如下验证: \num{1} $v_0 = s$, \num{2} $G$ 中有一条边从 $v_{j-1}$ 到 $v_j$, \num{3} $v_k = v$, \num{4} $k \le i$. 
 
 	紧接着我们陈述可以进行如下三种验证, 从而实现验证 $t \notin C_n$, 即不存在从 $s$ 到 $t$ 的路径.
 	\begin{itemize}
@@ -1038,7 +1050,7 @@
 \end{definition}
 
 \begin{definition}[对数空间规约, \NL-complete]
-	称函数 $f: \{0, 1\}^* \to \{0, 1\}^*$ 是 \obj{隐对数空间可计算的(implicitly logspace computable)}, 如果 $f$ 的输出长度是多项式的(存在 $c$ 使得 $|f(x)| \le |x|^c$ 对任意 $x \in \{0, 1\}^*$ 成立), 且语言 $L_f = \{\langle x, i \rangle | \text{the } i \text{-th bit of } f(x) \text{ is } 1\}, L_f' = \{\langle x, i \rangle | i \le |f(x)|\}$ 均属于 \L.
+	称函数 $f: \{0, 1\}^* \to \{0, 1\}^*$ 是\obj{隐对数空间可计算的(implicitly logspace computable)}, 如果 $f$ 的输出长度是多项式的(存在 $c$ 使得 $|f(x)| \le |x|^c$ 对任意 $x \in \{0, 1\}^*$ 成立), 且语言 $L_f = \{\langle x, i \rangle |i \text{-th bit of } f(x) \text{ is } 1\}, L_f' = \{\langle x, i \rangle | i \le |f(x)|\}$ 均属于 \L.
 
 	称语言 $L$ 可\obj{对数空间规约}到语言 $L'$(记作 $L \le_l L'$), 如果存在一个隐对数空间可计算函数 $f$ 使得对于任意 $x \in \{0, 1\}^*, x \in L \Leftrightarrow f(x) \in L'$.
 
@@ -1055,23 +1067,33 @@
 \begin{proof}
 	需要证明隐对数空间可计算函数在复合运算下封闭. 如果这个性质成立, 则引理的第一条自然成立, 第二条则考虑 $C \in \L$ 等价于存在隐对数空间可计算函数 $g$ 满足 $g(x) = [x \in C]$, 故也成立.
 
-	假设 $M_f, M_g$ 分别对隐对数空间可计算函数 $f, g$ 计算 $x, i \to f(x)_i$ 和 $y, j \to g(y)_j$, 考虑对 $h = f \circ g$ 构造 $M_h$ 计算 $x, k \to g(f(x))_k$. 大体上, $M_h$ 只需要仿照 $M_g$ 的计算, 并在每次需要查询输入纸带内容时, 临时调用 $M_f$ 计算 $f(x)$ 的某一比特即可.
+	假设 $M_f, M_g$ 分别对隐对数空间可计算函数 $f, g$ 计算 $x, i \to f(x)_i$ 和 $y, j \to g(y)_j$, 考虑对 $h = f \circ g$ 构造 $M_h$ 计算 $x, k \to g(f(x))_k$. 大体上, $M_h$ 只需要仿照 $M_g$ 的计算, 并在每次需要查询输入纸带内容时, 临时调用 $M_f$ 计算 $f(x)$ 的一个 bit 即可.
 
 \end{proof}
 \begin{theorem}
 	\textsf{PATH} $\in \NL$-complete.
+	\label{path_nl_complete}
 \end{theorem}
 \begin{proof}
 	考虑任意 $L \in \NL$, 记 $M$ 是在 $O(\log n)$ 空间内判定 $L$ 的图灵机. 构造隐对数空间可计算函数 $f$ 满足对于输入 $x \in \{0, 1\}^*, f(x) = \langle G_{M, x}, C_{\text{start}}, C_{\text{accept}} \rangle$. 由于 $G_{M, x}$ 的节点数量是 $2^{O(\log |x|)}$, 故 $|f(x)|$ 是关于 $|x|$ 多项式的. 显然 $G_{M, x}$ 的\obj{邻接矩阵} 的每一位都是对数空间可计算的, 因此整个 $f$ 是隐对数空间可计算的, 又有 $x \in L \Leftrightarrow f(x) \in \textsf{PATH}$, 从而说明 $L \le_l \textsf{PATH}$.
 \end{proof}
 \begin{remark}
-	结合 $\textsf{PATH} \in \NL$-complete 以及 $\overline{\textsf{PATH}} \in \NL$, 两者说明了 $\NL = \coNL$. 这是因为:
+	结合 $\textsf{PATH} \in \NL$-complete 以及 $\overline{\textsf{PATH}} \in \NL$, 两者说明了 $\NL = \coNL$. 这是因为: $$L \in \NL \Leftrightarrow L \le_l \textsf{PATH} \Leftrightarrow \overline{L} \le_l \overline{\textsf{PATH}} \Leftrightarrow \overline{L} \in \NL \Leftrightarrow L \in \coNL$$
+
+	\iffalse
 	\begin{itemize}
 		\item $\forall L \in \NL, L \le_l \textsf{PATH} \Rightarrow \overline{L} \le_l \overline{\textsf{PATH}} \Rightarrow \overline{L} \in \NL \Rightarrow L \in \coNL$, 说明 $\NL \subseteq \coNL$.
 		\item $\forall L \in \coNL, \overline{L} \in \NL \Rightarrow \overline{L} \le_l \textsf{PATH} \Rightarrow L \le_l \overline{\textsf{PATH}} \Rightarrow L \in \NL$, 说明 $\coNL \subseteq \NL$.
 	\end{itemize}
+	\fi
 	
-	这样的结论也可以一般化, 即对于任意 space constructible 的函数 $S : \mathbb N \to \mathbb N$ 满足 $S(n) \ge \log n$, 都有 $\NSPACE(S(n)) = \textbf{coNSPACE}(S(n))$.
+	\begin{corollary}
+		对于任意 space constructible 的函数 $S : \mathbb N \to \mathbb N$ 满足 $S(n) \ge \log n$, 都有 $\NSPACE(S(n)) = \textbf{coNSPACE}(S(n))$.
+	\end{corollary}
+	\begin{proof}
+		考虑语言 $$\textsf{NSPACE-TMSAT}_S = \{\langle M, w, 1^n \rangle | \text{NDTM } M \text{ accepts } w \text{ in space } S(n)\}$$
+		则可以类似\cref{path_nl_complete} 与 \cref{path_conl} 地证明 \num{1} $\textsf{NSPACE-TMSAT}_S \in \NSPACE(S(n))$-complete, \num{2} $\overline{\textsf{NSPACE-TMSAT}_S} \in \NSPACE(S(n))$, 从而得到类似的结论.
+	\end{proof}
 \end{remark}
 
 
@@ -1083,9 +1105,9 @@
 
 考虑 $\textsf{EXACT-INDSET} = \{\langle G, k \rangle | \text{the largest independent set of } G \text{ is of size } k\}$, 这个语言还属于 \NP 吗?
 
-我们可以写出 $\langle G, k \rangle \in \textsf{EXACT-INDSET}$ 的等价条件: \num{i} \textbf{存在}大小为 $k$ 的独立集, 且 \num{ii} \textbf{任意}独立集大小不超过 $k$. 证明 $\textsf{EXACT-INDSET} \in \NP$ 的难点在于无法简单地对 \num{ii} 给出多项式规模的 certificate.
+我们可以写出 $\langle G, k \rangle \in \textsf{EXACT-INDSET}$ 的等价条件: \num{i} \obj{存在}大小为 $k$ 的独立集, 且 \num{ii} \obj{任意}独立集大小不超过 $k$. 发现证明 $\textsf{EXACT-INDSET} \in \NP$ 的难点在于无法简单地对 (ii) 给出多项式规模的 certificate.
 
-类似的, 考虑 $\textsf{MIN-EQ-CNF} = \{\langle\phi, k\rangle | \exists \text{ CNF formula } \psi \text{ of size } \le k \text{ s.t. } \psi = \phi\}$, 此时 $\langle \phi, k \rangle \in \textsf{MIN-EQ-CNF}$ 的等价条件为: \textbf{存在} CNF formula $\psi$ 满足 $|\psi| \le k$, 使得对于\textbf{任意}赋值 $x$, 都有 $\psi(x) = \phi(x)$.
+类似的, 考虑 $\textsf{MIN-EQ-CNF} = \{\langle\phi, k\rangle | \exists \text{ CNF formula } \psi \text{ of size } \le k \text{ s.t. } \psi = \phi\}$, 此时 $\langle \phi, k \rangle \in \textsf{MIN-EQ-CNF}$ 的等价条件为: \obj{存在} CNF formula $\psi$ 满足 $|\psi| \le k$, 使得对于\obj{任意}赋值 $x$, 都有 $\psi(x) = \phi(x)$.
 
 上述的两种语言在定义中都包含了 $\exists$ 与 $\forall$ 两种量词, 我们尝试对这样的语言构建出一种新的语言类.
 
@@ -1102,13 +1124,13 @@
 		\forall, & i \text{ is even}\\
 	\end{cases}$. 定义polynomial hierarchy $\PH = \bigcup_{i \ge 1} \Sigma_i^p$.
 
-	对每个 $i \ge 1$, 定义 $\Pi_i^p = \textbf{co}\Sigma_i^p = \{L | \overline{L} \in \Sigma_i^p\}$, 则有 $\Sigma_i^p \subseteq \Pi_{i+1}^p \subseteq \Sigma_{i+2}^p$, 从而 $\PH = \bigcup_{i \ge 1}\Pi_i^p$ 也成立.
+	对每个 $i \ge 1$, 定义 $\Pi_i^p = \textbf{co}\Sigma_i^p = \{L | \overline{L} \in \Sigma_i^p\}$, 则有 $\Sigma_i^p \subseteq \Pi_{i+1}^p \subseteq \Sigma_{i+2}^p$, 从而 $\PH = \bigcup_{i \ge 1}\Pi_i^p$ 也对.
 \end{definition}
 
 我们猜测 $\P \neq \NP, \NP \neq \coNP$, 而放到 polynomial hierarchy 中, 类似的猜想是 $\Sigma_i^p \neq \Sigma_{i+1}^p, \Sigma_i^p \neq \Pi_i^p$.
 
 \begin{theorem}
-	对于 $i \ge 1$, 如果 $\Sigma_i^p = \Pi_i^p$, 则 $\PH = \Sigma_i^p$, 即 $\PH$ 坍缩到了第 $i$ 级. 特别的, 如果 $\P = \NP$, 则 $\PH$ 会坍缩到 $\P$. 
+	对于 $i \ge 1$, 如果 $\Sigma_i^p = \Pi_i^p$, 则 $\PH = \Sigma_i^p$, 即 $\PH$ 坍缩到第 $i$ 层. 特别的, 如果 $\P = \NP$, 则 $\PH$ 会坍缩到 $\P$. 
 \end{theorem}
 \begin{proof}
 	如果 $\Sigma_i^p = \Pi_i^p$, 考虑证明 $\Sigma_j^p = \Pi_j^p = \Sigma_i^p$ 对所有 $j \ge i$ 成立. 考虑对 $j$ 归纳.
@@ -1154,13 +1176,13 @@
 	\PPOLY 是所有多项式规模线路族可判定的语言类, 即 \PPOLY $ = \bigcup_{c \ge 0} \SIZE(n^c)$.
 \end{definition}
 \begin{theorem}
-	\P $\subseteq$ \PPOLY.
+	$\P \subseteq$ \PPOLY.
 	\label{P_subset_PPOLY}
 \end{theorem}
 \begin{proof}
 	类似于 Cook Levin Theorem 的证明.
 
-	由\cref{oblivious}, 对于任意 $L \in \P$, 都存在一台健忘的图灵机 $M$ 在多项式时间 $T(n)$ 内判定 $L$. 利用 $M$ 的健忘性来构造多项式规模线路族 $\{C_n\}_{n \in \mathbb N}$: 考虑 $M$ 运行时的 snapshot $z_1, z_2, \cdots, z_{T(n)}$, 每个 $z_i$ 都可以用常数个比特表达, 且确定 $z_i$ 也只需要用到之前的常数个 $z_j$, 因此构造布尔线路 $C_n$ 依次计算每个 $z_i$, 再把 $C_n$ 的输出设置为“$z_{T(n)}$ 是否到达 $M$ 的接受态”即可.
+	由\cref{oblivious}, 对于任意 $L \in \P$, 都存在一台健忘的图灵机 $M$ 在多项式时间 $T(n)$ 内判定 $L$. 利用 $M$ 的健忘性来构造多项式规模线路族 $\{C_n\}_{n \in \mathbb N}$: 考虑 $M$ 运行时的 snapshot $z_1, z_2, \cdots, z_{T(n)}$, 每个 $z_i$ 都可以用常数个 bit 表达, 且确定 $z_i$ 也只需要用到之前的常数个 $z_j$, 因此构造布尔线路 $C_n$ 依次计算每个 $z_i$, 再把 $C_n$ 的输出设置为“$z_{T(n)}$ 是否到达 $M$ 的接受态”即可.
 \end{proof}
 
 \subsection{线路可满足性}
@@ -1186,23 +1208,23 @@
 \end{proof}
 
 \subsection{线路一致生成}
-\cref{P_subset_PPOLY} 中的包含事实上是真包含, 因为 \PPOLY 甚至包含不可判定语言. 比如说, \PPOLY 包含所有一进制语言, 即便这样的语言可能是不可判定的.
+\cref{P_subset_PPOLY} 中的包含事实上是真包含, 因为 \PPOLY 甚至包含不可判定语言. 比如说, \PPOLY 包含所有一进制语言(unary language), 即便这样的语言可能是不可判定的.
 
 具体的, 对于任意语言 $L \subseteq \{1^n | n \in \mathbb N\}$, 线路族 $\{C_n\}_{n \in \mathbb N}$ 只需要对满足 $1^n \in L$ 的 $n$, 构造 $C_n$ 使其检查输入的 $n$ 位是否全是 $1$ 并输出检查结果, 而对 $1^n \notin L$ 的 $n$, 构造 $C_n$ 为直接输出 $0$.
 
 另一方面, 考虑一进制语言 $\textsf{UHALT} = \{1^n | n = \rep{M, x} \text{ such that } M \text{ halts on input } x\}$, 不难验证 $\textsf{HALT} \le_m \textsf{UHALT}$, 因而 \textsf{UHALT} 是不可判定的.
 
-这使得 \PPOLY 语言类处于一种很奇怪的境地, 其根源在于线路族 $\{C_n\}$ 是\obj{不一致(nonuniform)}的. 一种直观想法是, 我们希望限制线路族 $\{C_n\}_{n \in \mathbb N}$ 是“可高效构造的”, 从中引申出了一致生成(uniformly generate)的概念.
+这使得 \PPOLY 语言类处于一种很奇怪的境地, 其根源在于线路族 $\{C_n\}$ 是\obj{不一致(nonuniform)}的. 一种直观想法是, 我们希望限制线路族 $\{C_n\}_{n \in \mathbb N}$ 是“可高效构造的”, 从中引申出了\obj{一致生成(uniformly generate)}的概念.
 
 \begin{definition}[\P-一致线路族]
-	一个线路族 $\{C_n\}_{n \in \mathbb N}$ 被称为 \P-一致的, 如果存在对输入 $1^n$ 输出 $\rep{C_n}$ 的多项式时间图灵机.
+	一个线路族 $\{C_n\}_{n \in \mathbb N}$ 被称为 \P-一致(\P-uniform)的, 如果存在对输入 $1^n$ 输出 $\rep{C_n}$ 的多项式时间图灵机.
 \end{definition}
 \begin{theorem}
 	语言 $L$ 可以被 \P-一致线路族判定, 当且仅当 $L \in \P$.
 	\label{P-uniform}
 \end{theorem}
 \begin{proof}
-	$\Rightarrow: $ 根据定义, 可以先多项式时间地算出 $C_n$, 再根据 $C_n$ 多项式时间地算出结果.
+	$\Rightarrow: $ 根据定义, 可以先多项式时间地算出 $C_n$, 再多项式时间模拟 $C_n$ 算出结果.
 	
 	$\Leftarrow: $ 照搬\cref{P_subset_PPOLY} 的证明, 可以发现其中构造的线路族就是 \P-一致的.
 \end{proof}
@@ -1232,8 +1254,8 @@
 	列举一下三种不同量级的构造方式.
 	\begin{itemize}
 		\item $O(n2^n)$: $f: \{0, 1\}^n \to \{0, 1\}$ 只有不超过 $2^n$ 种满足 $f(x) = 1$ 的取值 $x$, 因此把这些 $x$ 列举一遍写成一个 DNF 的形式即可.
-		\item $O(2^n)$: 考虑 $f(x_1, x_2, \cdots, x_n) = (x_1 \wedge f(1, x_2, \cdots, x_n)) \vee (\lnot x_1 \wedge f(0, x_2, \cdots, x_n))$, 其中 $f(1, x_2, \cdots, x_n), f(0, x_2, \cdots, x_n)$ 是另外两个输入 $n - 1$ 比特的布尔函数, 可以递归构造, 从而线路规模为 $S(n) = O(1) + 2S(n - 1) = O(2^n)$.
-		\item $O\left(\frac{2^n}{n}\right)$: 是一种\obj{四毛子算法(Method of Four Russians)}的简单应用. 考虑输入 $k$ 比特的布尔函数只有 $2^{2^k}$ 个, 可以使用前述方法将这些函数对应的线路全部预构造出来. 修改前述递归构造方法, 在递归到 $n = k$ 时停止, 转而直接利用预构造得到的结果. 这种构造方法的电路规模为 $O(2^{n - k} + 2^{2^k + k})$, 取 $k = \log n - \varepsilon$ 即可得到 $O\left(\frac{2^n}{n}\right)$.
+		\item $O(2^n)$: 考虑 $$f(x_1, x_2, \cdots, x_n) = (x_1 \wedge f(1, x_2, \cdots, x_n)) \vee (\lnot x_1 \wedge f(0, x_2, \cdots, x_n))$$ 其中 $f(1, x_2, \cdots, x_n), f(0, x_2, \cdots, x_n)$ 是另外两个输入 $n - 1$ 比特的布尔函数, 可以递归构造, 从而线路规模为 $S(n) = O(1) + 2S(n - 1) = O(2^n)$.
+		\item $O\left(\frac{2^n}{n}\right)$: 是一种\obj{四毛子算法(Method of Four Russians)}的简单应用. 考虑输入 $k$ 比特的布尔函数只有 $2^{2^k}$ 个, 可以使用前述方法将这些函数对应的线路全部预构造出来. 修改前述递归构造方法, 在递归到 $n = k$ 时停止, 转而直接利用预构造得到的结果. 这种构造方法的电路规模为 $O(2^{n - k} + 2^k \cdot 2^{2^k})$, 取 $k = \log n - \varepsilon$ 即可得到 $O\left(\frac{2^n}{n}\right)$.
 	\end{itemize}
 \end{proof}
 \begin{theorem}[Nonuniform Size Hierarchy Theorem]
@@ -1262,47 +1284,47 @@
 \begin{proof}
 	$\subseteq$: 把线路族 $\{C_n\}_{n \in \mathbb N}$ 编码为建议 $\{\alpha_n\}_{n \in \mathbb N}$ 即可.
 
-	$\supseteq$: 类似\cref{P_subset_PPOLY} 中的构造, 可以得到多项式规模线路族 $\{D_n\}_{n \in \mathbb N}$ 满足对于任意 $x \in \{0, 1\}^n, \alpha \in \{0, 1\}^{a(n)}$ 都有 $D_{n + a(n)}(x, \alpha) = M(x, \alpha)$. 将 $\alpha_n$ 硬编码进 $D_n$ 即可得到 $\{C_n(x) = D_{n + a(n)}(x, \alpha(n))\}_{n \in \mathbb N}$.
+	$\supseteq$: 使用\cref{P_subset_PPOLY} 中的构造, 可以由 $M$ 得到多项式规模线路族 $\{D_n\}_{n \in \mathbb N}$, 满足对于任意 $x \in \{0, 1\}^n, \alpha \in \{0, 1\}^{a(n)}$, 都有 $D_{n + a(n)}(x, \alpha) = M(x, \alpha)$. 将 $\alpha_n$ 硬编码进 $D_n$ 即可得到 $\{C_n(x) = D_{n + a(n)}(x, \alpha(n))\}_{n \in \mathbb N}$.
 \end{proof}
 
 \subsection{Karp-Lipton Theorem}
 有一个问题是, $\textsf{SAT} \in $ \PPOLY 吗? 或者等价的, $\NP \subseteq $ \PPOLY 吗?
 
-Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩, 答案就是“否”.
+Karp \& Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩, 答案就是“否”.
 \begin{theorem}[Karp-Lipton Theorem]
 	如果 $\NP \subseteq $ \PPOLY, 那么 $\PH = \Sigma_2^p$.
 \end{theorem}
 \begin{proof}
-	考虑证明 $\NP \subseteq$ \PPOLY $\Rightarrow$ $\Pi_2\textsf{SAT} \in \Sigma_2^p \Rightarrow \Pi_2^p \subseteq \Sigma_2^p \Rightarrow \PH = \Sigma_2^p$. 其中 $$\Pi_2\textsf{SAT} = \{\psi = \forall u\exists v \phi(u, v) | \psi \text{ is satisfiable}\}$$可以验证 $\Pi_2\textsf{SAT} \in \Pi_2$-complete.
+	考虑证明 $\NP \subseteq$ \PPOLY $\Rightarrow$ $\Pi_2\textsf{SAT} \in \Sigma_2^p \Rightarrow \Pi_2^p \subseteq \Sigma_2^p \Rightarrow \PH = \Sigma_2^p$, 其中 $$\Pi_2\textsf{SAT} = \{\psi = \forall u\exists v, \varphi(u, v) | \psi \text{ is satisfiable}\}$$ 可以验证 $\Pi_2\textsf{SAT} \in \Pi_2$-complete, 故后面的 $\Rightarrow$ 成立. 接下来证明第一个 $\Rightarrow$.
 
-	考虑语言 $L = \{\langle \phi, u \rangle | \exists v, \phi(u, v) = 1\}$, 不难看出 $L \le_p \textsf{SAT}$, 从而 $L \in \NP$. 由于 $\NP \subseteq $ \PPOLY, 故存在多项式规模线路族 $\{C_n\}_{n \in \mathbb N}$ 可以判定语言 $L$, 即, 对于任意 $\langle \phi, u \rangle, \langle \phi, u \rangle \in L$ 当且仅当 $C_{n}(\phi, u) = 1$.
+	考虑语言 $L = \{\langle \varphi, u \rangle | \exists v, \varphi(u, v) = 1\}$, 不难看出 $L \le_p \textsf{SAT}$, 从而 $L \in \NP$. 由于 $\NP \subseteq $ \PPOLY, 故存在多项式规模线路族 $\{C_n\}_{n \in \mathbb N}$ 可以判定语言 $L$, 即, 对于任意 $\langle \varphi, u \rangle, \langle \varphi, u \rangle \in L$ 当且仅当 $C_{n}(\varphi, u) = 1$.
 
-	根据之前\cref{decision_vs_search} 的讨论, 可以把 search problems 多项式时间规约到 decision problems, 考虑其布尔线路版本, 也即存在另一个多项式规模线路族 $\{C_n'\}_{n \in \mathbb N}$, 使得对于任意 $\langle \phi, u \rangle, \exists v, \phi(u, v) = 1$ 当且仅当 $\phi(u, C_{n}'(\phi, u)) = 1$, 即 $C_{n}'(\phi, u)$ 输出了满足条件的 $v$.
+	根据之前\cref{decision_vs_search} 的讨论, 可以把 search problems 多项式时间规约到 decision problems, 考虑其布尔线路版本, 也即存在另一个多项式规模线路族 $\{C_n'\}_{n \in \mathbb N}$, 使得对于任意 $\langle \varphi, u \rangle, \exists v, \varphi(u, v) = 1$ 当且仅当 $\varphi(u, C_{n}'(\varphi, u)) = 1$, 即 $C_{n}'(\varphi, u)$ 输出了某个满足条件的 $v$.
 
-	注意到 $C_n'$ 的构造是与具体的 $\phi, u, v$ 无关的, 因此其对应量词可交换. 同时注意到在给出 $\phi, u$ 以及 $\{C_n'\}_{n \in \mathbb N}$ 时, 可以构造一台多项式时间图灵机 $M$ 来计算 $\phi(u, C_{n}'(\phi, u))$ 的结果.
+	注意到 $C_n'$ 的构造是与具体的 $\varphi, u, v$ 无关的, 因此其对应量词可交换. 同时注意到在给出 $\varphi, u$ 以及 $\{C_n'\}_{n \in \mathbb N}$ 时, 可以构造一台多项式时间图灵机 $M$ 来计算 $\varphi(u, C_{n}'(\varphi, u))$ 的结果.
 	\begin{equation*}
 		\begin{split}
-			& \psi = \forall u \exists v \phi(u, v) \in \Pi_2\textsf{SAT}\\
-			\Leftrightarrow & \forall u, \langle \phi, u \rangle \in L\\
-			\Leftrightarrow & \forall u, \exists C_n, C_n(\phi, u) = 1\\
-			\Leftrightarrow & \forall u, \exists C_n', \phi(u, C_{n}'(\phi, u)) = 1\\
-			\Leftrightarrow & \exists C_n', \forall u, \phi(u, C_{n}'(\phi, u)) = 1\\
+			& \psi = \forall u \exists v \varphi(u, v) \in \Pi_2\textsf{SAT}\\
+			\Leftrightarrow & \forall u, \langle \varphi, u \rangle \in L\\
+			\Leftrightarrow & \forall u, \exists C_n, C_n(\varphi, u) = 1\\
+			\Leftrightarrow & \forall u, \exists C_n', \varphi(u, C_{n}'(\varphi, u)) = 1\\
+			\Leftrightarrow & \exists C_n', \forall u, \varphi(u, C_{n}'(\varphi, u)) = 1\\
 			\Leftrightarrow & \exists C_n', \forall u, M(\psi, u, C_n') = 1\\
 		\end{split}
 	\end{equation*}
-	从而说明 $\Pi_2\textsf{SAT} \in \Sigma_2^p$. 接下来的 $\Pi_2\textsf{SAT} \in \Sigma_2^p \Rightarrow \Pi_2^p \subseteq \Sigma_2^p \Rightarrow \PH = \Sigma_2^p$ 都比较简单, 故不再赘述.
+	从而说明 $\Pi_2\textsf{SAT} \in \Sigma_2^p$. 
 \end{proof}
 
-这说明了什么? 考虑逆否命题, 这说明了如果 $\PH$ 没有坍缩到 $\Sigma_2^p$, 则 $\NP$ 语言, 或者更具体地, \textsf{SAT}, 不能被多项式规模线路族判定.
+这说明了什么? 考虑逆否命题, 这说明了如果 $\PH$ 没有坍缩到 $\Sigma_2^p$, 则 $\NP$-complete 语言, 或者更具体地, \textsf{SAT}, 不能被多项式规模线路族判定.
 
-不过这个结论并没有对 $\P \neq \NP$ 的研究做出任何进展性贡献, 因为 $\PH \neq \Sigma_2^p$ 已经是比 $\P \neq \NP$ 更强的结论了.
+不过这个结论并没有对 $\P \overset{?}{=} \NP$ 的研究做出任何进展性贡献, 因为 $\PH \neq \Sigma_2^p$ 已经是比 $\P \neq \NP$ 更强的结论了.
 
 \subsection{线路深度}
 线路深度与并行计算有很大的关系, 因此有很大的研究必要.
 \begin{definition}[\NC, \AC]
-	称语言 $L \in \NC^c$, 如果 $L$ 可以被线路族 $\{C_n\}_{n \in \mathbb N}$ 计算, 其中 $C_n$ 的规模为 $\text{poly}(n)$, 深度为 $O(\log^cn)$. 记 $\NC = \bigcup_{c \ge 0} \NC^c$.
+	称语言 $L \in \NC^c$, 如果 $L$ 可以被线路族 $\{C_n\}_{n \in \mathbb N}$ 识别, 其中 $C_n$ 的规模为 $\text{poly}(n)$, 深度为 $O(\log^cn)$. 记 $\NC = \bigcup_{c \ge 0} \NC^c$.
 
-	称语言 $L \in \AC^c$, 如果 $L$ 可以被线路族 $\{C_n\}_{n \in \mathbb N}$ 计算, 其中 $C_n$ 的规模为 $\text{poly}(n)$, 深度为 $O(\log^cn)$, 同时 $C_n$ 中对 AND, OR 门的输入数量不作限制. 记 $\AC = \bigcup_{c \ge 0} \AC^c$.
+	称语言 $L \in \AC^c$, 如果 $L$ 可以被线路族 $\{C_n\}_{n \in \mathbb N}$ 识别, 其中 $C_n$ 的规模为 $\text{poly}(n)$, 深度为 $O(\log^cn)$, 同时 $C_n$ 中对 AND, OR 门的输入数量不作限制. 记 $\AC = \bigcup_{c \ge 0} \AC^c$.
 \end{definition}
 \begin{proposition}
 	$\NC^i \subseteq \AC^i \subseteq \NC^{i + 1}$, 对任意 $i \ge 0$ 成立.
@@ -1312,9 +1334,12 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \end{theorem}
 \begin{proof}
 	$1^* \in \AC^0, 1^* \notin \NC^0$.
+
 	$\textsf{PARITY} = \{x | x \text{ has an odd number of 1s}\} \in \NC^1, \textsf{PARITY} \notin \AC^0$. 
 
-	其中证明 $\textsf{PARITY} \notin \AC^0$ 使用到了 Switching Lemma. 但我懒得学了, 同时觉得反正学了写下来也不会有人看. 那就不管了.
+	其中证明 $\textsf{PARITY} \notin \AC^0$ 使用到了 Switching Lemma.
+	
+	但我懒得学了, 同时觉得反正学了写下来也不会有人看. 那就不管了. 摆了.
 \end{proof}
 
 \newpage
@@ -1400,7 +1425,7 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \begin{proof}
 	任取 $L \in \BPP$, 由\cref{robustness} 知存在一台多项式时间图灵机 $M: \{0, 1\}^n \times \{0, 1\}^{m(n)} \to \{0, 1\}$ 满足 $\forall x \in \{0, 1\}^n$, $$\mathbb P_{r \in \{0, 1\}^{m(n)}}[M(x, r) \neq L(x)] \le 2^{-n-1}$$ 那么一定存在某个 $r_n \in \{0, 1\}^{m(n)}$ 对于所有 $x \in \{0, 1\}^n$ 都满足 $M(x, r_n) = L(x)$, 这是因为“存在 $x$ 使 $M(x, r) \neq L(x)$”的 $r$ 的数量只有不超过 $2^n \cdot \frac{2^m}{2^{n+1}} = 2^{m-1}$ 个.
 
-	于是存在一列多项式规模的字符串 $\{r_n\}_{n \in \mathbb N}$, 使得 $x \in L \Leftrightarrow M(x, r_{|x|}) = 1$. 根据 Turing Machines that Take Advice (\cref{take_advise}) 的模型, 我们得到了 $L \in $ \PPOLY.
+	于是存在一列多项式规模的字符串 $\{r_n\}_{n \in \mathbb N}$, 使得 $\forall x \in \{0, 1\}^*, x \in L \Leftrightarrow M(x, r_{|x|}) = 1$. 根据 Turing Machines that Take Advice (\cref{take_advise}) 的模型, 我们得到了 $L \in $ \PPOLY.
 \end{proof}
 \begin{theorem}
 	$\BPP \subseteq \Sigma_2^p \cap \Pi_2^p$.
@@ -1408,7 +1433,7 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 \begin{proof}
 	只证明 $\BPP \subseteq \Sigma_2^p$. 因为 $\BPP = \coBPP$, 故另一边也可以简单得到.
 
-	任取 $L \in \BPP$, 由\cref{robustness} 知存在一台多项式时间图灵机 $M: \{0, 1\}^n \times \{0, 1\}^{m} \to \{0, 1\}$ 满足 $\forall x \in \{0, 1\}^n$, $$\mathbb P_{r \in \{0, 1\}^{m}}[M(x, r) \neq L(x)] \le 2^{-n-1}$$ 其中 $m = \text{poly}(n)$. 对于 $x \in \{0, 1\}^n$, 记 $S_x$ 为所有满足 $M(x, r) = 1$ 的 $r$ 构成的集合, 则要么 $|S_x| \ge (1 - 2^{-n})2^m$, 要么 $|S_x| \le 2^{-n}2^m$.
+	任取 $L \in \BPP$, 由\cref{robustness} 知存在一台多项式时间图灵机 $M: \{0, 1\}^n \times \{0, 1\}^{m} \to \{0, 1\}$ 满足 $\forall x \in \{0, 1\}^n$, $$\mathbb P_{r \in \{0, 1\}^{m}}[M(x, r) \neq L(x)] \le 2^{-n}$$ 其中 $m = \text{poly}(n)$. 对于 $x \in \{0, 1\}^n$, 记 $S_x$ 为所有满足 $M(x, r) = 1$ 的 $r$ 构成的集合, 则要么 $|S_x| \ge (1 - 2^{-n})2^m$, 要么 $|S_x| \le 2^{-n}2^m$.
 	\begin{proposition}
 		对于 $S \subseteq \{0, 1\}^m$ 和 $x \in \{0, 1\}^m$, 记 $S + x = \{y \oplus x | y \in S\} \subseteq \{0, 1\}^m$, 其中 $\oplus$ 为二进制不进位加法(XOR). 记 $k = \lceil \frac mn \rceil + 1$, 对于任意 $S \subseteq \{0, 1\}^m$, \begin{itemize}
 			\item 如果 $|S| \le 2^{m-n}$, 则任意 $u_1, \cdots, u_k \in \{0, 1\}^m$ 都有 $\bigcup_{i=1}^k (S + u_i) \neq \{0, 1\}^m$.
@@ -1423,6 +1448,34 @@ Karp, Lipton 二位给出了答案: 只要 polynomial hierarchy $\PH$ 不坍缩,
 	\end{proof}
 
 	根据上述命题, 我们知道了 $x \in L$ 当且仅当 $$\exists u_1, \cdots, u_k, \forall r \in \{0, 1\}^m, r \in \bigcup_{i=1}^k (S_x + u_i)$$ 这等价于 $$\exists u_1, \cdots, u_k, \forall r \in \{0, 1\}^m, \bigvee_{i=1}^k M(x, r \oplus u_i) = 1$$ 于是 $L \in \Sigma_2^p$.
+\end{proof}
+
+\subsection{随机规约}
+\begin{definition}[多项式时间随机规约]
+	称语言 $L$ 可以多项式时间随机规约到语言 $L'$ (记为 $L \le_r L'$), 如果存在一台 PTM $M$, 满足对于任意 $x \in \{0, 1\}^*$, $$\mathbb P[L(x) = L'(M(x))] \ge \frac23$$
+\end{definition}
+\begin{definition}[$\textbf{BP} \cdot \textbf{NP}$]
+	$\textbf{BP} \cdot \textbf{NP} = \{L | L \le_r \textsf{3SAT}\}$.
+\end{definition}
+\begin{theorem}
+	$\textbf{BP} \cdot \textbf{NP} \subseteq \textbf{NP}_{\textbf{/poly}}$.
+\end{theorem}
+\begin{proof}
+	只需要证明 $L \le_r \textsf{3SAT} \Rightarrow $ 存在 poly-size nondeterministic circuit $\{C_n\}$ 可以识别 $L$.
+
+$L \le_r \textsf{3SAT}$ 说明存在多项式时间图灵机 $M$ 满足 $\mathbb P_{r \in \{0, 1\}^{m(n)}}[L(x) = \textsf{3SAT}(M(x, r))] \ge 2/3$, 其中 $n = |x|, m(n) = \text{poly}(n)$ 是 $M$ 消耗的随机比特数量. 根据 error reduction (\cref{robustness})的结论, 我们知道存在多项式时间图灵机 $M'$ 满足 $\mathbb P_{r \in \{0, 1\}^{m'(n)}}[L(x) \neq \textsf{3SAT}(M'(x, r))] \le 2^{-n-1}$, 其中 $m'(n) = \text{poly}(n)$.
+
+根据 Union Bound, \begin{align*}
+	\begin{split}
+		&\mathbb P_{r \in \{0, 1\}^{m'(n)}} \left(\exists x \in \{0, 1\}^n, L(x) \neq \textsf{3SAT}(M'(x, r))\right) \\
+		\le & \sum_{x \in \{0, 1\}^n}\mathbb P_{r \in \{0, 1\}^{m'(n)}}[L(x) \neq \textsf{3SAT}(M'(x, r))] \\
+		\le & \ 2^n \cdot 2^{-n-1} = 1/2 < 1
+	\end{split}
+\end{align*}
+
+故存在 $r_n \in \{0, 1\}^{m'(n)}$ 使得 $L(x) = \textsf{3SAT}(M'(x, r_n))$ 对任意 $x \in \{0, 1\}^n$ 成立.
+
+于是 $x \in L \Leftrightarrow \exists r_n, M'(x, r_n) \in \textsf{3SAT} \Leftrightarrow \exists r_n, \exists \text{ assignment } u, M'(x, r_n)(u) = \text{True}$. 构造线路 $C_n$ 接受输入 $x, r_n, u$, 根据 $M'$ 计算出 3CNF $M'(x, r_n)$, 再检验赋值 $u$ 是否是可满足赋值. $C_n$ 显然是多项式规模的, 因此 $L \in \textbf{NP}_{\textbf{/poly}}$.
 \end{proof}
 
 \subsection{空间受限的随机计算}
@@ -1797,6 +1850,18 @@ Goldreich-Levin Theorem 指出, 可以通过 $\{0, 1\}^n \to \{0, 1\}^n$ 单射 
 形式: take-home-exam, 开卷, 名义上不允许 Google.
 
 范围: 「\obj{所有}课上讲的\obj{所有}内容」「自动机只需掌握基本概念, 随机, 空间复杂性, NPC 是考察重点」
+
+~\\
+
+\textbf{关于考试重点、考题形式的说明}
+
+考题目前分为两种，判断（无需证明）和大题（证明）。
+
+关于最后两次课程中所说的考试重点，现在增加解释一下。
+
+1 关于自动机的部分，目前试题中只有判断题，没有证明。
+
+2 不可计算、时间、空间、电路、随机、交互式证明、密码学中的伪随机，这几部分有大题。 
 
 \end{document}
 

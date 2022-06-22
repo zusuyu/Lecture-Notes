@@ -19,7 +19,7 @@
 
 \usepackage{appendix}
 \geometry{a4paper,centering,scale=0.8}
-\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\geometry{left=0.8cm, right=0.8cm, top=1.5cm, bottom=1.5cm}
 \usepackage[format=hang,font=small,textfont=it]{caption}
 \usepackage[nottoc]{tocbibind}
 
@@ -110,7 +110,7 @@
 
 
 \title{\heiti\zihao{1} 机器学习\ 课程笔记}
-\author{\kaishu\zihao{-3} 酥雨\\zusuyu@stu.pku.edu.cn}
+\author{\kaishu\zihao{-3} 酥雨 \qquad zusuyu@stu.pku.edu.cn}
 
 \CTEXoptions[today=old]
 \date{\today}
@@ -448,23 +448,21 @@ Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个
 	\end{algorithmic}
 \end{algorithm}
 
-我们陈述以下命题:
-\begin{enumerate}
-	\item $\alpha_t = \arg\min\limits_{\alpha}Z_t = \arg\min\limits_{\alpha} \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i))$.
-	\item $\prod\limits_{t=1}^{T}Z_t = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_i\sum\limits_{t=1}^{T}\alpha_t h_t(x_i)\right) = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)$.
-	\item $\sum\limits_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] = \frac12$. (与证明最终结果无关, 在此是为了指明每一轮中训练得到的 $h_t$ 的优化方向是 orthogonal 的.)
-	\item $\mathbb P_{(x_i, y_i) \sim S} \left[F(x_i) \neq y_i\right] \le (1 - \gamma^2)^{T/2}$.
-\end{enumerate}
+\begin{proposition}
+	$\alpha_t = \arg\min\limits_{\alpha}Z_t = \arg\min\limits_{\alpha} \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i))$.
+\end{proposition}
+\begin{proof}
+	Recall that $\varepsilon_t = \sum\limits_{i=1}^{n}D_t(i)\mathbb I[y_i \neq h_t(x_i)]$, by applying \obj{AM–GM inequality} we have
+	$$Z_t = \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i)) = \varepsilon_t \exp(\alpha) + (1 - \varepsilon_t)\exp(-\alpha) \ge 2\sqrt{\varepsilon_t(1 - \varepsilon_t)}$$
+	where the equality holds if and only if $$\varepsilon_t \exp(\alpha) = (1 - \varepsilon_t)\exp(-\alpha) \Leftrightarrow \alpha = \frac12 \ln\frac{1 - \varepsilon_t}{\varepsilon_t} = \frac12 \ln\frac{1 + \gamma_t}{1 - \gamma_t} = \alpha_t$$
+	where $\gamma_t = 1 - 2\varepsilon_t$ in the assignment of $\alpha_t$. This suggests that $\alpha_t = \arg\min\limits_{\alpha} Z_t$ as desired.
+\end{proof}
 
-注意到 $\mathbb P_{(x_i, y_i) \sim S} \left[F(x_i) \neq y_i\right]$ 的最小非零结果应为 $\frac1n$, 故我们只需要限制 $(1 - \gamma^2)^{T/2} < \frac1n$, 即 $T = \Omega(\log n)$, 就能将 error 降为 $0$.
-
-\begin{enumerate}
-	\item Recall that $\varepsilon_t = \sum\limits_{i=1}^{n}D_t(i)\mathbb I[y_i \neq h_t(x_i)]$, by applying \obj{AM–GM inequality} we have
-	$$Z_t = \sum\limits_{i=1}^{n}D_t(i)\exp(-\alpha y_i h_t(x_i)) = \varepsilon_t \exp(\alpha) + (1 - \varepsilon)\exp(-\alpha) \ge 2\sqrt{\varepsilon_t(1 - \varepsilon_t)}$$
-	where the equality holds if and only if $$\varepsilon_t \e^{\alpha} = (1 - \varepsilon_t)\e^{-\alpha} \Leftrightarrow \alpha = \frac12 \ln\frac{1 - \varepsilon_t}{\varepsilon_t} = \frac12 \ln\frac{1 + \gamma_t}{1 - \gamma_t} = \alpha_t$$
-	where $\gamma_t = 1 - 2\varepsilon$ in the assignment of $\alpha_t$. This suggests that $\alpha_t = \arg\min\limits_{\alpha} Z_t$ as desired.
-
-	\item Notice that $D_{t+1}(i) = \frac{D_t(i)\exp(-\alpha_t y_i h_t(x_i))}{Z_t}$, by iteratively substitute the term of $D_t(i)$ in the expression of $Z_T$ ($Z_T = \sum_{i=1}^{n}D_T(i)\exp(-\alpha_T y_i h_T(x_i))$), we can eventually obtain the following equality. \begin{equation*}
+\begin{proposition}
+	$\prod\limits_{t=1}^{T}Z_t = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_i\sum\limits_{t=1}^{T}\alpha_t h_t(x_i)\right) = \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)$.
+\end{proposition}
+\begin{proof}
+	Notice that $D_{t+1}(i) = \frac{D_t(i)\exp(-\alpha_t y_i h_t(x_i))}{Z_t}$, by iteratively substitute the term of $D_t(i)$ in the expression of $Z_T$ ($Z_T = \sum_{i=1}^{n}D_T(i)\exp(-\alpha_T y_i h_T(x_i))$), we can eventually obtain the following equality. \begin{equation*}
 		\begin{split}
 			\prod_{t=1}^{T}Z_t &= \prod_{t=1}^{T-1}Z_t \sum_{i=1}^{n}D_T(i)\exp(-\alpha_T y_i h_T(x_i))\\
 			&= \prod_{t=1}^{T-2}Z_t \sum_{i=1}^{n}D_{T-1}(i)\exp(-\alpha_T y_i h_T(x_i) -\alpha_{T-1} y_i h_{T-1}(x_i))\\
@@ -473,8 +471,14 @@ Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个
 			&= \frac1n \sum\limits_{i=1}^{n}\exp\left(-y_if(x_i)\right)
 		\end{split}
 	\end{equation*}
-	
-	\item \begin{equation*}
+\end{proof}
+
+\begin{proposition}
+	$\sum\limits_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] = \frac12$.
+\end{proposition}
+这个命题阐述了每轮训练的 classifier 是 somehow orthogonal 的.
+\begin{proof}
+	\begin{equation*}
 		\begin{split}
 			\sum_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] &= \sum_{i=1}^{n}\frac{D_{t}(i)\exp(-\alpha_t y_i h_t(x_i))}{Z_t}\mathbb I[y_i \neq h_t(x_i)]\\
 			&= \frac{\sum\limits_{i=1}^{n}D_{t}(i)\exp(\alpha_t)\mathbb I[y_i \neq h_t(x_i)]}{\sum\limits_{i=1}^{n}D_{t}(i)\exp(\alpha_t)\mathbb I[y_i \neq h_t(x_i)] + \sum\limits_{i=1}^{n}D_{t}(i)\exp(-\alpha_t)\mathbb I[y_i = h_t(x_i)]}\\
@@ -483,8 +487,13 @@ Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个
 	\end{equation*}
 
 	Since $\alpha_t$ is chosen so that $\varepsilon_t \e^{\alpha_t} = (1 - \varepsilon_t)\e^{-\alpha_t}$, we can prove that $\sum\limits_{i=1}^{n}D_{t+1}(i)\mathbb I[y_i \neq h_t(x_i)] = \frac12$.
+\end{proof}
 
-	\item \begin{align*}
+\begin{proposition}
+	$\mathbb P_{(x_i, y_i) \sim S} \left[F(x_i) \neq y_i\right] \le (1 - \gamma^2)^{T/2}$.
+\end{proposition}
+\begin{proof}
+	\begin{align*}
 		\begin{split}
 			\mathbb P_{(x_i, y_i)\sim S}[F(x_i) \neq y_i] &= \frac1n \sum_{i=1}^n \mathbbm 1[y_if(x_i) \le 0] \le \frac1n \sum_{i=1}^{n} \exp(-y_if(x_i)) = \prod_{t=1}^T Z_t \\
 			&= \prod_{t=1}^T 2\sqrt{\varepsilon_t(1 - \varepsilon_t)} 
@@ -492,10 +501,18 @@ Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个
 			\le (1 - \gamma^2)^{T/2}
 		\end{split}
 	\end{align*}
-\end{enumerate}
+\end{proof}
+
+注意到 $\mathbb P_{(x_i, y_i) \sim S} \left[F(x_i) \neq y_i\right]$ 的最小非零结果应为 $\frac1n$, 故我们只需要限制 $(1 - \gamma^2)^{T/2} < \frac1n$, 即 $T = \Omega(\log n)$, 就能将 error 降为 $0$.
+
 
 \newpage
 \section{PAC-Bayesian Theory}
+
+相比于之前讨论的频率学派(frequentists), 贝叶斯学派(Bayesians)在研究统计问题时, 学到的是一个 hypothesis space 上的分布, 而非其中某个具体的 classifier.
+
+VC Theorem(\cref{VC-theorem})给出了频率学派对 generalization gap 一致收敛的限制, 而在贝叶斯学派中, 具有相同地位的是如下的 PAC-Bayesian Theorem.
+
 \begin{theorem}[PAC-Bayesian Theorem]
 	对于给定的 prior distribution of classifiers $\mathcal P$, 从数据集 $D$ 中随机抽取大小为 $n$ 的训练集 $S$, 有至少 $1 - \delta$ 的概率, 对于任意 distribution of classifiers $\mathcal Q$ 有如下不等式成立
 	$$\mathbb E_{h \sim \mathcal Q}[err_D(h)] \le \mathbb E_{h \sim \mathcal Q}[err_S(h)] + \sqrt{\frac{D_{KL}(\mathcal Q \| \mathcal P) + \log(3 / \delta)}{n}}$$
@@ -557,7 +574,7 @@ Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个
 		&\le \frac1n \left(\ln(3/\delta) + D_{KL}(\mathcal Q \| \mathcal P)\right)
 	\end{split}
 \end{equation*}
-其中第一行等号使用了 Cauchy Inequality, 第三行使用了\cref{PAC-Bayesian-lem-1} 代入 $f(h) = n\Delta^2$, 第四行使用了\cref{PAC-Bayesian-lem-2}, with probability at least $1 - \delta$.
+其中第一行不等号使用了 Cauchy Inequality, 第三行使用了\cref{PAC-Bayesian-lem-1} 代入 $f(h) = n\Delta^2$, 第四行使用了\cref{PAC-Bayesian-lem-2}, with probability at least $1 - \delta$.
 
 \subsection{PAC-Bayesian Bound for SVM}
 \begin{proposition}
@@ -567,7 +584,7 @@ Boosting 做的事情就是把一堆 classifier 放在一起, 从而得到一个
 	如果 $g_{\mathcal Q}$ 在一个数据点 $x$ 上出错, 则说明 $\mathcal Q$ 中至少一半的 classifier 都在 $x$ 上出错.
 \end{proof}
 
-考虑两个 distribution of classifiers $\mathcal P = \mathcal N(\mathbf 0, I_d), \mathcal Q = \mathcal N(\mu\mathbf w, I_d)$, 其中 $\|\mathbf w\|_2 = 1$, $\mu$ 是缩放系数. 此时 $g_{\mathcal Q}$ 就是传统理解下的 linear classifier $\mathbf w$ (这里不考虑常数 $b$).
+现在我们考虑 SVM 处理的线性分类问题. 假设 hypothesis space 为 $\mathcal F = \{f(\mathbf x) = \mathbf w^{\text T}\mathbf x | \mathbf w \in \mathbb R^d\}$, 考虑两个 distribution of classifiers $\mathcal P = \mathcal N(\mathbf 0, I_d), \mathcal Q = \mathcal N(\mu\mathbf w, I_d)$, 其中 $\|\mathbf w\|_2 = 1$, $\mu$ 是缩放系数. 此时 $g_{\mathcal Q}$ 就是传统理解下的 linear classifier $\mathbf w$ (这里不考虑常数 $b$).
 
 根据\cref{PAC-Bayesian} 的结论, 我们有 $$err_D(g_{\mathcal Q}) \le 2 \left[\mathbb E_{h \sim \mathcal Q}err_S(h) + \sqrt{\frac{D_{KL}(\mathcal Q \| \mathcal P) + \log(3 / \delta)}{n}}\right]$$
 
@@ -953,6 +970,7 @@ $$\E{L_T} - \min_{i \in [n]}\sum_{t=1}^{T}g_t(i) = \sum_{t=1}^{T}p_t^{\text T}Mq
 
 wlw: 证明太长了, 就不讲了.
 
+\newpage
 \section{Differential Privacy}
 
 设计差分隐私的主要目的, 是在不透露过多个体信息(privacy)的前提下, 提供尽量多, 或者尽量准确的整体统计信息(non-privacy). 有一种简单的想法, 就是给输出的整体信息加 noise.
