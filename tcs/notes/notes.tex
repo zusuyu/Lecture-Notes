@@ -1718,9 +1718,11 @@ $\IP \subseteq \PSPACE$ 这个方向相对是平凡的, 反过来我们想要证
 	称一组加密方案 $(\textsf E_k, \textsf D_k)$ 满足 perfect security, 如果对于任意明文 $x, x' \in \{0, 1\}^m$, 密文关于密钥的分布 $\textsf{E}_{U_n}(x), \textsf{E}_{U_n}(x')$ 都是相同的. 这里 $U_n$ 表示 $\{0, 1\}^n$ 上的均匀分布.
 \end{definition}
 
-这种定义给出了「完美」的安全性, 因为 Eve 不能通过密文的分布得到任何关于明文的信息.
+这种定义给出了「完美」的安全性, 因为 Eve 不能通过密文的分布得到关于明文的任何信息.
 
-注意到要想实现 perfect security, 密钥长度 $m$ 就必须不短于明文长度 $n$. (否则, $\left|\left\{\textsf E_k(x)\right\}_{k \in \{0, 1\}^m}\right| \le 2^m$, perfect security 要求分布相同导致这个集合对于任何 $x' \in \{0, 1\}^n$ 都是一样的, 从而 $\left|\left\{\textsf E_k(x)\right\}_{x \in \{0, 1\}^n}\right| \le 2^m < 2^n$, 与 $\textsf E_k(x)$ 是单射矛盾.) 这导致了严重的问题: Alice 和 Bob 要是有能力隐秘地交换这么长的密钥, 那还不如直接传递明文. 因为, 我们需要尝试构造出一种「利用短密钥传输长明文」的加密方案. 然而, 如下引理要求我们不得不先做出一个目前尚未证明的假设: $\P \neq \NP$.
+注意到要想实现 perfect security, 密钥长度 $m$ 就必须不短于明文长度 $n$. 否则, 对于 $x$ 有 $\left|\left\{\textsf E_k(x)\right\}_{k \in \{0, 1\}^m}\right| \le 2^m$, perfect security 要求分布相同导致这个集合对于任何 $x' \in \{0, 1\}^n$ 都是一样的, 从而对于 $k$ 有 $\left|\left\{\textsf E_k(x)\right\}_{x \in \{0, 1\}^n}\right| \le 2^m < 2^n$, 与 $\textsf E_k(x)$ 是单射矛盾.
+
+这导致了严重的问题: Alice 和 Bob 要是有能力隐秘地交换这么长的密钥, 那还不如直接传递明文. 因为, 我们需要尝试构造出一种「利用短密钥传输长明文」的加密方案. 然而, 如下引理要求我们不得不先做出一个目前尚未证明的假设: $\P \neq \NP$.
 
 \begin{lemma}
 	假设 $\P = \NP$, 令 $(\textsf{E}_k, \textsf{D}_k)$ 是一组「短密钥长明文」的加密方案. 此时存在一个(确定性)多项式时间算法 $A$ 和 $x_0, x_1 \in \{0, 1\}^m$, 满足 $$\mathbb P_{\substack{b \in_r \{0, 1\} \\ k \in_r \{0, 1\}^n}}[A(\textsf E_k(x_b)) = b] \ge \frac34$$
@@ -1751,7 +1753,7 @@ $\IP \subseteq \PSPACE$ 这个方向相对是平凡的, 反过来我们想要证
 接下来需要定义什么是「伪随机」, 以及引入构造时需要用到的工具: one-way function.
 
 \begin{definition}[Security Pseudorandom Generator]
-	令 $G: \{0, 1\}^* \to \{0, 1\}^*, \ell: \mathbb N \to \mathbb N$ 为多项式时间可计算函数, 其中 $\ell(n) \ge n$. 称 $G$ 是一个 security pseudorandom generator of stretch $\ell(n)$, 如果 $|G(x)| = \ell(|x|)$, 且对于任意多项式时间 PTM $A$, 都存在 negligible function $\varepsilon(n)$ 使得 $$\left|\mathbb P_{x \sim U_n}[A(G(x)) = 1] - \mathbb P_{x \sim U_{\ell(n)}}[A(x) = 1]\right| < \varepsilon(n), \forall n \in \mathbb N$$
+	令 $G: \{0, 1\}^* \to \{0, 1\}^*, \ell: \mathbb N \to \mathbb N$ 为多项式时间可计算函数, 满足 $\ell(n) \ge n$. 称 $G$ 是一个 security pseudorandom generator of stretch $\ell(n)$, 如果 $|G(x)| = \ell(|x|)$, 且对于任意多项式时间 PTM $A$, 都存在 negligible function $\varepsilon(n)$ 使得 $$\left|\mathbb P_{x \sim U_n}[A(G(x)) = 1] - \mathbb P_{x \sim U_{\ell(n)}}[A(x) = 1]\right| < \varepsilon(n), \forall n \in \mathbb N$$
 \end{definition}
 
 \begin{definition}[One-way Function]
@@ -1761,11 +1763,11 @@ $\IP \subseteq \PSPACE$ 这个方向相对是平凡的, 反过来我们想要证
 \begin{remark}
 	在进入下一段之前, 可以停下来思考一个哲学问题: 什么是「随机」, 或者说「足够随机」, 的串呢?
 
-	Kolmogorov 尝试给出了自己的定义: 他首先定义了 Kolmogorov Complexity, 对于串 $x \in \{0, 1\}^*$, 其 Kolmogorov Complexity 被定义为 $$K(x) = \min \left\{|\langle \rep{M}, w\rangle | \bigg|\text{Turing Machine } M \text{ halts on input } w \text{ and outputs }x\right\}$$ 紧接着, Kolmogorov 定义随机串集合为 $$\textsf{KOL-RAN} = \{x \in \{0, 1\}^*| K(x) \ge |x|\}$$
+	Kolmogorov 尝试给出了自己的定义: 他首先定义了 Kolmogorov Complexity, 对于串 $x \in \{0, 1\}^*$, 其 Kolmogorov Complexity 被定义为 $$K(x) = \min \left\{|\langle \rep{M}, w\rangle | \bigg|\text{Turing Machine } M \text{ halts on input } w \text{ and outputs }x\right\}$$ 紧接着, Kolmogorov 定义随机串集合为(常数 $0.99$ 是为了举例说明, 无特殊含义) $$\textsf{KOL-RAN} = \{x \in \{0, 1\}^*| K(x) \ge 0.99|x|\}$$
 
 	遗憾的是, 在这种定义下, 一个串是不是随机串可能是无法判定的. 换言之, $\textsf{KOL-RAN}$ 是不可判定语言.
 
-	证明比较 tricky. 首先我们指出存在任意长度的随机串, 因为长度为 $n$ 的串有 $2^n$ 个, 而短于 $n$ 的 $\langle \rep{M}, w\rangle$ 只有 $2^n - 1$ 种. 假设存在判定 $\textsf{KOL-RAN}$ 的图灵机 $M$, 则构造图灵机 $M'$, 其对于输入 $n$, 按字典序枚举所有长为 $n$ 的串并以之为输入运行 $M$, 输出第一个 $M$ 接受的串 $x_n$. 显然 $|\rep{M}| = O(1)$, 从而 $|\rep{M'}| = O(1)$, 我们有 $$K(x_n) \le |\langle \rep{M'}, \rep{n}\rangle| = O(1) + O(\log n) < n$$ 这与 $x_n \in \textsf{KOL-RAN}$ 矛盾.
+	证明比较 tricky. 首先我们指出存在任意长度的随机串, 因为长度为 $n$ 的串有 $2^n$ 个, 而短于 $0.99n$ 的 $\langle \rep{M}, w\rangle$ 只有 $2^{0.99n} - 1$ 种. 假设存在判定 $\textsf{KOL-RAN}$ 的图灵机 $M$, 则构造图灵机 $M'$, 其对于输入 $n$, 按字典序枚举所有长为 $n$ 的串并以之为输入运行 $M$, 输出第一个 $M$ 接受的串 $x_n$. 显然 $|\rep{M}| = O(1)$, 从而 $|\rep{M'}| = O(1)$, 我们有 $$K(x_n) \le |\langle \rep{M'}, \rep{n}\rangle| = O(1) + O(\log n) < 0.99n$$ 这与 $x_n \in \textsf{KOL-RAN}$ 矛盾.
 \end{remark}
 
 \subsection{Pseudorandom Generators from One-way Functions}
@@ -1792,12 +1794,12 @@ Goldreich-Levin Theorem 指出, 可以通过 $\{0, 1\}^n \to \{0, 1\}^n$ 单射 
 \textit{此时我们构造 $G(x, r) = \langle f(x), r, x \odot r \rangle$, 则 $G$ 就是一个 unpredictable function of stretch $\ell(2n) = 2n + 1$.}
 
 \begin{proof}
-	反证. \obj{固定 $n$}, 考虑如果存在 PTM $A$ 满足 $$\mathbb P_{x, r \in_r \{0, 1\}^n }[A(f(x), r) = x \odot r] \ge \frac12 + \varepsilon$$ 则可以构造运行时间为 $O(n^2 / \varepsilon^2)$ 的 PTM $B$ 满足 $$\mathbb P_{x\in_r \{0, 1\}^n, y = f(x)}[A(y) = x] \ge \Theta(\varepsilon)$$ 从而与 $f$ 的 one-way 性质产生矛盾. 这件事情有点难, 我们循序渐进地做. \begin{itemize}
+	反证. \obj{固定 $n$}, 考虑如果存在 PTM $A$ 满足 $$\mathbb P_{x, r \in_r \{0, 1\}^n }[A(f(x), r) = x \odot r] \ge \frac12 + \varepsilon$$ 则可以构造运行时间为 $O(n^2 / \varepsilon^2)$ 的 PTM $B$ 满足 $$\mathbb P_{x\in_r \{0, 1\}^n, y = f(x)}[B(y) = x] \ge \Theta(\varepsilon)$$ 从而与 $f$ 的 one-way 性质产生矛盾. 这件事情有点难, 我们循序渐进地做. \begin{itemize}
 		\item 如果我们的条件是 $$\mathbb P_{x, r \in_r \{0, 1\}^n }[A(f(x), r) = x \odot r] = 1$$ 那么就直接起飞了: 记 $e^i$ 表示只有第 $i$ 位上是 $1$ 其余位上都是 $0$ 的「单位向量」, 此时我们运行 $A(f(x), e^1), \cdots$, $A(f(x), e^n)$, 便以 $1$ 的概率得到了 $x$ 的每一位信息, 从而 $B$ 的正确率达到 $100\%$.
 		\item 现在把条件弱化到 $$\mathbb P_{x, r \in_r \{0, 1\}^n }[A(f(x), r) = x \odot r] \ge 0.9$$ 这样一来我们不好固定地选取 $e^1, \cdots, e^n$ 作为 $r$, 但是可以随机: 根据 Union Bound, $$\mathbb P_r[A(f(x), r) \neq x \odot r \vee A(f(x), r \oplus e^i) \neq x \odot (r \oplus e^i)] \le 0.2$$ (其中 $\oplus$ 表示二进制不进位加法) 记 $z = A(f(x), r), z_i' = A(f(x), r \oplus e^i)$, 从而只要我们随机选取 $r$, 就能有至少 $0.8$ 的概率, $z \oplus z_i'$ 的值恰好就等于 $x \odot e^i$. 根据\cref{robustness} 类似的方法, 可以重复随机 $r$ 将这个概率提升至 $1 - \frac{1}{10n}$, 从而再根据 Union Bound, 我们得到了一个 PTM $B$ 满足 $$\mathbb P_{x\in_r \{0, 1\}^n, y = f(x)}[A(y) = x] \ge 0.9$$
-		\item 回到原条件 $$\mathbb P_{x, r \in_r \{0, 1\}^n }[A(f(x), r) = x \odot r] \ge \frac12 + \varepsilon$$ 相比 0.9 的版本这里遇到了一个严重的问题: 注意到我们之前限制 $\mathbb P_r[z \oplus z_i' = x \odot r]$ 的时候用到了 Union Bound, 如果仍沿用的话只能得到 $$\mathbb P_r[z \oplus z_i' = x \odot r] \ge 2\varepsilon$$ 这个结果也太差了, 屁用没有. 因此, 我们想找个办法「钦定」其中一者是「一定正确」的. 方法是在随机生成一组(因为要重复多次) $r$ 后直接「枚举」$x \odot r$ 的值, 当「枚举」的结果完全正确时, 便能得到 $$\mathbb P_r[z \oplus z_i' = x \odot r] = \mathbb P_r[z_i' = x \odot (r \oplus e^i)] \ge \frac12 + \varepsilon$$ 这个结果就是好的. 可以用 Chernoff Bound 那一套计算出需要重复的随机次数大概是 $m = \Theta(n^2 / \varepsilon)$ 级别, 就可以把最终 $B$ 的正确率提升到 $\Theta(\varepsilon)$.
+		\item 回到原条件 $$\mathbb P_{x, r \in_r \{0, 1\}^n }[A(f(x), r) = x \odot r] \ge \frac12 + \varepsilon$$ 相比 0.9 的版本这里遇到了一个严重的问题: 注意到我们之前限制 $\mathbb P_r[z \oplus z_i' = x \odot r]$ 的时候用到了 Union Bound, 如果仍沿用的话只能得到 $$\mathbb P_r[z \oplus z_i' = x \odot r] \ge 2\varepsilon$$ 这个结果也太差了, 屁用没有. 因此, 我们想找个办法「钦定」其中一者是「一定正确」的. 方法是在随机生成一组(因为要重复多次) $r$ 后直接「枚举」$x \odot r$ 的值, 当「枚举」的结果完全正确时, 便能得到 $$\mathbb P_r[z \oplus z_i' = x \odot r] = \mathbb P_r[z_i' = x \odot (r \oplus e^i)] \ge \frac12 + \varepsilon$$ 这个结果就是好的. 可以用 Concentration Bound (这里考虑用 Chebyshev Inequality) 那一套计算出需要重复的随机次数大概是 $m = \Theta(n^2 / \varepsilon)$ 级别, 就可以把最终 $B$ 的正确率提升到 $\Theta(\varepsilon)$.
 		
-		但我们又遇到了一个问题: 枚举的复杂度变成了 $2^{\Omega(n^2 / \varepsilon)}$, 从而 $B$ 就不是多项式时间的了. 一筹莫展之际, 猛然回想起 Chernoff Bound 的分析中只利用到了多组随机变量的 pairwise independent 性质, 也就是说我们可以用一种更为快捷的方式来生成所有的 $r$: 独立随机生成 $k = \lceil \log_2 (m + 1) \rceil$ 个 $n$ 位 01 串 $s_1, \cdots, s_k$, 再取 $m$ 个互异非空集合 $T_1, \cdots, T_m \subseteq \{1, 2, \cdots, k\}$, 此时令 $r_i = \bigoplus_{j \in T_i} s_j$, 则 $r_1, \cdots, r_m$ 是 pairwise independent 的, 可以满足 Chernoff Bound 使用要求.
+		但我们又遇到了一个问题: 枚举的复杂度变成了 $2^{\Omega(n^2 / \varepsilon)}$, 从而 $B$ 就不是多项式时间的了. 一筹莫展之际, 蓦然回想起 Chebyshev Inequality 的分析中只利用到了多个随机变量 pairwise independent 的性质, 也就是说我们可以用一种更为快捷的方式来生成所有的 $r$: 独立随机生成 $k = \lceil \log_2 (m + 1) \rceil$ 个 $n$ 位 01 串 $s_1, \cdots, s_k$, 再取 $m$ 个互异非空集合 $T_1, \cdots, T_m \subseteq \{1, 2, \cdots, k\}$, 此时令 $r_i = \bigoplus_{j \in T_i} s_j$, 则 $r_1, \cdots, r_m$ 是 pairwise independent 的, 可以满足 Chebyshev Inequality 使用要求.
 
 		于是枚举的复杂度回到了 $2^{\log m} = \Theta(n^2 / \varepsilon)$, 这下终于多项式了. 于是原问题也就得以解决了.
 	\end{itemize}
@@ -1845,7 +1847,7 @@ Goldreich-Levin Theorem 指出, 可以通过 $\{0, 1\}^n \to \{0, 1\}^n$ 单射 
 
 \newpage
 \section{Final Exam}
-时间: 2022/06/24, 12:00-18:00
+时间: 2022/06/24, 13:00-18:00
 
 形式: take-home-exam, 开卷, 名义上不允许 Google.
 

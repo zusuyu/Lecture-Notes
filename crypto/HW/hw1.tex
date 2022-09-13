@@ -1,0 +1,180 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} Foundation of Cryptography \ Homework 1}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Foundation of Cryptography}
+	\chead{2022 Fall}
+	\rhead{Homework 1}
+	\cfoot{Page \thepage\ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section*{Problem 1}
+For any fixed probability distribution over $\mathcal M$, arbitrary message $m \in \mathcal M$ and ciphertext $c \in \mathcal C$, we have \begin{align*}
+	\begin{split}
+		\Pr{C = c | M = m} &= \Pr{K \cdot M = c | M = m} = \Pr{K \cdot m = c} \\&= \Pr{K = c \cdot m^{-1}} = 1 / |\mathcal G|
+	\end{split}
+\end{align*}
+Thus, by using Bayes' Theorem we obtain \begin{align*}
+	\begin{split}
+		\Pr{M = m_0 | C = c} &= \frac{\Pr{C = c \wedge M = m_0}}{\Pr{C = c}} \\
+		&= \frac{\Pr{C = c | M = m_0}}{\sum_{m \in \mathcal M} \Pr{C = c | M = m}\Pr{M = m}} \Pr{M = m_0} \\
+		&= \frac{1 / |\mathcal G|}{\sum_{m \in \mathcal M}\Pr{M = m} / |\mathcal G|}\Pr{M = m_0} \\
+		&= \Pr{M = m_0}
+	\end{split}
+\end{align*}
+as required by the definition of perfect secrecy.
+
+\section*{Problem 2}
+\subsection*{perfect secrecy implies perfect indistinguishability}
+For any $m_0, m_1 \in \mathcal M$, consider a probability distribution over $\mathcal M$ with non zero probability on both $m_0$ and $m_1$. According to perfect secrecy, for all $c \in \mathcal C$, we have \begin{align*}
+	\begin{split}
+		\Pr{\Enc(K, m_0) = c} &= \Pr{C = c | M = m_0} = \frac{\Pr{M = m_0 | C = c}}{\Pr{M = m_0}} \Pr{C = c} \\&= \Pr{C = c} = \frac{\Pr{M = m_1 | C = c}}{\Pr{M = m_1}} \Pr{C = c} = \Pr{C = c | M = m_1} = \Pr{\Enc(K, m_1) = c}
+	\end{split}
+\end{align*}
+
+\subsection*{perfect indistinguishability implies perfect secrecy}
+Perfect indistinguishability shows that for any fixed $c \in \mathcal C$, $\Pr{C = c | M = m_0} = \Pr{C = c | M = m_1}$ holds for arbitrary $m_0, m_1 \in \mathcal M$. Thus, for any probability distribution over $\mathcal M$ and arbitrary $m \in \mathcal M, c \in \mathcal C$, we have \begin{align*}
+	\begin{split}
+		\Pr{M = m | C = c} &= \frac{\Pr{C = c | M = m}\Pr{M = m}}{\Pr{C = c}} \\& = \frac{\Pr{C = c | M = m}}{\sum_{m' \in \mathcal M}\Pr{C = c | M = m'}\Pr{M = m'}}\Pr{M = m} \\&= \Pr{M = m}
+	\end{split}
+\end{align*}
+
+\section*{Problem 3}
+\subsection*{Part C}
+FSOC we assume $H[K] < \log(|\mathcal M|)$. Take the uniform distribution over $\mathcal M$ and consider a fixed ciphertext $c$, according to perfect correctness, we know that $\Dec(k, c) = m$ and \Dec\ is deterministic.
+
+Regard message $M$, ciphertext $C$ and key $K$ as random variables, we have $$H[M | C] = H[\Dec(K, C) | C] \le H[K] < \log(|\mathcal M|) = H[M]$$
+
+which means that there must be some $m \in \mathcal M$ violating the secrecy constraint $\Pr{M = m | C = c} = \Pr{M = m}$, so this scheme is not perfectly secret.
+
+\section*{Problem 4}
+\subsection*{Part A}
+
+$|\mathcal K| \ge |\mathcal M|$.
+
+FSOC we assume $|\mathcal K| < |\mathcal M|$. For a fixed ciphertext $c_0 \in \mathcal C$, there must be some message $m_0 \in \mathcal M$ which cannot be decrypted from $c_0$, i.e. for all $k \in \mathcal K$, $\Dec(k, c_0) \neq m_0$ (perfect correctness requires \Dec\ to be deterministic). For every probability distribution $M$ over $\mathcal M$, we have $$\left|\Pr{M = m_0 | C = c_0} - \Pr{M = m_0}\right| = \left|0 - \Pr{M = m_0}\right| = \Pr{M = m_0}$$
+since $M$ is arbitrary, $\Pr{M = m_0}$ can be arbitrarily large, so the relaxed secrecy requirement cannot be achieved for any fixed $\varepsilon < 1$.
+
+\subsection*{Part B}
+
+$|\mathcal K| \ge (1 - \varepsilon)|\mathcal M|$, with the assumption that $\Enc$ and $\Dec$ are both deterministic.
+
+The relaxed correctness requirement requires the total error rate to be $$\sum_{m \in \mathcal M}\sum_{k \in \mathcal K} \Pr{\Gen \to k} \Pr{\Dec(k, \Enc(k, m)) \neq m} \le \varepsilon |\mathcal M|$$
+by swapping two $\Sigma$s on the left side of the above inequation we obtain $$\varepsilon|\mathcal M| \ge \sum_{k \in \mathcal K}\Pr{\Gen \to k}\sum_{m \in \mathcal M}\Pr{\Dec(k, \Enc(k, m)) \neq m}$$
+
+Notice that for a fixed $k$, we have $\sum\limits_{m \in \mathcal M}\Pr{\Dec(k, \Enc(k, m)) \neq m} \ge |\mathcal M| - |\mathcal C|$, and $|\mathcal K| \ge |\mathcal C|$ is guaranteed when perfect secrecy condition holds. So eventually we get $$\varepsilon|\mathcal M| \ge |\mathcal M| - |\mathcal K| \Rightarrow |\mathcal K| \ge (1 - \varepsilon)|\mathcal M|$$
+
+\end{document}
