@@ -229,12 +229,13 @@ $f'$ is an OWF.
 
 FSOC we assume PPT adversary $\mathcal A'$ breaks $f'$ as OWF,which means that $$\text{Pr}_{x \gets \{0, 1\}^n}\left[\mathcal A'(f(x) \| f(f(x))) \to x': f(x) \| f(f(x)) = f(x') \| f(f(x'))\right] \ge \frac{1}{\text{poly}(n)}$$ then we can construct adversary $\mathcal A$ which breaks $f$ as OWF: on input $y$, call $\mathcal A'$ with input $y \| f(y)$, and output whatever $\mathcal A'$ outputs. It's clear that $\mathcal A$ runs in poly-time, and $$\text{Pr}_{x \gets \{0, 1\}^n}\left[\mathcal A(f(x)) \to x': f(x) = f(x') \right] \ge \frac{1}{\text{poly}(n)}$$
 which indicates that $f$ is not an OWF. A contradiction.
+
 \subsection*{Part B}
 $f'$ may not be an OWF.
 
-Assume that there is a length-perserving OWF $h$, we construct $f$ as $f(x_1 \| x_2) = 0^{n}h(x_1)$ where $|x_1| = |x_2| = n$. First we prove briefly that $f$ is also a length-perserving OWF.
+Assume that there is a length-perserving OWF $h$, we construct $f$ as $f(x_1 \| x_2) = 0^{n/2}h(x_1)$ where $|x_1| = |x_2| = n/2$. First we prove briefly that $f$ is also a length-perserving OWF.
 
-FSOC PPT adversary $\mathcal A$ breaks $f$ as OWF, which on input $0^n \| h(x_1)$ outputs $x_1' \| x_2'$ such that $0^n \| h(x_1') = 0^n \| h(x_1)$, with probability at least $\frac{1}{\text{poly(n)}}$. Then an adversary for $h$ can be built, which simply concatenate $0^n$ before its input and then call $\mathcal A$, and outputs the first half of $\mathcal A$'s output.
+FSOC PPT adversary $\mathcal A$ breaks $f$ as OWF, which on input $0^{n/2} \| h(x_1)$ outputs $x_1' \| x_2'$ such that $0^{n/2} \| h(x_1') = 0^{n/2} \| h(x_1)$, with probability at least $\frac{1}{\text{poly(n)}}$. Then an adversary for $h$ can be built, which simply concatenate $0^{n/2}$ before its input and then call $\mathcal A$, and outputs the first half of $\mathcal A$'s output.
 
 By the construction of $f'$, $f'(x_1 \| x_2) = x_1 \| (x_2 \oplus h(x_1))$. An adversary $\mathcal A$, with $\mathcal A(y_1 \| y_2) = y_1 \| (y_2 \oplus h(y_1))$, runs in poly-time and breaks $f$ as OWF. 
 \subsection*{Part C}
@@ -264,23 +265,50 @@ Thus $\mathcal D$ breaks $G$ as a PRG. An contradiction.
 \subsection*{Part E}
 $f'$ may not be an OWF.
 
-Let $f$ be the OWF mentioned in \textbf{Part B} ($f(x_1 \| x_2) = 0^n \| h(x_2)$) and $G$ be the PRG in \textbf{Problem 2 Part A} ($G(s) = G'(s_1, \cdots, s_{n/2})$).
+Let $f$ be the OWF mentioned in \textbf{Part B} ($f(x_1 \| x_2) = 0^{n/2} \| h(x_2)$) and $G$ be the PRG in \textbf{Problem 2 Part A} ($G(s) = G'(s_1, \cdots, s_{n/2})$).
 
-Now $f \circ G \equiv f(G(0^n))$ is constant, and is obviously not OWF. 
+Now $f \circ G \equiv f(G'(0^{n/2}))$ is constant, and is obviously not OWF. 
 \subsection*{Part F}
 $f'$ is an OWF.
 
-FSOC assume that adversary $A$ breaks $f'$ as OWF, which is, for some polynomial $p(n)$, $$\text{Pr}_{x \gets \{0, 1\}^{n}}[\mathcal A(f(x \| 0^{\log n})) \to x': f(x' \| 0^{\log n}) = f(x \| 0^{\log n})] \ge \frac{1}{p(n)}$$
+FSOC assume that adversary $\mathcal A$ breaks $f'$ as OWF, which is, for some polynomial $p(n)$, $$\text{Pr}_{x \gets \{0, 1\}^{n}}[\mathcal A(f(x \| 0^{\log n})) \to x': f(x' \| 0^{\log n}) = f(x \| 0^{\log n})] \ge \frac{1}{p(n)}$$
 
-We assert that $\mathcal A$ is also an adversary which breaks $f$ as OWF: \begin{align*}
+We can construct an adversary $\mathcal A'$ which, on input $x$ of length $n + \log n$, outputs $A(x)$, with the last $\log n$ bits replaced with $0$s. We assert that $\mathcal A'$ breaks $f$ as OWF.
+\begin{align*}
 	\begin{split}
-		&\text{Pr}_{x \gets \{0, 1\}^{n+\log n}}[\mathcal A(f(x)) \to x': f(x') = f(x)] \\\ge\ & \text{Pr}_{x \gets \{0, 1\}^{n+\log n}}[\mathcal A(f(x)) \to x': f(x') = f(x) \wedge \text{ last } \log n \text{ bits of } x \text{ are all } 0\text{s}] \\=\ & \text{Pr}_{x \gets \{0, 1\}^{n}}[\mathcal A(f(x \| 0^{\log n})) \to x': f(x' \| 0^{\log n}) = f(x \| 0^{\log n})] \cdot \frac{1}{2^{\log n}} \\\ge\ &\frac{1}{np(n)}
+		&\text{Pr}_{x \gets \{0, 1\}^{n+\log n}}[\mathcal A'(f(x)) \to x': f(x') = f(x)] \\\ge\ & \text{Pr}_{x \gets \{0, 1\}^{n+\log n}}[\mathcal A'(f(x)) \to x': f(x') = f(x) \wedge \text{ last } \log n \text{ bits of } x \text{ are all } 0\text{s}] \\=\ &  \frac{1}{2^{\log n}} \cdot \text{Pr}_{x \gets \{0, 1\}^{n}}[\mathcal A'(f(x \| 0^{\log n})) \to x': f(x') = f(x \| 0^{\log n})]
+		\\=\ &  \frac{1}{2^{\log n}} \cdot \text{Pr}_{x \gets \{0, 1\}^{n}}[\mathcal A(f(x \| 0^{\log n})) \to x': f(x' \| 0^{\log n}) = f(x \| 0^{\log n})]
+		\\\ge\ &\frac{1}{np(n)}
 	\end{split}
 \end{align*}
 
 $np(n)$ is also a polynomial, so $\mathcal A$ breaks $f$ as OWF, which causes a contradiction.
 \subsection*{Part G}
-咋做啊
+$f'$ may not be an OWF.
+
+Suppose that we have a length-perserving OWF $g$, we can construct $f$ as follows:
+$$f(x_1 \| x_2) = \begin{cases}
+	x_1 \| 0^{n/2}, & x_2 = 0^{n/2} \\
+	g(x_1) \| 0^{n/2-1}1, & \text{otherwise}
+\end{cases}$$
+
+We claim that $f$ is an OWF and $f'$, which removes the last $\log n$ bits of $f$'s output, is not an OWF.
+
+FSOC assume $\mathcal A$ breaks $f$ as OWF, which means
+\begin{align*}
+	\begin{split}
+		\frac{1}{\text{poly}(n)} \le \ & \text{Pr}_{x_1, x_2 \gets \{0, 1\}^{n/2}}\left[\mathcal A(f(x_1 \| x_2)) \to x_1' \| x_2': f(x_1' \| x_2') = f(x_1 \| x_2)\right] \\
+		= \ & \frac{1}{2^{n/2}}\cdot\text{Pr}_{x_1 \gets \{0, 1\}^{n/2}}\left[\mathcal A(x_1 \| 0^{n/2}) \to x_1' \| x_2': f(x_1' \| x_2') = x_1 \| 0^{n/2}\right] \\
+		& + \frac{2^{n/2}-1}{2^{n/2}}\cdot\text{Pr}_{x_1 \gets \{0, 1\}^{n/2}, x_2 \neq 0^{n/2}}\left[\mathcal A(g(x_1) \| 0^{n/2-1}1) \to x_1' \| x_2': f(x_1' \| x_2') = g(x_1) \| 0^{n/2-1}1\right] \\
+		\le \ & \frac{1}{2^{n/2}} + 1 \cdot \text{Pr}_{x_1, x_2}\left[\mathcal A(g(x_1) \| 0^{n/2-1}1) \to x_1' \| x_2': g(x_1') = g(x_1)\right] \\
+		= \ & \frac{1}{2^{n/2}} + 1 \cdot \text{Pr}_{x_1}\left[\mathcal A'(g(x_1)) \to x_1' : g(x_1') = g(x_1)\right]
+	\end{split}
+\end{align*}
+then $\mathcal A'$ breaks $g$ as OWF which shows an contradiction. So $f$ here is an OWF.
+
+As for $f'$, consider adversary $\mathcal A$ such that $\mathcal A(x) = x \| 0^{\log n}$ for any input $x$ of length $n - \log n$. In this case, for all $x \in \{0, 1\}^n$, $\mathcal A(f'(x))$ ends with at least $n/2$ 0s, and the only thing $f'$ then does is truncation, remaining the first $n - \log n$ bits of $\mathcal A(f'(x))$ unchanged.
+
+Thus, $f'(\mathcal A(f'(x))) = f'(x)$ holds for all $x \in \{0, 1\}^n$, which easily breaks $f'$ as OWF.
 \section*{Problem 6}
 \subsection*{Part A}
 \begin{align*}
@@ -294,7 +322,7 @@ Let $m(n) = 2nq(n)$ and $r(n) = 2m(n)^2p(n)$.
 From \textbf{Part A} we know that $$\frac{1}{p(n)} < \frac{m(n)^2}{r(n)} + \left(\text{Pr}[x \text{ is good}]\right)^m \Rightarrow \left(\text{Pr}[x \text{ is good}]\right)^m > \frac{1}{2p(n)}$$
 which implies $\text{Pr}[x \text{ is good}] \ge 1 - \frac{1}{2q(n)}$ since otherwise we have $$\frac{1}{2p(n)} < \left(\text{Pr}[x \text{ is good}]\right)^m < \left(1 - \frac{1}{2q(n)}\right)^{2nq(n)} \approx \exp(-n)$$ RHS of this inequility is negligible while LHS is non-negligible, which shows a contradiction.
 
-So $\text{Pr}[x \text{ is good}] \ge 1 - \frac{1}{2q(n)}$ and $\text{Pr}[x \text{ is bad}] \le \frac{1}{2q(n)}$.
+Thus, $\text{Pr}[x \text{ is good}] \ge 1 - \frac{1}{2q(n)}$ and $\text{Pr}[x \text{ is bad}] \le \frac{1}{2q(n)}$.
 
 \subsection*{Part C}
 \def\AREP{\mathcal{A}_{\text{repeat}}}
