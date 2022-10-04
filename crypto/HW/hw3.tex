@@ -1,0 +1,224 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{bbm}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} Fundamentals  of Cryptography \ Homework 3}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}\large
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Fundamentals  of Cryptography}
+	\chead{2022 Fall}
+	\rhead{Homework 3}
+	\cfoot{Page \thepage\ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\def\PrivK#1#2{\textsf{PrivK}_{{#1}}^{\textsf{#2}}}
+
+\section*{Problem 1}
+
+$\textsf{Dec}(k, (r, c)) = F_k^{-1}(c) \oplus r$.
+
+Denote $\Pi = (\textsf{Gen}, \textsf{Enc}, \textsf{Dec})$ as the encryption scheme mentioned in the problem, and $\tilde{\Pi} = (\widetilde{\textsf{Gen}}, \widetilde{\textsf{Enc}}, \widetilde{\textsf{Dec}})$ exactly the same as $\Pi$, except that a truely random permutation $f$ is used in place of $F_k$.
+
+The proof is divided into two parts: \begin{itemize}
+	\item In the first part we prove that for any PPT adversary $\mathcal A$, there is some negligible function $\varepsilon(n)$ such that \begin{equation}\left| \text{Pr}\left[\PrivK{\mathcal A, \Pi}{cpa}(n) = 1\right] - \text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \right| < \varepsilon(n)\label{1-1}\end{equation}
+	\item In the second part we show that for any PPT adversary $\mathcal A$, \begin{equation}\text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \le \frac12 + \frac{2q(n)}{2^n}\label{1-2}\end{equation} for some polynomial $q(n)$.
+\end{itemize}
+
+When finished the proof of the two parts mentioned above, one can see that obviously $\text{Pr}\left[\PrivK{\mathcal A, \Pi}{cpa}(n) = 1\right] \le \frac12 + \frac{q(n)}{2^n} + \varepsilon(n)$, which means $\Pi$ is secure under CPA attack.
+
+\subsection*{Proof of \cref{1-1}}
+
+For any PPT adversary $\mathcal A$, a PPT distinguisher $\mathcal D$ can be built, which has access to an oracle $\mathcal O: \{0, 1\}^n \to \{0, 1\}^n$ (here it refers to $F_k$ or $f$) and interacts with $\mathcal A$ like this:
+\begin{enumerate}
+	\item when $\mathcal A$ queries the ciphertext for message $m \in \{0, 1\}^n$, choose uniformly random $r \in \{0, 1\}^n$ and return $(r, \mathcal O(r \oplus m))$.
+	\item when $\mathcal A$ outputs $m_0$ and $m_1$, choose a random bit $b \in \{0, 1\}$ and uniformly random $r \in \{0, 1\}^n$, then return $(r, \mathcal O(r \oplus m_b))$.
+	\item continue answering $\mathcal A$'s queries until $\mathcal A$ outputs a bit $b'$, then output $\mathbbm 1[b = b']$.
+\end{enumerate}
+
+It is easy to see that \begin{align*}
+	\begin{split}
+		\text{Pr}\left[\PrivK{\mathcal A, \Pi}{cpa}(n) = 1\right] &= \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k}(1^n) = 1\right] \\
+		\text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] &= \text{Pr}_{f \gets \textsf{Perm}_n}\left[\mathcal D^{f}(1^n) = 1\right]
+	\end{split}
+\end{align*}
+where $\textsf{Perm}_n$ denotes the collection of all permutations over $\{0, 1\}^n$.
+
+Since $F$ is a PRP, by definition we know that $$\left| \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k}(1^n) = 1\right] - \text{Pr}_{f \gets \textsf{Perm}_n}\left[\mathcal D^{f}(1^n) = 1\right] \right| < \varepsilon(n)$$ for some negligible $\varepsilon(n)$, so \cref{1-1} is proved as desired.
+
+\subsection*{Proof of \cref{1-2}}
+Notice that $\mathcal A$ runs in polynomial time, so it can only queries the ciphertext for polynomially many $m$, say, $q(n)$. Whenever $\mathcal A$ queries $m$ it obtains $f(r \oplus m)$ where $r$ is known to $\mathcal A$ and chosen uniformly random. That is, each query gives $\mathcal A$ a pair $(x, f(x))$ which is a point value of $f$, where $x = r \oplus m$ is chosen uniformly random.
+
+When $\mathcal A$ outputs $m_0, m_1$ and receives $(r^*, f(r^* \oplus m_b))$, it checks out all the recordings from the interaction, and if the point value for $r^* \oplus m_0$ or $r^* \oplus m_1$ is found, it can break the encryption scheme with $100\%$ confidence, otherwise it learns nothing about $f(r^* \oplus m_0)$ and $f(r^* \oplus m_1)$, and probability of outputing the correct answer is exactly $1/2$.
+
+The probability that the point value for $r^* \oplus m_0$ or $r^* \oplus m_1$ can be found equals to the probability of finding out two specific items among $2^n$ during $q(n)$ times of random choosing, which by union bound is not greater than $2q(n) / 2^n$. Thus, $$\text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \le \frac{2q(n)}{2^n} \cdot 1 + \left(1 - \frac{2q(n)}{2^n}\right) \cdot \frac12 = \frac12 + \frac{2q(n)}{2^n}$$
+
+
+\section*{Problem 2}
+\subsection*{Part A: $F'$ is a PRF}
+First we show that for any PPT distinguisher $\mathcal D$, \begin{equation}
+	\left| \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{g \circ F_k}(1^n)\right] - \text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{g \circ f}(1^n)\right] \right| < \textsf{negl}(n)\label{2-A-1}
+\end{equation}
+(here $f_1 \circ f_2$ denotes the composition of function $f_1$ and $f_2$.)
+
+This can be done by constructing another distinguisher $\mathcal D'$, which always queries the same message $m$ as $\mathcal D$ does except that the oracle used here is $F_k$ or $f$ instead of $g \circ F_k$ or $g \circ f$, and outputs the same as $\mathcal D$ does.
+
+It is easy to see that \begin{align*}
+	\begin{split}
+		\text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{g \circ F_k}(1^n)\right] &= \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D'^{F_k}(1^n)\right] \\
+		\text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{g \circ f}(1^n)\right] &= \text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D'^{f}(1^n)\right] \\
+	\end{split}
+\end{align*}
+
+Since $F$ is a PRF, from its definition it is clear to see that \cref{2-A-1} can be proved.
+
+Then we can show that for any PPT distinguisher $\mathcal D$, \begin{equation}
+	\left| \text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{g \circ f}(1^n)\right] - \text{Pr}_{h \gets \textsf{Func}_{n, 2n}}\left[\mathcal D^{h}(1^n)\right] \right| < \textsf{negl}(n)\label{2-A-2}
+\end{equation}
+(here $\textsf{Func}_{n, 2n}$ is defined as $\{h: \{0, 1\}^n \to \{0, 1\}^{2n}\}$.)
+
+This can be done by using hybird argument: assume $\mathcal D$ interacts with oracle for $p(n)$ rounds and, WLOG, we assume $\mathcal D$ never queries for the same $x$ for encryption (that is obviously suboptimal). Based on $\mathcal D$, distinguisher $\mathcal D'$ can be built, which on input $r \in \{0, 1\}^{2n}$ works as follows:
+\begin{itemize}
+	\item randomly sample $t$ from $\{1, 2, \cdots, p(n)\}$, and randomly fix some $f \gets \textsf{Func}_n$ and $h \gets \textsf{Func}_{n, 2n}$. ($f$ and $h$ do not need to be fully stored.)
+	\item interact with $\mathcal D$. Whenever queried with $x$ in round $i$, return $\begin{cases}
+		g(f(x)), & i < t \\
+		r, & i = t \\
+		h(x), & i > t
+	\end{cases}$.
+	\item output the same as $\mathcal D$ does.
+\end{itemize}
+
+From this construction we know that \begin{align*}
+	\begin{split}
+		\text{Pr}_{s \gets \{0, 1\}^n}\left[\mathcal D'(g(s)) = 1\right] &- \text{Pr}_{r \gets \{0, 1\}^{2n}}\left[\mathcal D'(r) = 1\right] \\&= \frac{1}{p(n)}\left(\text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{g \circ f}(1^n)\right] - \text{Pr}_{h \gets \textsf{Func}_{n, 2n}}\left[\mathcal D^{h}(1^n)\right]\right)
+	\end{split}
+\end{align*}
+
+Since $g$ is a PRG, both sides of the equation are negligible, and \cref{2-A-2} is proved as desired.
+
+From \cref{2-A-1} and \cref{2-A-2} one can draw that \begin{equation}
+	\left| \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{g \circ F_k}(1^n)\right] - \text{Pr}_{h \gets \textsf{Func}_{n, 2n}}\left[\mathcal D^{h}(1^n)\right] \right| < \textsf{negl}(n)
+\end{equation}
+which suggests that $F'_k = g \circ F_k$ is a PRF.
+
+\subsection*{Part B: $F'$ may not be a PRF}
+Let $g$ be a PRG which drops its first bit of input. It is easy to see that such PRG exists.
+
+Then for any $x \in \{0, 1\}^{n-1}$, $F_k'(0 \| x) = F_k(g(0\|x)) = F_k(g(1\|x)) = F_k'(1\|x)$, which suggests that $F_k'$ is not that "random" and can be easily distinguished from a truely random function.
+
+\section*{Problem 3}
+\subsection*{Part A: $F'$ may not be a strong PRP}
+\subsection*{Part B: $F'$ is a PRF}
+
+\section*{Problem 4}
+\end{document}
