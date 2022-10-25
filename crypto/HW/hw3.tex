@@ -128,11 +128,11 @@
 
 $\textsf{Dec}(k, (r, c)) = F_k^{-1}(c) \oplus r$.
 
-Denote $\Pi = (\textsf{Gen}, \textsf{Enc}, \textsf{Dec})$ as the encryption scheme mentioned in the problem, and $\tilde{\Pi} = (\widetilde{\textsf{Gen}}, \widetilde{\textsf{Enc}}, \widetilde{\textsf{Dec}})$ exactly the same as $\Pi$, except that a truely random permutation $f$ is used in place of $F_k$.
+Denote $\Pi = (\textsf{Gen}, \textsf{Enc}, \textsf{Dec})$ as the encryption scheme mentioned in the problem, and $\tilde{\Pi} = (\widetilde{\textsf{Gen}}, \widetilde{\textsf{Enc}}, \widetilde{\textsf{Dec}})$ exactly the same as $\Pi$, except that a truly random permutation $f$ is used in place of $F_k$.
 
 The proof is divided into two parts: \begin{itemize}
 	\item In the first part we prove that for any PPT adversary $\mathcal A$, there is some negligible function $\varepsilon(n)$ such that \begin{equation}\left| \text{Pr}\left[\PrivK{\mathcal A, \Pi}{cpa}(n) = 1\right] - \text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \right| < \varepsilon(n)\label{1-1}\end{equation}
-	\item In the second part we show that for any PPT adversary $\mathcal A$, \begin{equation}\text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \le \frac12 + \frac{2q(n)}{2^n}\label{1-2}\end{equation} for some polynomial $q(n)$.
+	\item In the second part we show that for any PPT adversary $\mathcal A$, \begin{equation}\text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \le \frac12 + \frac{q(n)}{2^n}\label{1-2}\end{equation} for some polynomial $q(n)$.
 \end{itemize}
 
 When finished the proof of the two parts mentioned above, one can see that obviously $\text{Pr}\left[\PrivK{\mathcal A, \Pi}{cpa}(n) = 1\right] \le \frac12 + \frac{q(n)}{2^n} + \varepsilon(n)$, which means $\Pi$ is secure under CPA attack.
@@ -161,7 +161,7 @@ Notice that $\mathcal A$ runs in polynomial time, so it can only queries the cip
 
 When $\mathcal A$ outputs $m_0, m_1$ and receives $(r^*, f(r^* \oplus m_b))$, it checks out all the recordings from the interaction, and if the point value for $r^* \oplus m_0$ or $r^* \oplus m_1$ is found, it can break the encryption scheme with $100\%$ confidence, otherwise it learns nothing about $f(r^* \oplus m_0)$ and $f(r^* \oplus m_1)$, and probability of outputing the correct answer is exactly $1/2$.
 
-The probability that the point value for $r^* \oplus m_0$ or $r^* \oplus m_1$ can be found equals to the probability of finding out two specific items among $2^n$ during $q(n)$ times of random choosing, which by union bound is not greater than $2q(n) / 2^n$. Thus, $$\text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \le \frac{2q(n)}{2^n} \cdot 1 + \left(1 - \frac{2q(n)}{2^n}\right) \cdot \frac12 = \frac12 + \frac{2q(n)}{2^n}$$
+The probability that the point value for $r^* \oplus m_0$ or $r^* \oplus m_1$ can be found equals to the probability of finding out two specific items among $2^n$ during $q(n)$ times of random choosing, which by union bound is not greater than $2q(n) / 2^n$. Thus, $$\text{Pr}\left[\PrivK{\mathcal A, \tilde{\Pi}}{cpa}(n) = 1\right] \le \frac{2q(n)}{2^n} \cdot 1 + \left(1 - \frac{2q(n)}{2^n}\right) \cdot \frac12 = \frac12 + \frac{q(n)}{2^n}$$
 
 
 \section*{Problem 2}
@@ -214,11 +214,165 @@ which suggests that $F'_k = g \circ F_k$ is a PRF.
 \subsection*{Part B: $F'$ may not be a PRF}
 Let $g$ be a PRG which drops its first bit of input. It is easy to see that such PRG exists.
 
-Then for any $x \in \{0, 1\}^{n-1}$, $F_k'(0 \| x) = F_k(g(0\|x)) = F_k(g(1\|x)) = F_k'(1\|x)$, which suggests that $F_k'$ is not that "random" and can be easily distinguished from a truely random function.
+Then for any $x \in \{0, 1\}^{n-1}$, $F_k'(0 \| x) = F_k(g(0\|x)) = F_k(g(1\|x)) = F_k'(1\|x)$, which suggests that $F_k'$ is not that "random" and can be easily distinguished from a truly random function.
 
 \section*{Problem 3}
 \subsection*{Part A: $F'$ may not be a strong PRP}
+3-round Feistel is a PRP but not a strong one.
 \subsection*{Part B: $F'$ is a PRF}
+For any distinguisher $\mathcal D'$ which tries to distinguish $F'$ from truly random functions, another distinguisher $\mathcal D$ can be built, which \begin{itemize}
+	\item simulates $\mathcal D'$, when $\mathcal D'$ queries $x$, use its oracle and get $\mathcal O(x)$, and then return $x \oplus \mathcal O(x)$ to $\mathcal D'$.
+	\item outputs whatever $\mathcal D'$ outputs.
+\end{itemize}
+
+It is easy to see that \begin{align*}
+	\begin{split}
+		\text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k}(1^n)\right] &= \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D'^{F'_k}(1^n)\right] \\
+		\text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{f}(1^n)\right] &= \text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D'^{x \oplus f}(1^n)\right] \\
+	\end{split}
+\end{align*}
+
+Thus $F'$ is a PRF.
+
+\subsection*{Part C: $F'$ is a PRP}
+
+First we can show that for any PPT distinguisher $\mathcal D$, $$\left| \text{Pr}_{k_1 \| k_2 \gets g(\$)}\left[\mathcal D^{F_{k_2} \circ F_{k_1}}(1^n) = 1\right] - \text{Pr}_{k_1, k_2 \gets \$}\left[\mathcal D^{F_{k_2} \circ F_{k_1}}(1^n) = 1\right] \right| < \textsf{negl}(n)$$
+This is because $g$ is a PRG and no PPT distinguisher can distinguish $g(\$)$ from $\$ \| \$$ with non-negligible advantage.
+
+Then we can show that for any PPT distinguisher $\mathcal D$, $$\left| \text{Pr}_{k_1, k_2 \gets \$}\left[\mathcal D^{F_{k_2} \circ F_{k_1}}(1^n) = 1\right] - \text{Pr}_{f_1, f_2 \gets \textsf{Perm}_n}\left[\mathcal D^{f_2 \circ f_1}(1^n) = 1\right] \right| < \textsf{negl}(n)$$
+This is because $F$ itself is a PRP.
+
+Together it has proved that $F'_k = F_{k_2} \circ F_{k_1}$ is a PRP.
+
+\subsection*{Part D: $F'$ is a PRP}
+
+First we show that for any PPT distinguisher $\mathcal D$, $$\left| \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k \circ F_k}(1^n) = 1\right] - \text{Pr}_{f \gets \textsf{Perm}_n}\left[\mathcal D^{f \circ f}(1^n) = 1\right] \right| < \textsf{negl}(n)$$
+
+This is because for any PPT distinguisher $\mathcal D$ which tries to distinguish $F_k \circ F_k$ from $f \circ f$, another distinguisher $\mathcal D'$ can be built, which queries the same as $\mathcal D$ does, uses its oracle twice to get $\mathcal O(\mathcal O(x))$, returns the result to $\mathcal D$ and finally outputs the same bit as $\mathcal D$. Thus \begin{align*}
+	\begin{split}
+		\text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k \circ F_k}(1^n)\right] &= \text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D'^{F_k}(1^n)\right] \\
+		\text{Pr}_{f \gets \textsf{Perm}_n}\left[\mathcal D^{f \circ f}(1^n)\right] &= \text{Pr}_{f \gets \textsf{Perm}_n}\left[\mathcal D'^{f}(1^n)\right] \\
+	\end{split}
+\end{align*}
+since $F_k$ is a PRP, $\mathcal D$ can not have non-negligible advantage.
+
+Then we are going to show that for any PPT distinguisher $\mathcal D$, $$\left|\text{Pr}_{f \gets \textsf{Perm}_n}\left[\mathcal D^{f \circ f}(1^n) = 1\right] - \text{Pr}_{f \gets \textsf{Perm}_n}\left[\mathcal D^{f}(1^n) = 1\right]\right| < \textsf{negl}(n)$$
+
+WLOG we assume that $\mathcal D$ does not query the same $x$ more than once. If all $x^{(i)}, \mathcal O(x^{(i)})$ are distinct, we can assert that no distinguisher can figure out the correct answer with probability more than $1/2$, and the thing only fails with negligible probability, so the inequlity above holds for any PPT distinguisher.
+
+Combining these two statements we can show that $F'_k = F_k \circ F_k$ is a PRP.
 
 \section*{Problem 4}
+\subsection*{Part A: $F(k, x \oplus c) = F(k, x) \oplus c$}
+A distinguisher $\mathcal D$ simply queries the encryption for $0^n$ and $1^n$ and checks whether $\mathcal O(0^n) \oplus \mathcal O(1^n) = 1^n$, then outputs $1$ if the equation holds and $0$ otherwise.
+
+It is easy to see that \begin{align*}
+	\begin{split}
+		\text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k}(1^n) = 1\right] &= 1 \\
+		\text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{f}(1^n) = 1\right] &= 1 / 2^n
+	\end{split}
+\end{align*}
+so $\mathcal D$ breaks $F_k$ as PRF.
+
+\subsection*{Part B: $F(k \oplus c, x) = F(k, x) \oplus c$}
+A distinguisher $\mathcal D$ can be built, which \begin{itemize}
+	\item calculates $F(0^n, 0^n)$.
+	\item queries the encryption for $0^n$, say, $\mathcal O(0^n)$.
+	\item learns the "key" $k' = F(0^n, 0^n) \oplus \mathcal O(0^n)$.
+	\item checks the "key" is correct or not, that is, randomly choose $x \in \{0, 1\}^n$ and checks whether $F(k', x) = \mathcal O(x)$, then outputs $1$ is key is correct and $0$ otherwise.
+\end{itemize}
+
+It is easy to see that \begin{align*}
+	\begin{split}
+		\text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k}(1^n) = 1\right] &= 1 \\
+		\text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{f}(1^n) = 1\right] &= 1 / 2^n
+	\end{split}
+\end{align*}
+so $\mathcal D$ breaks $F_k$ as PRF.
+
+\subsection*{Part C: $F(k_1 \oplus k_2, x) = F(k_1, x) \oplus F(k_2, x)$}
+
+Let $\varepsilon_i = 0^{i-1}10^{n-i}$ be the $i$-th "unit vector". For any $k, x \in \{0, 1\}^n$, if $k$ has $1$ on bit $i_1, i_2, \cdots, i_l$, then we have $F(k, x) = \bigoplus\limits_{j=1}^{l}F(\varepsilon_{i_j}, x)$.
+
+A distinguisher $\mathcal D$ first calculates $\alpha_i = F(\varepsilon_i, 0^n)$ and then checks whether the linear span $\textsf{span}\left(\{\alpha_i\}_{i=1}^n\right)$ equals to the whole linear space $\{0, 1\}^n$.
+
+\begin{itemize}
+	\item If the answer is yes, then for any $y \in \{0, 1\}^n$ there exists exactly one set $S \subseteq \{1, \cdots, n\}$ such that $y = \bigoplus\limits_{i \in S}\alpha_i$. This means that the distinguisher $\mathcal D$ can learn the key by finding the set $S$ such that $\mathcal O(0^n) = \bigoplus\limits_{i \in S}\alpha_i$ can let key be $k = \bigoplus\limits_{i\in S}\varepsilon_i$.
+	
+	After learning the key, $\mathcal D$ takes a single test just like the one in \textbf{Part B} does, and then outputs the testing result.
+
+	In this case we can show that \begin{align*}
+		\begin{split}
+			\text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k}(1^n) = 1\right] &= 1 \\
+			\text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{f}(1^n) = 1\right] &= 1 / 2^n
+		\end{split}
+	\end{align*}
+	so $\mathcal D$ breaks $F_k$ as PRF.
+	\item If the answer is no, then for at least half of $y \in \{0, 1\}^n$, it can not be represented as the linear combination of $\alpha_i$. Then $\mathcal D$ simply checks whether $\mathcal O(0^n)$ can be represented and ouputs the result.
+	
+	In this case we can show that \begin{align*}
+		\begin{split}
+			\text{Pr}_{k \gets \{0, 1\}^n}\left[\mathcal D^{F_k}(1^n) = 1\right] &= 1 \\
+			\text{Pr}_{f \gets \textsf{Func}_n}\left[\mathcal D^{f}(1^n) = 1\right] &\le 1/2
+		\end{split}
+	\end{align*}
+	so $\mathcal D$ also breaks $F_k$ as PRF.
+\end{itemize}
+
+(All linear algebra calculation can be done in polynomial time via algorithms like Gauss-Jordan Elimination, so $\mathcal D$ is indeed a PPT distinguisher.)
+
+\section*{Problem 5}
+Assume there is a length-doubling PRG $G: \{0, 1\}^n \to \{0, 1\}^{2n}$, and we use the notation $G_0(s)$ and $G_1(s)$ to describe the former and latter half of $G(s)$ respectively, that is \begin{align*}
+	G(s) = G_0(s) \| G_1(s)
+\end{align*}
+\begin{itemize}
+	\item $F$ is constructed as $$F(k, x) = G_{x_1} G_{x_2} \cdots G_{x_n}(k)$$ (this means the composition of $n$ $G_{0/1}$ functions, the notation $\circ$ is omitted for simplicity.) it is easy to see that $F$ runs in polynomial time.
+	\item The puncture function is constructed as $$\textsf{puncture}(k, x) = \left\{\left(\overline{x_i} \| x_{i+1 \cdots n}, G_{\overline{x_i}} G_{x_{i+1}} \cdots G_{x_n}(k)\right) \bigg| i = 1, 2, \cdots, n\right\}$$
+	\item The eval function $\textsf{eval}(k_{-x}, x')$ first finds one satisfying that $str$ is a suffix of $x'$ among all $(str, key)$ pairs in $k_{-x}$ (we assert that there exsits and only exsits one such pair since $x' \neq x$), and than calculates $\textsf{eval}(k_{-x}, x') = G_{x'_1} G_{x'_2} \cdots G_{x'_{n-|str|}}(key)$.
+	
+	It is not hard to see that $\textsf{eval}(k_{-x}, x') = F_k(x')$ for all $x' \neq x$.
+\end{itemize}
+
+We need to further prove that \begin{itemize}
+	\item $F$ is a PRF. By hybird argument, consider $$F_{h_i}(x) = G_{x_1}G_{x_2}\cdots G_{x_i}(h_i(x_{i+1}\cdots x_n))$$ where $h_i: \{0, 1\}^{n-i} \to \{0, 1\}^n$ is a truly random function. Clearly $F_{h_0}$ is actually a truly random function over $\{0, 1\}^n$, and $F_{h_n}$ is equivalent to $F$.
+	
+	Since $G$ is a PRG, no PPT distinguisher can distinguish $F_{h_i}$ from $F_{h_{i+1}}$ with non-negligible advantage, so $F_{h_0}$ can not be distinguished from $F_{h_n}$ with non-negligible advantage, which means that $F$ is a PRF.
+	\item $F$ is puncturable. Here hybird argument is used again, considering such parameterized security game: 
+	\begin{itemize}
+		\item With parameter $i$, the distinguisher $\mathcal D$ chooses $x$, the challenger samples random $k, u$, computes $k_{-x}$, and sends $\begin{cases}(k_{-x}, G_{x_1}\cdots G_{x_i}(u)),& i < n \\(k_{-x}, G_{x_1}\cdots G_{x_n}(k)), & i = n\end{cases}$ to the distinguisher.
+	\end{itemize}
+
+	Obviously the two cases in the problem are equivalent to game $i=n$ and $i=0$ respectively.
+
+	Since $G$ is a PRG, no PPT distinguisher can distinguish security games with adjacent parameter $i$, so the two cases are also indistinguishable, with non-negligible advantage.
+\end{itemize}
+\section*{Problem 6}
+\subsection*{Part A}
+The distinguisher $\mathcal D$ can implement the following steps to break 3-round Feistel: \begin{itemize}
+	\item Query $\textsf{Dec}(0^n, 0^n) \to (a, b)$.
+	\item Query $\textsf{Enc}(0^n, b) \to (c, d)$.
+	\item Query $\textsf{Dec}(c, a\oplus d) \to (e, f)$.
+	\item Output $1$ is $f = c \oplus b$ and $0$ otherwise.
+\end{itemize}
+
+Here's why it works: under 3-round Feistel encryption scheme, the first query reveals \begin{align*}
+	\begin{split}
+		a &= F_{k_3}(0^n) \oplus F_{k_1}(b) \\
+		b &= F_{k_2}(F_{k_3}(0^n))
+	\end{split}
+\end{align*}
+and the second query \begin{align*}
+	\begin{split}
+		c &= b \oplus F_{k_2}(F_{k_1}(b)) \\
+		d &= F_{k_1}(b) \oplus F_{k_3}(c)
+	\end{split}
+\end{align*}
+and so $$a \oplus d = F_{k_3}(0^n) \oplus F_{k_3}(c)$$ 
+
+In the final query, the distinguisher knows that $$f = c \oplus F_{k_2}(F_{k_3}(0^n)) = c \oplus b$$.
+
+So distinguisher $\mathcal D$ outputs $1$ with probability $1$ under 3-round Feistel, but with probability $1/2^n$ under truly random permutations, which means that 3-round Feistel is not a strong PRP.
+
+\subsection*{Part B}
+这咋做啊
 \end{document}
