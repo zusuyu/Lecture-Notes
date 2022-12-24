@@ -1,0 +1,259 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{bbm}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} Fundamentals  of Cryptography \ Homework 9}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}\large
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Fundamentals  of Cryptography}
+	\chead{2022 Fall}
+	\rhead{Homework 9}
+	\cfoot{Page \thepage\ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\def\Gen{\textsf{Gen}}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Sign{\textsf{Sign}}
+\def\Verify{\textsf{Verify}}
+\def\Pr{\text{Pr}}
+\def\poly{\text{poly}}
+\def\Agg{\textsf{Aggregate}}
+
+
+\section*{Problem 1 $1$-out-of-$t$ Oblivious Transfer}
+\subsection*{Part A}
+
+The protocol goes like this: \begin{itemize}
+	\item The sender prepares $t$ random messages $r_1, \cdots, r_t$ uniformly sampled from $\{0, 1\}^{\ell}$.
+	\item The given $1$-out-of-$2$ OT protocol is used for $t$ rounds. In round $i$, the sender prepares the following two inputs for the OT protocol: $$(r_i, \bigoplus_{j < i}r_j \oplus m_i)$$
+	\item If the receiver wants to learn $m_x$, he or she requires the former message in the first $x-1$ rounds, and the later message in round $x$, which means he or she can learn $$r_1, \cdots, r_{x-1}, \bigoplus_{j < x}r_j \oplus m_x$$ helping him or her reveal $m_x$.
+\end{itemize}
+
+The correctness for this protocol is obvious.
+
+The view of the sender can be simulated by $t\textsf{OT.Sim}_S$, which runs $\textsf{OT.Sim}_S$ on $t$ pairs of inputs prepared by the sender independently.
+
+The view of the receiver can also be simulated by $t\textsf{OT.Sim}_R$. In the first $x-1$ rounds, the (semi-honest) receiver can only require the former message, and $t\textsf{OT.Sim}_R$ simply samples $r \gets \$$ and returns $\textsf{OT.Sim}_R(r, 0)$ to the receiver. Of course it should remember all $r$-s. When round $x$ comes, the receiver requires the later message, the $t\textsf{OT.Sim}_R$ will return $\textsf{OT.Sim}_R(m_x \oplus R, 1)$, where $R$ denotes the XOR sum of all $r$-s. In the remaining rounds, it simply returns $\textsf{OT.Sim}_R(\$, b)$ for the require bit $b$ from the receiver.
+
+Thus, the protocol is secure against semi-honest sender and semi-honest receiver.
+
+\def\Sim{\textsf{Sim}}
+\def\View{\textsf{View}}
+
+\newpage
+\section*{Problem 2 Oblivious Linear Function Evalution}
+\subsection*{Part B}
+\subsubsection*{Security of Receiver: computationally secure}
+With input $a, b$, the simulator for the sender $\Sim_S(a, b)$ should output view somehow indistinguishable from $\View_S(a, b, x)$.
+
+According to the protocol, the simulator $\Sim_S$ should send to the sender $pk$ the public key and $c$ the encryption for $x$. Without knowing $x$, the simulator simply sends $c = \Enc(pk, 0)$, or just the encryption for some random element in $\mathcal R$, which is computationally indistinguishable from $\Enc(pk, x)$ as long as the public-key encryption scheme is CPA-secure.
+
+So we have $\Sim_S(a, b) \approx_c \View_S(a, b, x)$, which suggests computational security of the receiver.
+
+\subsubsection*{Security of Sender: perfectly secure}
+We need to build a simulator $\Sim_R$ such that $\Sim_R(x, ax + b) \approx \View_R(a, b, x)$.
+
+$\Sim_R$ can encrypt $ax + b$ directly and send it back to the receiver, so this security is perfect.
+
+\subsection*{Part C}
+With Alice having $x_1, y_1 \in \mathcal R$ and Bob having $x_2, y_2 \in \mathcal R$, the arithmetic analog of GMW protocol should give Alice $z_1 \in \mathcal R$ and Bob $z_2 \in \mathcal R$, such that $$z_1 + z_2 = (x_1 + x_2)(y_1 + y_2)$$
+
+In this new protocol, Alice should sample $r_1 \gets \mathcal R$ and Bob should sample $r_2 \gets \mathcal R$, both uniformly at random.
+
+Alice should set the OLE parameters $a = x_1, b = r_1$. Bob should make query for $x = y_2$ and learn $ax + b = x_1y_2 + r_1$, without any other information. After that, Bob set $z_2 = (x_1y_2 + r_1) + (x_2y_2 - r_2)$.
+
+Similarly Alice can also learn $x_2y_1 + r_2$ without any other information, and set $z_1 = (x_2y_1 + r_2) + (x_1y_1 - r_1)$.
+
+It is not hard to see that $z_1 + z_2 = (x_1 + x_2)(y_1 + y_2)$, which means this protocol is correct.
+
+\newpage
+\section*{Problem 3 Information-Theoretic Garbled Circuits}
+\subsection*{Part A}
+Notice that the gate table is indexed by $(x_{j_1} \oplus \alpha_{j_1}, x_{j_2} \oplus \alpha_{j_2})$ which hides $x_{j_1}, x_{j_2}$, so the table no longer needs to be random shuffled.
+
+When evaluating this modified garbled circuit, use the first bit of two garbled input $L_{j_1, x_{j_1}}$ and $L_{j_2, x_{j_2}}$ to index the gate table, and decrypt only one table entry to reveal $L_{i, x_i}$.
+\subsection*{Part B}
+
+The biggest issue when replacing the CPA-secure encryption scheme with a perfect secure encryption scheme directly is that some $L_{i, b}$-s are used as keys in the gate table more than once.
+
+To fix this, we need to ensure that such $L_{i, b}$-s use different bits in encryption. Specifically, let's say a gate $g$ with input wires $j_1, j_2$ and output wire $i$, then, if the length of $L_{i, 0}, L_{i, 1}$ is $k$-bit, we need $2k$ bits in $L_{j_1, 0}, L_{j_1, 1}, L_{j_2, 0}, L_{j_2, 1}$ \textbf{dedicated for wire $i$}.
+
+We should now analyse the total length of all $L_{i, b}$-s. Generally speaking, the length of $L_{i, b}$ should equal to twice the sum of length of all $L_{j, b}$-s where $j$ is a "descendant" of $i$, plus one, which stands for the mask bit.
+
+We call a sequence of wires $i_1, \cdots, i_d$ a \textit{path} of depth $d$ in circuit $C$, if \begin{itemize}
+	\item for all $1 \le j < d$, there is a gate in $C$ which takes $i_{j}$ as input wire and $i_{j+1}$ as output wire.
+\end{itemize}
+
+It can be proved by induction that, for any wire $i$ in $C$, its garbled string $L_{i, 0}, L_{i, 1}$ is of length $$\sum_d 2^{d-1} [\# \text{ path of depth }d\text{ strarting with wire }i]$$
+
+For circuit with depth $O(\log n)$, the total length of $L_{i, b}$-s is $\poly(n)$. They can be garbled efficiently.
+
+\subsection*{Part C}
+
+First, $\Sim$ samples random strings as $L_{i, x_i}$ for each $i \in [1, n]$.
+
+Then, it generates gate table for each gate $g$. Let's say for a gate $g$ with input wires $j_1, j_2$ and output wire $i$, since $L_{j_1, x_{j_1}}, L_{j_2, x_{j_2}}$ are known, $\Sim$ knows which entry in gate table encrypts $L_{i, x_i}$. For other entries, it should simulate since at least one key to encrypt is unknown to itself.
+
+Specifically, to simulate $\Enc(k_1, \Enc(k_2, p))$, if $k_1$ is unknown, $\Sim$ should use $\$$ to simulate, while if $k_1$ is known but $k_2$ unknown, it should use $\Enc(k_1, \$)$ instead to simulate.
+
+CPA-security or perfect security of the encryption scheme ensures the computational or perfect indistinguishability of the simulator.
+
+\section*{Problem 4: Randomized Encoding}
+\subsection*{Part A}
+
+$\hat{f}$ takes $x, r$ as input. It generates $\tilde C$ the garbled circuit of $f$, $L_{i, b}$ the garbled strings, using $r$ as its random tape, and outputs $\tilde{C}$ together with $L_{1, x_1}, \cdots, L_{n, x_n}$.
+
+For correctness, notice that garbled circuit can be simulated efficiently, thus efficient decoding algorithm which retrieves $f(x)$ can be easily built.
+
+For security, it is guaranteed by the security of Yao's garbled circuit.
+
+For less complexity (less circuit depth here, specifically), notice that all gate tables can be computed in parallel, so the circuit to compute garbled circuit is of $O(1)$ depth, since all $L_{j_1, b}, L_{j_2, b}, L_{i, b}$-s are known in advance.
+\subsection*{Part B}
+
+Protocol: Each party randomly picks a $r_i \gets \mathcal R$, and then uses $\Pi_g$ protocol computing $g((x_1, r_1), \cdots, (x_n, r_n)) = \hat{f}((x_1, \cdots, x_n), r_1 + \cdots + r_n)$, and finally decode $\hat{f}((x_1, \cdots, x_n), r_1 + \cdots + r_n)$ to get $f(x_1, \cdots, x_n)$.
+
+The correctness of the new protocol is obvious.
+
+Since $\Pi_g$ is computationally secure against semi-honest adversary corrupting up to $t$ parties, the new protocol is also computationally secure against semi-honest adversary corrupting up to $t$ parties.
+
+\newpage
+\section*{Problem 5: Threshold Secret Sharing Lower Bound}
+\subsection*{Part A}
+
+Let $x_0, x_1$ denote two distinct elements from $\mathcal X$.
+
+Let $S_{i, 0}$ denote the $i$-th share when the secret is $x_0$. Notice that $S_{i, 0}$ is a random variable over $\mathcal S_i$. Similarly we define $S_{i, 1}$.
+
+Since only one share can reveal no information about the secret, the distribution of $S_{i, 0}$ and $S_{i, 1}$ should be identical. Furthermore, we can get $$\Pr\left[S_{i, 0} = S_{i, 1}\right] \ge \frac{1}{|\mathcal S_i|}$$
+
+Also notice that it is impossible for both $S_{i, 0} = S_{i, 1}$ and $S_{j, 0} = S_{j, 1}$, since otherwise, in some circumstances it could be impossible to reveal the secret $x$ (would feel confused between $x_0$ and $x_1$).
+
+Thus, \begin{align*}
+	\begin{split}
+		1 \ge \Pr\left[\exists i, S_{i, 0} = S_{i, 1}\right] &= \sum_{i=1}^{n} \Pr\left[S_{i, 0} = S_{i, 1}\right] \\ &\ge \sum_{i=1}^{n}\frac{1}{|\mathcal S_i|}
+	\end{split}
+\end{align*}
+
+So we have proved that $\sum_{i=1}^{n}\frac{1}{|\mathcal S_i|} \le 1$. Function $f(x) = \log (1/x)$ is a convex function, by Jensen's Inequality, $$\sum_i\log|\mathcal S_i| = \sum_i f(1/|\mathcal S_i|) \ge nf\left(\frac{\sum_i 1/|\mathcal S_i|}{n}\right) \ge nf\left(\frac 1n\right) = n\log n$$
+
+\subsection*{Part B}
+
+We convert a $t$-out-of-$n$ secret sharing to a $2$-out-of-$n$ secret sharing, and try to follow the proof in \textbf{Part A}.
+
+Let $A \subseteq [n]$ be a set of parties of size $t - 2$. After receiving the share, all members in $A$ boardcast its share to every other parties. It can be proved that the remaining $n - t + 2$ parties are in a $2$-out-of-$n$ secret sharing with perfect correctness and perfect security.
+
+Let $B = [n] \setminus A$. Following the proof in \textbf{Part A} we have $$\sum_{i \in B}\log |\mathcal S_i| \ge (n-t+2)\log(n-t+2)$$ 
+which means $\sum_i\log|\mathcal S_i| = \Omega((n-t)\log(n-t))$.
+\end{document}

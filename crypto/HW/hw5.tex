@@ -1,0 +1,191 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{bbm}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} Fundamentals  of Cryptography \ Homework 5}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}\large
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Fundamentals  of Cryptography}
+	\chead{2022 Fall}
+	\rhead{Homework 5}
+	\cfoot{Page \thepage\ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\def\Gen{\textsf{Gen}}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Pr{\text{Pr}}
+\def\poly{\text{poly}}
+
+\section*{Problem 1}
+\subsection*{Part A}
+Define $f_{\Gen}$ to be a $\{0, 1\}^* \to \{0, 1\}^*$ function such that $$f_{\Gen}(x) = pk$$ where $$\Gen(1^n; x) = (pk, sk)$$ we use such notation to indicate that PPT algorithm $\Gen$ takes $1^n$ as input and $x$ as its random tape.
+
+We are going to prove that $f_{\Gen}$ is an OWF. FSOC assume that there is a PPT adversary $\mathcal A$ such that $$\Pr_{\substack{x \gets \$\\x' \gets \mathcal A(f_{\Gen}(x))}}\left[f_{\Gen}(x') = f_{\Gen}(x)\right] \ge \frac{1}{\poly(n)}$$ then another adversary $\mathcal A'$ simply calls $\mathcal A$ to get the "correct random tape" $x'$ with at least $1 / \poly(n)$ probability, and thus it obtains $sk$ such that $\forall m, \Dec(sk, \Enc(pk, m)) = m$, which gives $\mathcal A'$ the capability to break $(\Gen, \Enc, \Dec)$ as a CPA-secure public-key encryption scheme, a contradiction.
+
+Thus such $\mathcal A$ does not exist, making $f_{\Gen}$ an OWF.
+
+\section*{Problem 2}
+Suppose there is a PPT distinguisher $\mathcal D$ who breaks matrix DDH assumption, i.e. $$\left| \Pr\left[\mathcal D(g, g^{\vec{a}}, g^{\vec{b}}, g^{\vec{a} \otimes \vec{b}}) = 1\right] - \Pr\left[\mathcal D(g, g^{\vec{a}}, g^{\vec{b}}, g^{C}) = 1\right] \right| \ge \frac{1}{\poly(n)}$$
+where $\vec{a}$ and $\vec{b}$ are of length $h, w$ respectively, $\otimes$ means tensor product, $C$ is of shape $h \times w$, $h, w = \poly(n)$.
+
+Now Let us construct another distinguisher $\mathcal D'$ which distinguishes $(g, g^a, g^b, g^{ab})$ from $(g, g^a, g^b, g^c)$. It works as follows: \begin{itemize}
+	\item Take input $(g, g^a, g^b, v)$
+	\item Randomly choose $i \in [h]$ and $j \in [w]$
+	\item Randomly choose $a_{1}, \cdots, a_{h}$ and $b_{1}, \cdots, b_{w}$, calculate $g^{a_1}, \cdots, g^{a_h}$, $g^{b_1}, \cdots, g^{b_w}$, but not for $a_i$ and $b_j$. Let $g^{a_i} = g^a$ and $g^{b_j} = g^b$ (which means $a_i$ and $b_j$ may be unknown to $\mathcal D'$)
+	\item Generate $C \in G^{h \times w}$ such that $$C_{i', j'} = \begin{cases}
+		g^{a_{i'}b_{j'}}, & (i', j') < (i, j) \\
+		v, & (i', j') = (i, j) \\
+		g^{\$}, & (i', j') > (i, j)
+	\end{cases}$$
+	Notice that when $(i', j') < (i, j)$, either $a_{i'}$ or $b_{j'}$ is known to $\mathcal D'$, so it can calculate $g^{a_{i'}b_{j'}}$ as either $(g^{b_{j'}})^{a_{i'}}$ or $(g^{a_{i'}})^{b_{j'}}$.
+	\item Output $\mathcal D(g, g^{\vec{a}}, g^{\vec{b}}, C)$.
+\end{itemize}
+
+We denote \begin{align*}
+	\begin{split}
+		P_{n, m, \$} &= \Pr\left[\mathcal D'(g, g^a, g^b, v) = 1 \bigg| (i, j) = (n, m), v \gets g^{\$}\right] \\
+		P_{n, m, ab} &= \Pr\left[\mathcal D'(g, g^a, g^b, v) = 1 \bigg| (i, j) = (n, m), v = g^{ab}\right] \\
+	\end{split}
+\end{align*}
+
+Notice that \begin{align*}
+	\begin{split}
+		P_{1, 1, \$} &= \Pr\left[\mathcal D(g, g^{\vec a}, g^{\vec b}, g^{C}) = 1\right] \\
+		P_{h, w, ab} &= \Pr\left[\mathcal D(g, g^{\vec a}, g^{\vec b}, g^{\vec a \otimes \vec b}) = 1\right] \\
+		P_{n, m, ab} &= P_{n, m+1, \$}
+	\end{split}
+\end{align*}
+which indicates \begin{align*}
+	\begin{split}
+		\left| \Pr\left[\mathcal D'(g, g^a, g^b, g^{ab})=1\right] - \Pr\left[\mathcal D'(g, g^a, g^b, g^{c})=1\right] \right| &= \frac{1}{hw}\left|\sum_{n, m}P_{n, m, ab} - \sum_{n, m}P_{n, m, \$}\right| \\
+		&= \frac{1}{hw}\left|P_{h, w, ab} - P_{1, 1, \$}\right| \\
+		&\ge \frac{1}{hw} \cdot \frac{1}{\poly(n)}
+	\end{split}
+\end{align*}
+thus $\mathcal D'$ distinguishes $(g, g^a, g^b, g^{ab})$ from $(g, g^a, g^b, g^c)$ with non-negligiable adventage, which breaks DDH assumption.
+
+\section*{Problem 3}
+\subsection*{Part A}
+Since $p, q$ are both safe primes, $e_i \nmid \varphi(N) = (p-1)(q-1)$, which means that $e_i$ is invertable moduled $\varphi(N)$, i.e. there exists $d_i$ such that $e_id_i \equiv 1 \bmod \varphi(N)$.
+
+With $\varphi(N), s$ and $e_i$ given, $d_i$ can be calculated by 辗转相除 in $\poly(n)$-time, thus it can be efficient to calculate $f(k, i) = s^{1/e_i} = s^{d_i} \bmod N$.
+
+\subsection*{Part B}
+Given $k_S = (N, t)$, we know that $t = s^{\prod_{i \in S} 1 / e_i} = s^{\prod_{i \in S}d_i}$, so
+$$\textsf{Eval}(k_S = (N, t), S, i) = t^{\prod_{j \in S, j \neq i}e_j} \bmod N = s^{d_i \cdot \prod_{j \in S, j \neq i}e_jd_j} = s^{d_i} = f(k, i)$$
+
+\subsection*{Part C}
+
+\end{document}

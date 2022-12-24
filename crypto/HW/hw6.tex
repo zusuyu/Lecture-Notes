@@ -1,0 +1,205 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[linewidth=1pt]{mdframed}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{bbm}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} Fundamentals  of Cryptography \ Homework 6}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}\large
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Fundamentals  of Cryptography}
+	\chead{2022 Fall}
+	\rhead{Homework 6}
+	\cfoot{Page \thepage\ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\def\Gen{\textsf{Gen}}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Pr{\text{Pr}}
+\def\poly{\text{poly}}
+\def\negl{\text{negl}}
+
+\section*{Problem 1}
+\subsection*{Part A}
+$$\Dec(sk, ct = (\mathbf t, v)) = \begin{cases}
+	0, & v - \mathbf{s}^T\mathbf{t} \in [-\frac q2, \frac q2] \\
+	1, & \text{otherwise}
+\end{cases}$$
+since one can see that $v - \mathbf{s}^T\mathbf{t} = \mathbf{e}^T\mathbf{r} + \lfloor\frac q2\rfloor \cdot b$, so it is "small" if $b = 0$, and "big" if $b = 1$.
+
+Notice that $|\mathbf{e}^T\mathbf{r}| \le Bm$, so to decrypt correctly, we'd like to have the constraint that $Bm \le \frac q4$.
+\subsection*{Part B}
+\subsubsection*{Hybrid 0 and hybrid 1 are computationally indistinguishable}
+
+FSOC assume PPT distinguisher $\mathcal D$ distinguishes hybrid 0 from hybrid 1 with non-negligible advantage. Then another distinguisher $\mathcal D'$ can be built, which takes $(\mathbf A, \mathbf b^T) = pk$ as input, randomly samples $\mathbf r \gets \{0, 1\}^m$, send $(pk, ct = (\mathbf{Ar}, \mathbf b^T\mathbf r + \lfloor\frac q2\rfloor \cdot b))$ to distinguisher $\mathcal D$, and finally outputs whatever $\mathcal D$ outputs.	
+
+So $\mathcal D'$ distinguishes $(\mathbf A, \mathbf s^T\mathbf A + \mathbf e^T)$ from $(\mathbf A, \mathbf b^T)$, which breaks LWE assumption.
+
+\subsubsection*{Hybrid 1 and hybrid 2 are statistically indistinguishable}
+
+\begin{center}
+	\begin{mdframed}
+
+		\includegraphics[scale=0.35]{Leftover.png}
+		
+	\end{mdframed}
+\end{center}
+
+Here each row of matrix $\mathbf A$, $\mathbf a_1, \cdots, \mathbf a_n$, together with $\mathbf b$, can be regarded as $s_1, \cdots, s_m$. $\mathbf r$ can be regarded as hash function key $k$, which means that the hash function $\mathbb Z_q^m \times \mathbb Z_q^m \to \mathbb Z_q$ is defined as "dot product".
+
+Leftover Hash Lemma shows that the statistical difference between $(\mathbf{Ar}, \mathbf{b}^T\mathbf{r})$ and $(\mathbf{a}, v)$ $$\delta \le \frac12(n+1)\sqrt{q \cdot q^{-m}} = \frac{(n+1)q^{-(m-1)/2}}{2}$$
+
+When $\frac{(n+1)q^{-(m-1)/2}}{2} = \negl(n)$, we can say that hybrid 1 and hybrid 2 are statistically indistinguishable.
+
+\section*{Problem 2}
+\subsection*{Part A}
+For all $0 \le i < N$, we have $$(1 + N)^i = 1 + iN \in \mathbb G_N$$
+
+For any $0 \le i < j < N$, $1 + iN \neq 1 + jN$, which means that $|\{(1 + N)^i | 0 \le i < N\}| = N$, thus $1 + N$ is a generator of $\mathbb G_N$.
+\subsection*{Part B}
+Every element in $\mathbb G_n$ can be written as $1 + kN$, for some $0 \le k < N$.
+
+Suppose that $g = 1 + xN$ and $g^a = 1 + yN$ (here $x$ and $y$ can be computed efficiently), we know that $(1 + xN)^a = 1 + yN$, thus $ax \equiv y \bmod N$.
+\begin{itemize}
+	\item If $x$ is invertable module $N$, one can simply calculates $a' = y \cdot x^{-1} \bmod N$.
+	\item If $p | x$ and $q \nmid x$, then we must have $p | y$, so one can calculates $a' = \left(\frac yp\right) \cdot \left(\frac xp\right)^{-1} \bmod q$.
+	\item If $q | x$ and $p \nmid x$, we must have $q | y$, so one can calculates $a' = \left(\frac yq\right) \cdot \left(\frac xq\right)^{-1} \bmod p$.
+	\item If $x = 0$, then $y = 0$, $a'$ can be any integer.
+\end{itemize}
+
+\subsection*{Part C}
+Uniformly randomly sample $x$ from $\mathbb{QR}_{N^2}$, then output $x^N$.
+
+\begin{itemize}
+	\item $x$ can be written as $x = gh$ such that $g \in \mathbb G_N$ and $h \in \mathbb H_N$. Since $|\mathbb G_N| = N$, $g^N = 1$ holds for all $g \in \mathbb G_N$. So $x^N = g^Nh^N = h^N \in \mathbb H_N$.
+	\item Since $\mathbb{QR}_{N^2} = \mathbb G_N \times \mathbb H_N$, so uniform $x$ over $\mathbb{QR}_{N^2}$ implies uniform $h$ over $\mathbb H_N$. Notice that $\gcd(N, p'q') = 1$, so $N$ is invertable module $p'q'$, and $h^N$ is also uniform over $\mathbb H_N$.
+\end{itemize}
+
+\subsection*{Part D}
+$$\Dec(sk, c) = \textsf{discrete-log}(c^{p'q'}) \cdot (p'q')^{-1} \bmod N$$
+
+Notice that $|\mathbb H_N| = p'q'$, so we must have $c^{p'q'} = (h \cdot (1 + N)^m)^{p'q'} = 1 + mp'q'N\in \mathbb G_N$, and $p'q'$ is invertable module $N$, which gives the chance to reveal the message and then make the public-key encryption scheme correct.
+
+FSOC assume PPT adversary $\mathcal A$ breaks this encryption scheme as EAV-secure (notice that EAV-secure is equivalent to CPA-secure under public-key encryption scheme settings). We construct a PPT distinguisher $\mathcal D$ who distinguishes $(N, h)$ from $(N, x)$ for $h \gets \mathbb H_N$ and $x \gets \mathbb{QR}_{N^2}$, and thus breaks DCR assumption.
+
+When $\mathcal D$ receives $(N, y)$, it calls $\mathcal A$ with public key $pk = N$. $\mathcal A$ outputs two distinct messages $m_0, m_1$, and $\mathcal D$ picks $r \in \mathbb H_N$ and $b \in \{0, 1\}$ uniformly at random. Instead of returning $c = h \cdot (1 + N)^{m_b}$, it returns $c = h \cdot y \cdot (1 + N)^{m_b}$. Then $\mathcal A$ outputs a single bit $b'$, and $\mathcal D$ outputs $1$ iff $b' = b$.
+
+Then here are two cases: \begin{itemize}
+	\item If $y$ is sampled from $\mathbb H_N$, then the encryption is "right", which means that $\mathcal A$ outputs the correct answer $b$ with probability at least $\frac12 + \frac{1}{\poly(n)}$, so $\mathcal D$ outputs $1$ with probability at least $\frac12 + \frac{1}{\poly(n)}$.
+	\item If $y$ is sampled from $\mathbb{QR}_{N^2}$, then the encryption is "corrupt", which means that the ciphertext $c$ output by challenger is the encryption of a random message, and thus $\mathcal A$ can do nothing but random guessing with this random ciphertext, which makes $\mathcal D$ outputs $1$ with probability at most a half.
+\end{itemize}
+
+Thus $\mathcal D$ distinguishes $(N, h)$ from $(N, x)$ with non-negligible advantage, which breaks DCR assumption.
+
+\end{document}

@@ -1,0 +1,213 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{bbm}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} Fundamentals  of Cryptography \ Homework 8}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}\large
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Fundamentals  of Cryptography}
+	\chead{2022 Fall}
+	\rhead{Homework 8}
+	\cfoot{Page \thepage\ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\def\Gen{\textsf{Gen}}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Sign{\textsf{Sign}}
+\def\Verify{\textsf{Verify}}
+\def\Pr{\text{Pr}}
+\def\poly{\text{poly}}
+
+\def\Agg{\textsf{Aggregate}}
+
+\section*{Problem 1}
+\subsection*{Part A}
+The proof system should work like this: \begin{itemize}
+	\item The verifier takes input $(a, b, c)$ while the prover takes both $(a, b, c)$ and the witness $(x, y)$.
+	\item The prover randomly picks $r$ from $\mathbb Z_p$ and sends $u = g^r, v = a^r$ to the verifier.
+	\item The verifier randomly picks $e$ from $\mathbb Z_p$ and sends it to the prover.
+	\item The prover calculates $d = e \cdot y + r \bmod p$ and sends it back to the prover.
+	\item The verifier checks whether $g^d = b^e \cdot u$ and $a^d = c^e \cdot v$, and outputs \textsf{accept} iff both correct.
+\end{itemize}
+
+\subsubsection*{Completeness}
+For all $(a, b, c) \in L$, $u, v$ can be set correctly, so both $g^d = g^{ey + r} = b^e \cdot g^r$ and $a^d = g^{xd} = g^{exy + xr} = c^e \cdot v$ should hold, which means this proof system achieves perfect completeness.
+
+\subsubsection*{Soundness}
+For all $(a, b, c) \notin L$, $a = g^x, b = g^y, c = g^z$, where $c \neq xy \bmod p$.
+
+let us say the prover sends $u = g^{\alpha}$ and $v = g^{\beta}$ to the verifier in the first round, and integer $d$ in the third round after receiving $e$ from the verifier in the second round. Then the verifier will accept $(a, b, c)$ iff $$\begin{cases}
+	d = e \cdot y + \alpha \\
+	x \cdot d = e \cdot z + \beta
+\end{cases}$$ which means $$e = \frac{x\alpha - \beta}{z - xy}$$
+
+Thus, with probability $1/p$ the verifier will choose such $e$, and in this case the cheating prover can fool the verifier. Otherwise there is no solution to the above equation, and thus the verifier won't be fooled.
+
+\subsection*{Zero Knowledge}
+
+A PPT simulator $S$ can be used to simulate the interaction between verifier and prover, and outputs the view of verifier which distributed exactly the same as the verifier's in the ideal world.
+
+$S$ samples $e$ and $d$ uniformly random from $\mathbb Z_p$, and sets $u = g^d / b^e, v = a^d / c^e$.
+
+Notice that in both real world and ideal world, the distribution of $d$ is always the uniform distribution over $\mathbb Z_p$, which suggests that the distribution of view is identical, and thus zero knowledge.
+
+\subsection*{Part B}
+
+\begin{itemize}
+	\item The verifier takes input $(a, b, c)$ while the prover takes both $(a, b, c)$ and the witness $(x, y)$.
+	\item The prover randomly picks $r$ from $\mathbb Z_p$ and sends $u = g^r, v = a^r$ to the verifier.
+	\item The verifier randomly picks $b$ from $\{0, 1\}$ and sends it to the prover.
+	\item If $b = 0$, the prover proves $u = g^r, v = a^r$ by sending $r$ to the verifier, and if $b = 1$, proves $b = u^{y/r}, c = v^{y/r}$ by sending $y/r$.
+\end{itemize}
+
+\subsubsection*{Soundness}
+
+If for some $(a, b, c)$ the verifier outputs \texttt{accept} with probability greater than $1/2$, there must be some $r, z \in \mathbb Z_p$ such that $(g^r)^z = b, (a^r)^z = c$, which suggests that $(a, b, c)$ is a DDH tuple.
+
+\subsubsection*{Zero Knowledge}
+
+A simulator $S$ first randomly picks $b' \gets \{0, 1\}$ and $e \gets \mathbb Z_p$. It sends $u = g^e, v = a^e$ to any PPT (malicious) adversary $V^*$ if $b' = 0$, and $u = b^{1/e}, v = c^{1/e}$ if $b' = 1$.
+
+$V^*$ will output a challenge bit $b$. If $b = b'$, simulator $S$ can go ahead by sending $V^*$ the proof: $e$, which suggests $u = g^e, v = a^e$ when $b = 0$, and $b = u^{e}, c = v^e$ when $b = 1$. If $b \neq b'$, $S$ restarts and repeats.
+
+Obviously $S$ works in expected poly-time, and since the distribution of $r$ and $y/r$ in the original protocol are both the uniform distribution over $\mathbb Z_p$, the view of $S$ is identical with its counterpart the ideal world.
+
+\section*{Problem 2}
+\subsection*{Part A}
+Parallelly, and independently run the proof system for $k$ times, and outputs \texttt{accept} iff each run is \texttt{accept}.
+
+Repetition reserves perfect completeness. Notice that the result of all runs are i.i.d., the soundness error is $(1 / 2)^k$. 
+
+The simulator for the former protocol can be used $k$ times independently and gives the identical distribution of view, and thus honest-verifier zero-knowledge is guaranteed.
+
+\subsection*{Part B}
+
+\def\msg{\textsf{msg}}
+
+We want to find a simulator $S$ such that for all $x \in L$, the view output by $S(x)$, $(\msg_1, \msg_2, \msg_3)$, has $\msg_2 = 0$ w.p. $1/2$, and $\msg_2 = 1$ w.p. $1/2$, independently with $\msg_1$. If such $S$ is found, we can construct another simulator $S'$ which works like this: \begin{enumerate}
+	\item $S'(x)$ calls $S(x)$ for $k$ times independently
+	
+	it gets the view $(\msg_1^1, \cdots, \msg_1^k, \msg_2^1, \cdots, \msg_2^k, \msg_3^1, \cdots, \msg_3^k)$
+
+	\item for \textbf{any} malicious verifier $V^*$, $S'$ calls $V^*(\msg_1^1, \cdots, \msg_1^k) \to (\overline{\msg_2^1}, \cdots, \overline{\msg_2^k})$ 
+	\item if $(\overline{\msg_2^1}, \cdots, \overline{\msg_2^k}) \neq (\msg_2^1, \cdots, \msg_2^k)$, $S'$ restarts
+	\item otherwise $S'$ outputs $(\msg_1^1, \cdots, \msg_1^k, \msg_2^1, \cdots, \msg_2^k, \msg_3^1, \cdots, \msg_3^k)$ as its view
+\end{enumerate}
+
+It can be shown that step 3 succeeds w.p. exactly $1/2^k$. Since $k$ is a constant, $S^*$ runs in polytime.
+
+Notice that the original proof system is malicious verifier zero knowledge, which means \textbf{for any} (malicious) verifier $V$, there is a simulator $S_V$, who interacts with $V$ and outputs the identical view. We can set $V$ as the verifier who always choose the challenge $\msg_2$ uniformly, and independently with $\msg_1$. Then we can obtain the $S$ we want.
+
+\end{document}

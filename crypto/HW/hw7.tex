@@ -1,0 +1,208 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{bbm}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} Fundamentals  of Cryptography \ Homework 7}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}\large
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{Fundamentals  of Cryptography}
+	\chead{2022 Fall}
+	\rhead{Homework 7}
+	\cfoot{Page \thepage\ of \pageref{TotPages}}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\def\Gen{\textsf{Gen}}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Sign{\textsf{Sign}}
+\def\Verify{\textsf{Verify}}
+\def\Pr{\text{Pr}}
+\def\poly{\text{poly}}
+
+\def\Agg{\textsf{Aggregate}}
+
+\section*{Problem 1}
+\begin{align*}
+	\begin{split}
+		\Agg(m_1, \sigma_1, \cdots, m_{\ell}, \sigma_{\ell}) &= \prod_{i=1}^{\ell}\sigma_i \\
+		\Verify(pk, m_1, \cdots, m_{\ell}, \sigma) &= \left[\sigma^{e} \equiv \prod_{i=1}^{\ell}H(m_i) \bmod N\right]
+	\end{split}
+\end{align*}
+
+Assume there is a PPT adversary (the forger) $\mathcal A$ who braks this aggregate signature scheme, we'll show that we can construct another PPT adversary $\mathcal A'$ who breaks RSA assumption.
+
+$\mathcal A'$ works as follows: \begin{itemize}
+	\item $\mathcal A'$ is given $N, y, e$ as described in RSA assumption. The goal of $\mathcal A'$ is to find $x$ such that $x^e \equiv y \bmod N$.
+	\item $\mathcal A'$ prepares the answer for the oracle queries that $\mathcal A$ will ask, by choosing at random $r_1, \cdots, r_{p(n)} \in \mathbb Z_n^*$ and an index $j \in \{1, \cdots, p(n)\}$, and let the answer to the $i$-th query to $H$ be $$H(m_i) = \begin{cases}
+		y \cdot r_i^e, & i = j \\
+		r_i^e, & i \neq j
+	\end{cases}$$ where $p(n)$ is some polynomial.
+	
+	Intuitively, $\mathcal A'$ is betting on the chance that $\mathcal A$ will include its $j$-th oracle query in its output (the forgery).
+
+	\item $\mathcal A'$ prepares the answer for the signature queries that $\mathcal A$ will ask. Typically when asked $\Sign(sk, m_i)$ for some $i \neq j$, $\mathcal A'$ simply returns $r_i$. When asked $\Sign(sk, m_j)$, $\mathcal A'$ fails.
+	\item $\mathcal A'$ runs the forger algorithm $\mathcal A$, and answer its both oracle and signature queries.
+	\item $\mathcal A'$ retrieves the output $(m_{i_1}, \cdots, m_{i_{\ell}}, \sigma)$ of $\mathcal A$. If $j \notin \{i_1, \cdots, i_{\ell}\}$ it fails, otherwise $\mathcal A'$ knows that w.p. at least $1 / \poly(n)$, $$\sigma^e = \prod_{k=1}^{\ell}H(m_{i_k}) = y \cdot \prod_{k=1}^{\ell}r_{i_k}^e$$ then it simply outputs $x = \sigma \cdot \prod\limits_{k=1}^{\ell}r_{i_k}^{-1}$ such that $x^e = y$.
+\end{itemize}
+
+One can see that $$\Pr\left[\mathcal A' \text{ breaks RSA assumption}\right] \ge \frac{1}{p(n)}\Pr\left[\mathcal A \text{ breaks this aggregate signature scheme}\right] = \frac{1}{\poly(n)}$$
+
+So $\mathcal A'$ indeed breaks RSA assumption.
+
+\section*{Problem 2}
+
+\subsection*{Part A}
+The signature algorithm $\Sign$ first finds $H(m)^{-1} \bmod \varphi(N)$, which is efficient via 辗转相除. Then it uses the fast power algorithm to calculate $g^{H(m)^{-1}} \bmod N$.
+
+Notice that addition and multiplication operation of $\mathbb Z_N$ elements can be down in $\poly(n)$ time, and only $\poly(n)$ operations are needed in the above process, thus all thins can be done in $\poly(n)$-time.
+
+\subsection*{Part B}
+Assume there is a PPT adversary $\mathcal A$ who braks Gennaro-Halevi-Rabin signature scheme, we'll show that we can construct another PPT adversary $\mathcal A'$ who breaks RSA assumption.
+
+$\mathcal A'$ works as follows: \begin{itemize}
+	\item $\mathcal A'$ is given $N, y, e$ as described in RSA assumption. The goal of $\mathcal A'$ is to find $x$ such that $x^e \equiv y \bmod N$.
+	\item $\mathcal A'$ prepares the answer for the oracle queries that $\mathcal A$ will ask, by choosing at random $e_1, \cdots, e_{p(n)} \in \mathbb Z_n^*$ (except $e_j$, it sets $e_j = e$ without sampling) and an index $j \in \{1, \cdots, p(n)\}$, and let the answer to the $i$-th query to $H$ be $H(m_i) = e_i$. Let $E = \prod\limits_{i \neq j}e_i$, $\mathcal A'$ sets $g = y^E \bmod N$ as public key and sends it to $\mathcal A$.
+	
+	For simplicity, we suppose that $\mathcal A'$ chooses such $e_i$-s that $\gcd(e_i, e) = 1$ for all $i \neq j$, which means that $\gcd(E, e) = 1$. In the real world, this succeeds with probability at least $1 / \poly(n)$.
+
+	Intuitively, $\mathcal A'$ is betting on the chance that $\mathcal A$ will use its $j$-th oracle query as its output (the forgery).
+
+	\item $\mathcal A'$ prepares the answer for the signature queries that $\mathcal A$ will ask. Typically when asked $\Sign(sk, m_i)$ for some $i \neq j$, $\mathcal A'$ simply returns $y^{E / e_i}$ (notice that $E / e_i$ is an integer when $i \neq j$). When asked $\Sign(sk, m_j)$, $\mathcal A'$ fails.
+
+	\item $\mathcal A'$ runs the forger algorithm $\mathcal A$, and answer its both oracle and signature queries.
+
+	\item $\mathcal A'$ retrieves the output $(m, \sigma)$ of $\mathcal A$. If $m \neq m_j$ it fails, otherwise $\mathcal A'$ knows that w.p. at least $1 / \poly(n)$, $$\sigma^{e} = y^{E}$$ now $\mathcal A'$ computes two integer $a, b$ such that $ae + bE = 1$ by extended Euclidean algorithm, and outputs $$x = \sigma^b \cdot y^a$$ such that $$x^e = (\sigma^{e})^b\cdot y^{ae} = y^{bE}\cdot y^{ae} = y$$
+\end{itemize}
+
+\subsection*{Part C}
+
+$$\Verify'(pk, m_1, \cdots, m_{\ell}, \sigma) = \left[\sigma^{\prod_{i}H(m_i)} = g^{\sum_i\prod_{j \neq i}H(m_j)}\right]$$
+
+\subsection*{Part D}
+
+(We assume that $m_1, \cdots, m_{\ell}$ be a sequence of distinct messages such that all $H(m_i)$-s are pairwise-coprime.)
+
+With aggregate signature $\sigma$ and messages $m_1, \cdots, m_{\ell}$ given, one can calculate $\sigma^{\prod_{i \neq 1}H(m_i)}$ which gives the value $$v_1 = \sigma^{\prod_{i \neq 1}H(m_i)} = g^{\frac{\prod_{i \neq 1}H(m_i)}{H(m_1)} + \sum_{j=2}^{\ell}\prod_{i \neq 1, i \neq j}H(m_i)}$$
+
+Since for all $j \in \{2, \cdots, \ell\}$, the value $g^{\prod_{i \neq 1, i \neq j}H(m_i)}$ can be calculated efficiently, one can further obtain the value $$v_2 = v_1 / \prod_{j=2}^{\ell}g^{\prod_{i \neq 1, i \neq j}H(m_i)} = g^{\frac{\prod_{i \neq 1}H(m_i)}{H(m_1)}}$$
+
+Notice that by our assumption, $\gcd\left(H(m_1), \prod_{i \neq 1} H(m_i)\right) = 1$, thus we can compute two integer $a, b$ such that $aH(m_1) + b\prod_{i \neq 1} H(m_i) = 1$, and it follows $$v_3 = g^{a}v_2^{b} = g^{\frac{aH(m_1) + b\prod_{i \neq 1} H(m_i)}{H(m_1)}} = g^{1 / H(m_1)}$$ which gives the signature of message $m_1$.
+
+\section*{Problem 3}
+Notice that the equation $$x^e = g \bmod N$$ has and only has one solution $$x = g^d \bmod N$$ for some $g \in \mathbb Z_N^*$, and $ed = 1 \bmod \varphi(N)$. This suggests that \Verify-s in the RSA signature and the Gennaro-Halevi-Rabin Signature are both canonical.
+
+And since both \Sign-s are deterministic, existential unforgeability implies strong unforgeability.
+
+
+\end{document}
