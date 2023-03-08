@@ -1,0 +1,154 @@
+\documentclass[8pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage[a4paper]{geometry}
+
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{multirow}
+\usepackage[cache=false]{minted}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue
+}
+
+\usepackage{appendix}
+\geometry{a4paper,centering,scale=0.8}
+\geometry{left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+\usepackage[format=hang,font=small,textfont=it]{caption}
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{extarrows}
+\usepackage{qcircuit}
+\usepackage{fancyhdr}
+\usepackage{cleveref}
+\usepackage{totpages}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{bbm}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{arrows.meta}%画箭头用的包
+
+\makeatletter
+\def\@maketitle{%
+	\newpage
+	\begin{center}%
+		\let \footnote \thanks
+		{\LARGE \@title \par}%
+		\vskip 1.5em%
+		{\large
+			\lineskip .5em%
+			\begin{tabular}[t]{c}%
+				\@author
+			\end{tabular}\par}%
+		\vskip 1em%
+		{\large \@date}%
+	\end{center}%
+	\par
+	\vskip 1.5em}
+\makeatother
+
+\newtheoremstyle{compact}%
+{3pt}{3pt}%
+{}{}%
+{\bfseries}{\textcolor{red}{.}}%  % Note that final punctuation is omitted.
+{.5em}{\mbox{\textcolor{red}{\thmname{#1}\thmnumber{ #2}}\thmnote{ (\textcolor{blue}{#3})}}}
+\theoremstyle{compact}
+\newtheorem{innercustomgeneric}{\customgenericname}
+\providecommand{\customgenericname}{}
+\newcommand{\newcustomtheorem}[2]{%
+	\newenvironment{#1}[1]
+	{%
+		\renewcommand\customgenericname{#2}%
+		\renewcommand\theinnercustomgeneric{##1}%
+		\innercustomgeneric
+	}
+	{\endinnercustomgeneric}
+}
+
+\DeclareMathOperator{\card}{card}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{proposition}{命题}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\newtheorem{Proof}{证明}
+
+\def\obj#1{\textbf{\uline{#1}}}
+\def\num#1{\textnormal{\textbf{\mbox{\textcolor{blue}{(#1)}}}}}
+\def\le{\leqslant}
+\def\ge{\geqslant}
+\def\im{\text{im }}
+\def\Pr#1{\text{Pr}\left[{#1}\right]}
+\def\E#1{\mathbb{E}\left[{#1}\right]}
+\def\Var#1{\text{Var}\left[{#1}\right]}
+\def\Enc{\textsf{Enc}}
+\def\Dec{\textsf{Dec}}
+\def\Gen{\textsf{Gen}}
+\def\rep#1{\llcorner{#1}\lrcorner}
+
+\title{\heiti\zihao{1} 编译原理 \ 第一次作业}
+\author{\kaishu\zihao{-3} 周书予\\2000013060@stu.pku.edu.cn}
+
+\CTEXoptions[today=old]
+\date{\today}
+
+\begin{document}\large
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\lhead{编译原理}
+	\chead{2023 Spring}
+	\rhead{第一次作业}
+	\cfoot{第 \thepage 页, 共 \pageref{TotPages} 页}
+}
+\pagestyle{plain}
+
+
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}	
+\maketitle
+
+\section*{Ex. 3.3.2}
+正则表达式定义的语言分别由满足如下条件的字符串构成:
+\begin{enumerate}
+	\item \textbf{a(a|b)*a}: 仅包含字符 $a, b$, 长度至少为 $2$ 且以字符 $a$ 开头结尾的串.
+	\item \textbf{(($\varepsilon$|a)b*)*}: 仅包含字符 $a, b$ 且不存在相邻的字符 $a$ 的串.
+	\item \textbf{(a|b)*a(a|b)(a|b)}: 仅包含字符 $a, b$, 长度至少为 $3$ 且倒数第 $3$ 个字符为 $a$ 的串.
+	\item \textbf{a*ba*ba*ba*}: 仅包含字符 $a, b$ 且有恰好 $3$ 个字符 $b$ 的串.
+	\item \textbf{(aa|bb)*((ab|ba)(aa|bb)*(ab|ba)(aa|bb)*)*}: 仅包含字符 $a, b$ 且字符 $a, b$ 出现次数均为偶数的串.
+\end{enumerate}
+
+\section*{Ex. 3.3.3}
+在一个长度为 $n$ 的字符串中, 
+\begin{itemize}
+	\item 前缀有 $n + 1$ 个.
+	\item 后缀有 $n + 1$ 个.
+	\item 真前缀有 $n - 1$ 个.
+	\item 子串有至少 $n + 1$, 至多 $\frac{n(n+1)}{2} + 1$ 个.
+	\item 子序列有至少 $n + 1$, 至多 $2^n$ 个.
+\end{itemize}
+
+\section*{Ex. 3.3.5}
+\begin{enumerate}
+	\item \textbf{[\^{}aeiou]*a[\^{}eiou]*e[\^{}aiou]*i[\^{}aeou]*o[\^{}aeiu]*u[\^{}aeio]*}
+	\item \textbf{a*b*c*d*e*f*g*h*i*j*k*l*m*n*o*p*q*r*s*t*u*v*w*x*y*z*}
+	\item \textbf{($\backslash$/$\backslash$*) ([\^{}*"] | $\backslash$".*$\backslash$" | $\backslash$*+[\^{}/])* ($\backslash$*$\backslash$/)}
+	\item \textbf{a(aa|bb)*(ab|ba)A|bA}, where \textbf{A$\to$(aa|bb)*((ab|ba)(aa|bb)*(ab|ba)(aa|bb)*)*}
+	\item \textbf{b*a*b?a*}
+\end{enumerate}
+
+\end{document}
