@@ -145,13 +145,96 @@ initial text=$ $, % sets the text that appears on the start arrow
 	\end{tikzpicture}
 \end{center}
 
-\subsection*{Fig. 3.29}
+\subsection*{Fig. 3.30}
 \begin{center} % ’ht’ tells LaTeX to place the figure ’here’ or at the top of the page
 	\begin{tikzpicture}
 		\node[state, initial, accepting] (0123) {0123};
         \draw (0123) edge[loop above] node{a} (0123)
         (0123) edge[loop below] node{b} (0123);	\end{tikzpicture}
 \end{center}
+
+\section*{Regular Expression $\to$ NFA $\to$ minimized DFA}
+\subsection*{3) $((\varepsilon | a)b^*)^*$}
+\subsubsection*{NFA}
+\begin{center}
+	\begin{tikzpicture}
+		\node[state, initial] (0) {};
+		\node[state, right of=0] (1) {};
+		\node[state, above right of=1] (2) {};
+		\node[state, right of=2] (3) {};
+		\node[state, below right of=1] (4) {};
+		\node[state, right of=4] (5) {};
+		\node[state, below right of=3] (6) {};
+		\node[state, right of=6] (7) {};
+		\node[state, right of=7, accepting] (8) {};
+%		\node[state, initial, accepting] (0123) {0123};
+%        \draw (0123) edge[loop above] node{a} (0123)
+%        (0123) edge[loop below] node{b} (0123);
+		\draw 
+		(0) edge[above] node{$\varepsilon$} (1)
+		(1) edge[above] node{$\varepsilon$} (2)
+		(2) edge[above] node{$\varepsilon$} (3)
+		(3) edge[above] node{$\varepsilon$} (6)
+		(1) edge[above] node{$\varepsilon$} (4)
+		(4) edge[above] node{$a$} (5)
+		(5) edge[above] node{$\varepsilon$} (6)
+		(6) edge[above] node{$\varepsilon$} (7)
+		(7) edge[above] node{$\varepsilon$} (8)
+		(7) edge[loop above] node{$b$} (7)
+		(8) edge[below, bend left] node{$\varepsilon$} (0);
+	\end{tikzpicture}
+\end{center}
+\subsubsection*{minimized DFA}
+\begin{center} % ’ht’ tells LaTeX to place the figure ’here’ or at the top of the page
+	\begin{tikzpicture}
+		\node[state, initial, accepting] (0123) {};
+        \draw (0123) edge[loop above] node{a} (0123)
+        (0123) edge[loop below] node{b} (0123);	\end{tikzpicture}
+\end{center}
+
+\subsection*{4) $(a|b)^*abb(a|b)^*$}
+\subsubsection*{NFA}
+\begin{center}
+	\begin{tikzpicture}
+		\node[state, initial] (0) {};
+		\node[state, right of=0] (1) {};
+		\node[state, right of=1] (2) {};
+		\node[state, right of=2] (3) {};
+		\node[state, right of=3, accepting] (4) {};
+%		\node[state, initial, accepting] (0123) {0123};
+%        \draw (0123) edge[loop above] node{a} (0123)
+%        (0123) edge[loop below] node{b} (0123);
+		\draw 
+			(0) edge[above] node{$a$} (1)
+			(1) edge[above] node{$b$} (2)
+			(2) edge[above] node{$b$} (3)
+			(0) edge[loop above] node{$a$} (0)
+	        (0) edge[loop below] node{$b$} (0)
+			(3) edge[loop above] node{$a$} (3)
+			(3) edge[loop below] node{$b$} (3)
+			(3) edge[above] node{$\varepsilon$} (4);
+	\end{tikzpicture}
+\end{center}
+
+\subsubsection*{minimized DFA}
+\begin{center}
+	\begin{tikzpicture}
+		\node[state, initial] (0) {};
+		\node[state, right of=0] (1) {};
+		\node[state, right of=1] (2) {};
+		\node[state, right of=2, accepting] (3) {};
+		\draw 
+			(0) edge[above] node{$a$} (1)
+			(1) edge[above] node{$b$} (2)
+			(2) edge[above] node{$b$} (3)
+			(0) edge[loop above] node{$b$} (0)
+	        (1) edge[loop above] node{$a$} (1)
+	        (2) edge[loop above] node{$a$} (2)
+			(3) edge[loop above] node{$a$} (3)
+			(3) edge[loop below] node{$b$} (3);
+	\end{tikzpicture}
+\end{center}
+
 
 %\begin{center}
 %	\includegraphics*[scale=0.21]{0308.jpg}
